@@ -1,0 +1,25 @@
+root = true
+
+[*]
+end_of_line = lf
+charset = utf-8
+max_line_length = 78
+indent_style = tab
+indent_size = 3
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{md,markdown}]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = false
+
+[*.j]
+max_line_length = off
+
+[*.wts]
+end_of_line = crlf
+max_line_length = off
+
+[COMMIT_EDITMSG]
+max_line_length = 72
