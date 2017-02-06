@@ -22,8 +22,7 @@ function Settings.read ()
 	-- Setup the output files.
 	settings.output.map = Path.join (
 		settings.output.directory, settings.name .. '.w3x')
-	settings.output.script = join (
-		settings.output.directory, settings.name .. '.j')
+	settings.output.script = settings.output.map .. '.j'
 	settings.output.globals = Path.join (
 		settings.output.directory, 'globals.lua')
 
