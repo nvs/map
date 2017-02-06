@@ -13,17 +13,17 @@ local patterns = {
 	},
 
 	real = {
-		'^(%.%d+)$',
-		'^(%d+%.%d*)$'
+		'^(-?%.%d+)$',
+		'^(-?%d+%.%d*)$'
 	},
 
 	integer = {
 		{ 'literal', '^(\'.\')$' },
 		{ 'code', '^(\'....\')$' },
-		{ 'hexadecimal', '^(%$%x+)$' },
-		{ 'hexadecimal', '^(0x%x+)$' },
-		{ 'octal', '^(0[0-7]+)$' },
-		{ 'decimal', '^(%d+)$' }
+		{ 'hexadecimal', '^(-?%$%x+)$' },
+		{ 'hexadecimal', '^(-?0x%x+)$' },
+		{ 'octal', '^(-?0[0-7]+)$' },
+		{ 'decimal', '^(-?%d+)$' }
 	}
 }
 
