@@ -27,12 +27,6 @@ function Settings.read ()
 	settings.output.globals = Path.join (
 		settings.output.directory, 'globals.lua')
 
-	-- Adds patch files to accompany the provided directory, making a 'pair'.
-	configuration.patch.files = {
-		'common.j',
-		'blizzard.j'
-	}
-
 	return settings
 end
 

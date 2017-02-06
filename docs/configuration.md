@@ -49,6 +49,11 @@ The path to the directory where the project work files will be placed.
 
 The path to the directory that contains the files 'common.j' and 'blizzard.j'.
 
+### `patch.files` _(`table`)_
+
+The file list containing JASS scripts that are provided by Warcraft 3 itself.
+Typically, these are the 'common.j' and 'blizzard.j'.
+
 #### `scripts` _(`table`)_
 #### `scripts.directory` _(`string`)_
 
