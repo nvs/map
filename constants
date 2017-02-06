@@ -1,0 +1,71 @@
+#!/usr/bin/env lua
+
+if not arg [1] or arg [1] == '--help' then
+	io.stdout:write ([[
+constants - Load constant data into the working map
+
+Usage:
+  constants [options]
+  constants <configuration>
+
+Options:
+  --help    Displays this help message.
+]])
+
+	os.exit (0)
+end
+
+local Globals = require ('map.globals')
+local Grimex = require ('map.tools.grimex')
+local Map = require ('map.common')
+local Path = require ('map.path')
+local Settings = require ('map.settings')
+
+local unpack = table.unpack or unpack
+local settings = Settings.read ()
+
+local patch_scripts, map_scripts, output = Map.check_scripts (settings)
+if not patch_scripts then
+	io.stderr:write (output)
+	os.exit (1)
+end
+
+local scripts = Map.parse_scripts (map_scripts, settings)
+local globals = Globals.process (unpack (scripts))
+
+if not Globals.write (settings.output.globals, globals) then
+	os.exit (1)
+end
+
+local function merge_constants (name)
+	local files = Map.files_exist (settings.constants [name])
+	table.insert (files, 1, settings.output.globals)
+
+	local status, output = Grimex.constants (
+		settings.prefix, settings.output.map, files)
+
+	local output_log_path = Path.join (
+		settings.output.directory, 'grimex-constants-' .. name .. '.txt')
+	Grimex.log (output_log_path, output)
+
+	name = name:gsub ('^%l', string.upper) .. ' Settings: '
+
+	if status then
+		io.stdout:write (name, 'OK', '\n')
+	else
+		io.stdout:write (name, 'Failure', '\n')
+	end
+
+	return status
+end
+
+local status = merge_constants ('gameplay')
+	and merge_constants ('interface')
+
+os.remove (settings.output.globals)
+
+if status then
+	os.exit (0)
+else
+	os.exit (1)
+end

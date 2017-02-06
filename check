@@ -1,0 +1,30 @@
+#!/usr/bin/env lua
+
+if not arg [1] or arg [1] == '--help' then
+	io.stdout:write ([[
+check - Parse JASS scripts and validate their syntax
+
+Usage:
+  check [options]
+  check <configuration>
+
+Options:
+  --help    Displays this help message.
+]])
+
+	os.exit (0)
+end
+
+local Map = require ('map.common')
+local Settings = require ('map.settings')
+
+local settings = Settings.read ()
+local status, _, output = Map.check_scripts (settings)
+
+if status then
+	io.stdout:write (output)
+	os.exit (0)
+else
+	io.stderr:write (output)
+	os.exit (1)
+end

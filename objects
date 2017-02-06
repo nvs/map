@@ -1,0 +1,58 @@
+#!/usr/bin/env lua
+
+if not arg [1] or arg [1] == '--help' then
+	io.stdout:write ([[
+objects - Load object data into the working map
+
+Usage:
+  objects [options]
+  objects <configuration>
+
+Options:
+  --help    Displays this help message.
+]])
+
+	os.exit (0)
+end
+
+local Globals = require ('map.globals')
+local Grimex = require ('map.tools.grimex')
+local Map = require ('map.common')
+local Path = require ('map.path')
+local Settings = require ('map.settings')
+
+local unpack = table.unpack or unpack
+local settings = Settings.read (arg [1])
+
+local patch_scripts, map_scripts, output = Map.check_scripts (settings)
+if not patch_scripts then
+	io.stderr:write (output)
+	os.exit (1)
+end
+
+local scripts = Map.parse_scripts (map_scripts, settings)
+local globals = Globals.process (unpack (scripts))
+
+if not Globals.write (settings.output.globals, globals) then
+	os.exit (1)
+end
+
+local files = Map.files_exist (settings.objects)
+table.insert (files, 1, settings.output.globals)
+
+local status, output = Grimex.objects (
+	settings.prefix, settings.output.map, files)
+
+local output_log_path = Path.join (
+	settings.output.directory, 'grimex-objects.txt')
+Grimex.log (output_log_path, output)
+
+os.remove (settings.output.globals)
+
+if status then
+	io.stdout:write ('Objects: OK', '\n')
+	os.exit (0)
+else
+	io.stderr:write ('Objects: Failure', '\n')
+	os.exit (1)
+end

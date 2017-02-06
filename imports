@@ -1,0 +1,36 @@
+#!/usr/bin/env lua
+
+if not arg [1] or arg [1] == '--help' then
+	io.stdout:write ([[
+imports - Load imports into the working map
+
+Usage:
+  imports [options]
+  imports <configuration>
+
+Options:
+  --help    Displays this help message.
+]])
+
+	os.exit (0)
+end
+
+local Grimex = require ('map.tools.grimex')
+local Path = require ('map.path')
+local Settings = require ('map.settings')
+
+local settings = Settings.read (arg [1])
+local status, output = Grimex.imports (
+	settings.prefix, settings.output.map, settings.imports.directory)
+
+local output_log_path = Path.join (
+	settings.output.directory, 'grimex-imports.txt')
+Grimex.log (output_log_path, output)
+
+if status then
+	io.stdout:write ('Imports: OK', '\n')
+	os.exit (0)
+else
+	io.stderr:write ('Imports: Failure', '\n')
+	os.exit (1)
+end
