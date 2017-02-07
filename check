@@ -15,10 +15,15 @@ Options:
 	os.exit (0)
 end
 
-local Map = require ('map.common')
 local Settings = require ('map.settings')
+local settings, message = Settings.read ()
 
-local settings = Settings.read ()
+if not settings then
+	io.stdout:write (message, '\n')
+	os.exit (1)
+end
+
+local Map = require ('map.common')
 local status, _, output = Map.check_scripts (settings)
 
 if status then

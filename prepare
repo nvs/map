@@ -18,10 +18,16 @@ Options:
 	os.exit (0)
 end
 
-local Path = require ('map.path')
 local Settings = require ('map.settings')
+local settings, message = Settings.read ()
 
-local settings = Settings.read (arg [1])
+if not settings then
+	io.stdout:write (message, '\n')
+	os.exit (1)
+end
+
+local Path = require ('map.path')
+
 local status = Path.copy (settings.input.map, settings.output.map)
 
 if status then
