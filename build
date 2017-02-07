@@ -18,11 +18,16 @@ Options:
 	os.exit (0)
 end
 
+local Settings = require ('map.settings')
+local settings, message = Settings.read ()
+
+if not settings then
+	io.stdout:write (message, '\n')
+	os.exit (1)
+end
+
 local PJass = require ('map.tools.pjass')
 local Map = require ('map.common')
-local Settings = require ('map.settings')
-
-local settings = Settings.read ()
 
 local patch_scripts, map_scripts, output = Map.check_scripts (settings)
 
