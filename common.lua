@@ -35,8 +35,8 @@ end
 --
 -- Upon success, returns a `table` containing the patch scripts, a `table`
 -- containing the map scripts, and the output `string` from the PJass command.
--- On failure, returns `nil` twice, followed by either an error `message` or
--- PJass `output`.
+-- On failure, returns `nil` twice, followed by a `string` containing either
+-- an error message or PJass output.
 function Map.check_scripts (settings)
 	local patch_scripts, message = Map.files_exist (settings.patch)
 
