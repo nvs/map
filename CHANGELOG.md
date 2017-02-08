@@ -4,6 +4,8 @@
 ### Fixed
 - Ensure that commands write to 'stderr' on configuration file errors.
 - Commands will properly display parse errors when encountered.
+- The exit code was not being properly handled for executed shell commands on
+  Lua 5.1 and LuaJIT.
 
 ## [0.1.1] - 2017-02-07
 ### Fixed
