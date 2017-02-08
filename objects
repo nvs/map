@@ -2,7 +2,7 @@
 
 if not arg [1] or arg [1] == '--help' then
 	io.stdout:write ([[
-objects - Load object data into the working map
+map objects - Load object data into the working map
 
 Usage:
   objects [options]

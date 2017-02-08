@@ -2,7 +2,7 @@
 
 if not arg [1] or arg [1] == '--help' then
 	io.stdout:write ([[
-imports - Load imports into the working map
+map imports - Load imports into the working map
 
 Usage:
   imports [options]

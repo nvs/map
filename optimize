@@ -2,7 +2,7 @@
 
 if not arg [1] or arg [1] == '--help' then
 	io.stdout:write ([[
-optimize - Create an optimized version of the working map
+map optimize - Create an optimized version of the working map
 
 Usage:
   optimize [options]

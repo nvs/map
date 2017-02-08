@@ -2,7 +2,7 @@
 
 if not arg [1] or arg [1] == '--help' then
 	io.stdout:write ([[
-prepare - Prepare a new working map
+map prepare - Prepare a new working map
 
 Creates a new working map in the output directory, destructively overwriting
 an existing work map.

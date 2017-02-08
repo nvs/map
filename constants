@@ -2,7 +2,7 @@
 
 if not arg [1] or arg [1] == '--help' then
 	io.stdout:write ([[
-constants - Load constant data into the working map
+map constants - Load constant data into the working map
 
 Usage:
   constants [options]

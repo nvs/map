@@ -2,7 +2,7 @@
 
 if not arg [1] or arg [1] == '--help' then
 	io.stdout:write ([[
-build - Combine JASS scripts into a single file
+map build - Combine JASS scripts into a single file
 
 Validates the syntax of the JASS scripts, then combines them into a single
 file. The result is placed in the output directory.

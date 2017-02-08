@@ -2,7 +2,7 @@
 
 if not arg [1] or arg [1] == '--help' then
 	io.stdout:write ([[
-check - Parse JASS scripts and validate their syntax
+map check - Parse JASS scripts and validate their syntax
 
 Usage:
   check [options]
