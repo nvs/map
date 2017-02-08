@@ -9,8 +9,17 @@ Usage:
   imports <configuration>
 
 Options:
-  --help    Displays this help message.
+  --version    Displays the version number.
+  --help       Displays this help message.
 ]])
+
+	os.exit (0)
+elseif arg [1] == '--version' then
+	local Version = require ('map.version')
+
+	io.stdout:write (string.format ([[
+map imports %d.%d.%d
+]], Version.major, Version.minor, Version.patch))
 
 	os.exit (0)
 end
