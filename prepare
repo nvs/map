@@ -31,7 +31,7 @@ local Settings = require ('map.settings')
 local settings, message = Settings.read ()
 
 if not settings then
-	io.stdout:write (message, '\n')
+	io.stderr:write (message, '\n')
 	os.exit (1)
 end
 

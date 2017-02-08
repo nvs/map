@@ -100,12 +100,15 @@ function Shell.execute (...)
 		if status_or_code == 0 then
 			return true, 'exit', status_or_code
 		else
-			if not is_windows then
-				-- This apparently is only correct on Linux and/or Posix systems.
-				code = code / 256
+			if is_windows then
+				code = status_or_code
+
+			-- This apparently is only correct on Linux and/or Posix systems.
+			else
+				code = status_or_code / 256
 			end
 
-			return nil, 'exit', status_or_code / 256
+			return nil, 'exit', code
 		end
 
 	-- Lua 5.2, Lua 5.3, or LuaJIT with 5.2 compatibility:
