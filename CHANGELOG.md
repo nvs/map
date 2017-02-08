@@ -1,6 +1,9 @@
 # Map Changelog
 
 ## [Unreleased]
+### Added
+- A '--version' option can be passed to commands to get the current map tools
+  version number.
 
 ## [0.1.1] - 2017-02-07
 ### Fixed
