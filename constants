@@ -53,7 +53,7 @@ if not Globals.write (settings.output.globals, globals) then
 end
 
 local function merge_constants (name)
-	local files = Map.files_exist (settings.constants [name])
+	local files = Map.load_files (settings.constants [name])
 	table.insert (files, 1, settings.output.globals)
 
 	local status, output = Grimex.constants (

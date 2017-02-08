@@ -4,7 +4,11 @@ local PJass = require ('map.tools.pjass')
 
 local Map = {}
 
-function Map.files_exist (pair)
+-- Takes the configuration setting `pair (table)` (i.e. `pair.directory
+-- (string)` and `pair.files (table)`) and ensures that all files exist.
+-- Returns a `table` containing the files with the directory appended upon
+-- success. Otherwise, `nil` with an error message `string`.
+function Map.load_files (pair)
 	local files = {}
 	local missing = {}
 
@@ -38,13 +42,13 @@ end
 -- On failure, returns `nil` twice, followed by a `string` containing either
 -- an error message or PJass output.
 function Map.check_scripts (settings)
-	local patch_scripts, message = Map.files_exist (settings.patch)
+	local patch_scripts, message = Map.load_files (settings.patch)
 
 	if not patch_scripts then
 		return nil, nil, message
 	end
 
-	local map_scripts, message = Map.files_exist (settings.scripts)
+	local map_scripts, message = Map.load_files (settings.scripts)
 
 	if not map_scripts then
 		return nil, nil, message

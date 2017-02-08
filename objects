@@ -52,7 +52,7 @@ if not Globals.write (settings.output.globals, globals) then
 	os.exit (1)
 end
 
-local files = Map.files_exist (settings.objects)
+local files = Map.load_files (settings.objects)
 table.insert (files, 1, settings.output.globals)
 
 local status, output = Grimex.objects (
