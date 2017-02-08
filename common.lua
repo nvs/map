@@ -38,9 +38,10 @@ end
 -- JASS syntax.
 --
 -- Upon success, returns a `table` containing the patch scripts, a `table`
--- containing the map scripts, and the output `string` from the PJass command.
--- On failure, returns `nil` twice, followed by a `string` containing either
--- an error message or PJass output.
+-- containing the map scripts, and a `string` containing the parse results. On
+-- parse failure, returns `false` twice, followed by a `string` containing the
+-- parse results. On error, returns `nil` twice, followed by a `string`
+-- containing an error message.
 function Map.check_scripts (settings)
 	local patch_scripts, message = Map.load_files (settings.patch)
 
@@ -60,7 +61,7 @@ function Map.check_scripts (settings)
 	if status then
 		return patch_scripts, map_scripts, output
 	else
-		return nil, nil, output
+		return false, false, output
 	end
 end
 

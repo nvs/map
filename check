@@ -35,10 +35,10 @@ end
 local Map = require ('map.common')
 local status, _, output = Map.check_scripts (settings)
 
-if status then
-	io.stdout:write (output)
-	os.exit (0)
-else
+if status == nil then
 	io.stderr:write (output)
 	os.exit (1)
+else
+	io.stdout:write (output)
+	os.exit (status and 0 or 1)
 end

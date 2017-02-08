@@ -5,6 +5,10 @@
 - A '--version' option can be passed to commands to get the current map tools
   version number.
 
+### Changed
+- The 'check' command now displays parse results to 'stdout' regardless of the
+  outcome. Note that other errors continue to write to 'stderr'.
+
 ## [0.1.2] - 2017-02-07
 ### Fixed
 - Ensure that commands write to 'stderr' on configuration file errors.
