@@ -1,6 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
+### Fixed
+- Ensure that commands write to 'stderr' on configuration file errors.
 
 ## [0.1.1] - 2017-02-07
 ### Fixed
