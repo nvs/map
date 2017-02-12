@@ -37,7 +37,8 @@ the map.
 #### `input` _(`table`)_
 #### `input.map` _(`string`)_
 
-The path to the file that will be used as the basis for the working map.
+The path to the file that will be used as the basis for the working map. It
+is assumed that this file has either a `.w3m` or `.w3x` extension.
 
 #### `output` _(`table`)_
 #### `output.directory` _(`string`)_

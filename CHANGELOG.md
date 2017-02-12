@@ -4,6 +4,7 @@
 ### Added
 - A '--version' option can be passed to commands to get the current map tools
   version number.
+- Maps with the `.w3m` extension (RoC) are now supported.
 
 ### Changed
 - The 'check' command now displays parse results to 'stdout' regardless of the
