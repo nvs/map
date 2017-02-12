@@ -175,7 +175,8 @@ function Settings.read ()
 
 	-- Setup the output files.
 	settings.output.map = Path.join (
-		settings.output.directory, settings.name .. '.w3x')
+		settings.output.directory, settings.name ..
+		settings.input.map:match ('^.+(%..+)$'))
 	settings.output.script = settings.output.map .. '.j'
 	settings.output.globals = Path.join (
 		settings.output.directory, 'globals.lua')
