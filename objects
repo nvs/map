@@ -1,6 +1,15 @@
 #!/usr/bin/env lua
 
-if not arg [1] or arg [1] == '--help' then
+local Map = require ('map.common')
+local Globals = require ('map.globals')
+local Grimex = require ('map.tools.grimex')
+local Path = require ('map.path')
+
+local options = {
+	['--version'] = Map.version
+}
+
+options ['--help'] = function ()
 	io.stdout:write ([[
 map objects - Load object data into the working map
 
@@ -14,55 +23,30 @@ Options:
 ]])
 
 	os.exit (0)
-elseif arg [1] == '--version' then
-	local Version = require ('map.version')
-
-	io.stdout:write (string.format ([[
-map objects %d.%d.%d
-]], Version.major, Version.minor, Version.patch))
-
-	os.exit (0)
 end
 
-local Settings = require ('map.settings')
-local settings, message = Settings.read (arg [1])
+local map, message = Map.initialize (options)
 
-if not settings then
-	io.stderr:write (message, '\n')
+if not map then
+	io.stderr:write (message)
 	os.exit (1)
 end
 
-local Globals = require ('map.globals')
-local Grimex = require ('map.tools.grimex')
-local Map = require ('map.common')
-local Path = require ('map.path')
-
-local unpack = table.unpack or unpack
-
-local patch_scripts, map_scripts, output = Map.check_scripts (settings)
-if not patch_scripts then
-	io.stderr:write (output)
+if not Globals.write (map.settings.output.globals, map.globals) then
 	os.exit (1)
 end
 
-local scripts = Map.parse_scripts (map_scripts, settings)
-local globals = Globals.process (unpack (scripts))
-
-if not Globals.write (settings.output.globals, globals) then
-	os.exit (1)
-end
-
-local files = Map.load_files (settings.objects)
-table.insert (files, 1, settings.output.globals)
+local files = Map.load_files (map.settings.objects)
+table.insert (files, 1, map.settings.output.globals)
 
 local status, output = Grimex.objects (
-	settings.prefix, settings.output.map, files)
+	map.settings.prefix, map.settings.output.map, files)
 
 local output_log_path = Path.join (
-	settings.output.directory, 'grimex-objects.txt')
+	map.settings.output.directory, 'grimex-objects.txt')
 Grimex.log (output_log_path, output)
 
-os.remove (settings.output.globals)
+os.remove (map.settings.output.globals)
 
 if status then
 	io.stdout:write ('Objects: OK', '\n')

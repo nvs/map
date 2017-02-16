@@ -1,6 +1,13 @@
 #!/usr/bin/env lua
 
-if not arg [1] or arg [1] == '--help' then
+local Map = require ('map.common')
+local Path = require ('map.path')
+
+local options = {
+	['--version'] = Map.version
+}
+
+options ['--help'] = function ()
 	io.stdout:write ([[
 map prepare - Prepare a new working map
 
@@ -17,27 +24,16 @@ Options:
 ]])
 
 	os.exit (0)
-elseif arg [1] == '--version' then
-	local Version = require ('map.version')
-
-	io.stdout:write (string.format ([[
-map prepare %d.%d.%d
-]], Version.major, Version.minor, Version.patch))
-
-	os.exit (0)
 end
 
-local Settings = require ('map.settings')
-local settings, message = Settings.read (arg [1])
+local map, message = Map.initialize (options)
 
-if not settings then
-	io.stderr:write (message, '\n')
+if not map then
+	io.stderr:write (message)
 	os.exit (1)
 end
 
-local Path = require ('map.path')
-
-local status = Path.copy (settings.input.map, settings.output.map)
+local status = Path.copy (map.settings.input.map, map.settings.output.map)
 
 if status then
 	io.stdout:write ('Prepare: OK', '\n')

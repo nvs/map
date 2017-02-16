@@ -1,6 +1,13 @@
 #!/usr/bin/env lua
 
-if not arg [1] or arg [1] == '--help' then
+local Map = require ('map.common')
+local Optimizer = require ('map.tools.optimizer')
+
+local options = {
+	['--version'] = Map.version
+}
+
+options ['--help'] = function ()
 	io.stdout:write ([[
 map optimize - Create an optimized version of the working map
 
@@ -14,29 +21,18 @@ Options:
 ]])
 
 	os.exit (0)
-elseif arg [1] == '--version' then
-	local Version = require ('map.version')
-
-	io.stdout:write (string.format ([[
-map optimize %d.%d.%d
-]], Version.major, Version.minor, Version.patch))
-
-	os.exit (0)
 end
 
-local Settings = require ('map.settings')
-local settings, message = Settings.read (arg [1])
+local map, message = Map.initialize (options)
 
-if not settings then
-	io.stderr:write (message, '\n')
+if not map then
+	io.stderr:write (message)
 	os.exit (1)
 end
 
-local Optimizer = require ('map.tools.optimizer')
-
-local optimized = settings.output.map:gsub ('%.w3x$', '-optimized.w3x')
-local status = Optimizer.optimize (settings.prefix,
-	settings.output.map, optimized, settings.optimizer.tweaks)
+local optimized = map.settings.output.map:gsub ('%.w3x$', '-optimized.w3x')
+local status = Optimizer.optimize (map.settings.prefix,
+	map.settings.output.map, optimized, map.settings.optimizer.tweaks)
 
 if status then
 	io.stdout:write ('Optimize: OK', '\n')
