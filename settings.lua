@@ -7,8 +7,6 @@ do
 	local unpack = table.unpack or unpack
 
 	local configuration = {
-		name = 'string',
-
 		flags = {
 			debug = 'boolean'
 		},
@@ -18,7 +16,8 @@ do
 		},
 
 		output = {
-			directory = 'string'
+			directory = 'string',
+			name = 'string'
 		},
 
 		patch = {
@@ -175,7 +174,7 @@ function Settings.read ()
 
 	-- Setup the output files.
 	settings.output.map = Path.join (
-		settings.output.directory, settings.name ..
+		settings.output.directory, settings.output.name ..
 		settings.input.map:match ('^.+(%..+)$'))
 	settings.output.script = settings.output.map .. '.j'
 	settings.output.globals = Path.join (

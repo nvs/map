@@ -20,11 +20,6 @@ values) must be set to either `true` or `false`.
 
 ### General Settings
 
-#### `name` _(`string`)_
-
-The name of the project, and the name used when referencing and working with
-numerous files throughout the project.
-
 #### `flags` _(`table`)_
 #### `flags.debug` _(`boolean`)_
 
@@ -44,6 +39,10 @@ is assumed that this file has either a `.w3m` or `.w3x` extension.
 #### `output.directory` _(`string`)_
 
 The path to the directory where the project work files will be placed.
+
+#### `output.name` _('string')_
+
+The name used when creating the output map and script files.
 
 #### `patch` _(`table`)_
 #### `patch.directory` _(`string`)_
