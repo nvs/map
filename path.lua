@@ -37,7 +37,6 @@ function Path.copy (source_path, destination_path)
 	local source = io.open (source_path, 'rb')
 
 	if source then
-		os.remove (destination_path)
 		local destination = io.open (destination_path, 'wb')
 
 		if destination then
