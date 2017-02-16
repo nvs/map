@@ -39,7 +39,7 @@ endfunction
 
 The 'build' command extends upon this behavior without altering the standard
 JASS language syntax, making the `debug` keyword more useful. When the
-`options.debug` flag is set to `false`, debugging is essentially disabled.
+`flags.debug` is set to `false`, debugging is essentially disabled.
 Functionally, this does not really change anything, given that `debug` is
 ignored by default. However, in an attempt to avoid potential side effects
 (such as code bloat after optimization), statements prefixed with `debug` are
