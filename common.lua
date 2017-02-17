@@ -193,4 +193,16 @@ function Map.initialize (options)
 	end
 end
 
+-- Displays the current version of the map tools for the command being
+-- executed, then exits successfully.
+function Map.version ()
+	local Version = require ('map.version')
+
+	io.stdout:write (string.format ([[
+map %s %d.%d.%d
+]], Path.base_name (arg [0]), Version.major, Version.minor, Version.patch))
+
+	os.exit (0)
+end
+
 return Map
