@@ -9,21 +9,29 @@ local options = {
 
 options ['--help'] = function ()
 	io.stdout:write ([[
-map prepare - Prepare a new working map
+map prepare - Prepare the new working map
 
-Creates a new working map in the output directory, destructively overwriting
-an existing work map.
+Updates the working map within the output directory, rebuilding trigger string
+data if needed.
 
 Usage:
   prepare [options]
-  prepare <configuration>
+  prepare [options] <configuration>
 
 Options:
+  --force      Force overwriting of map file. By default, will do
+               nothing if the output file already exists.
   --version    Displays the version number.
   --help       Displays this help message.
 ]])
 
 	os.exit (0)
+end
+
+local force
+
+options ['--force'] = function ()
+	force = true
 end
 
 local map, message = Map.initialize (options)
@@ -33,7 +41,12 @@ if not map then
 	os.exit (1)
 end
 
-local status = Path.copy (map.settings.input.map, map.settings.output.map)
+if force and Path.is_readable (map.settings.output.map) then
+	os.remove (map.settings.output.map)
+end
+
+local status = Path.is_readable (map.settings.output.map)
+	or Path.copy (map.settings.input.map, map.settings.output.map)
 
 if status then
 	io.stdout:write ('Prepare: OK', '\n')
