@@ -7,8 +7,6 @@ do
 	local unpack = table.unpack or unpack
 
 	local configuration = {
-		name = 'string',
-
 		flags = {
 			debug = 'boolean'
 		},
@@ -18,7 +16,8 @@ do
 		},
 
 		output = {
-			directory = 'string'
+			directory = 'string',
+			name = 'string'
 		},
 
 		patch = {
@@ -149,11 +148,11 @@ do
 	end
 end
 
--- Reads and processes the configuration file specified within `arg [1]`, then
+-- Reads and processes the file specified by `configuration (string)`, then
 -- returns the settings `table`. When an error is encountered, returns `nil`
 -- along with a `message (string)`.
-function Settings.read ()
-	local chunk, message = loadfile (arg [1])
+function Settings.read (configuration)
+	local chunk, message = loadfile (configuration)
 
 	if not chunk then
 		return nil, 'parse error: ' .. message
@@ -175,7 +174,7 @@ function Settings.read ()
 
 	-- Setup the output files.
 	settings.output.map = Path.join (
-		settings.output.directory, settings.name ..
+		settings.output.directory, settings.output.name ..
 		settings.input.map:match ('^.+(%..+)$'))
 	settings.output.script = settings.output.map .. '.j'
 	settings.output.globals = Path.join (

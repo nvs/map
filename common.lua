@@ -1,6 +1,8 @@
+local Globals = require ('map.globals')
 local JASS = require ('map.jass')
 local Path = require ('map.path')
 local PJass = require ('map.tools.pjass')
+local Settings = require ('map.settings')
 
 local Map = {}
 
@@ -121,6 +123,86 @@ function Map.build_script (scripts, settings)
 	script:close ()
 
 	return true
+end
+
+-- Takes the provided `options (table)`, where keys represent command otions,
+-- and each cooresponding value is a `function` to execute. By default, will
+-- run `options ['--help']` if no arguments are passed to the command.
+--
+-- Then it attempts to initialize a map environment. This involves loading
+-- settings, parsing scripts, and loading globals. Upon success, returns a
+-- `table` with the following structure, along with the output `string` of a
+-- successful parse.
+--
+-- ```
+-- {
+--     settings = {
+--         -- The results of `Settings.read ()`.
+--     },
+--     patch = {
+--         -- The results of `Map.parse_scripts ()` upon the patch files.
+--     },
+--     scripts = {
+--         -- The results of `Map.parse_scripts ()` upon the map scripts.
+--     },
+--     globals = {
+--         -- The results of `Globals.process ()` upon the map scripts.
+--     }
+-- }
+-- ```
+--
+-- Upon parse failure, returns `false` along with a `string` containing the
+-- parse results. Upon error, returns `nil` followed by a `string` containing
+-- an error message.
+function Map.initialize (options)
+	if #arg == 0 then
+		if options ['--help'] then
+			options ['--help'] ()
+		else
+			return nil, 'command has no `--help` option\n'
+		end
+	end
+
+	local index = 1
+
+	while arg [index] and options [arg [index]] do
+		options [arg [index]] ()
+		index = index + 1
+	end
+
+	local map = {}
+
+	local settings, message = Settings.read (arg [index])
+
+	if settings then
+		map.settings = settings
+	else
+		return nil, message .. '\n'
+	end
+
+	local patch_scripts, map_scripts, output = Map.check_scripts (settings)
+
+	if patch_scripts then
+		map.patch = Map.parse_scripts (patch_scripts, settings)
+		map.scripts = Map.parse_scripts (map_scripts, settings)
+		map.globals = Globals.process (unpack (map.scripts))
+
+		return map, output
+	else
+		return patch_scripts, output
+	end
+end
+
+-- Displays the current version of the map tools for the command being
+-- executed, then exits successfully.
+function Map.version ()
+	local Version = require ('map.version')
+
+	io.stdout:write (string.format ([[
+map %s %d.%d.%d
+]], Path.base_name (arg [0]), Version.major, Version.minor, Version.patch))
+
+	os.exit (0)
 end
 
 return Map

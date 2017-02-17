@@ -1,6 +1,13 @@
 #!/usr/bin/env lua
 
-if not arg [1] or arg [1] == '--help' then
+local Map = require ('map.common')
+local PJass = require ('map.tools.pjass')
+
+local options = {
+	['--version'] = Map.version
+}
+
+options ['--help'] = function ()
 	io.stdout:write ([[
 map build - Combine JASS scripts into a single file
 
@@ -17,43 +24,27 @@ Options:
 ]])
 
 	os.exit (0)
-elseif arg [1] == '--version' then
-	local Version = require ('map.version')
-
-	io.stdout:write (string.format ([[
-map build %d.%d.%d
-]], Version.major, Version.minor, Version.patch))
-
-	os.exit (0)
 end
 
-local Settings = require ('map.settings')
-local settings, message = Settings.read ()
+local map, message = Map.initialize (options)
 
-if not settings then
-	io.stderr:write (message, '\n')
+if not map then
+	io.stderr:write (message)
 	os.exit (1)
 end
 
-local PJass = require ('map.tools.pjass')
-local Map = require ('map.common')
-
-local patch_scripts, map_scripts, output = Map.check_scripts (settings)
-
-if not patch_scripts then
-	io.stderr:write (output)
+if not Map.build_script (map.scripts, map.settings) then
 	os.exit (1)
 end
 
-local scripts = Map.parse_scripts (map_scripts, settings)
-Map.debug_scripts (scripts, settings)
+local patch = {}
 
-if not Map.build_script (scripts, settings) then
-	os.exit (1)
+for _, script in ipairs (map.patch) do
+	table.insert (patch, script.path)
 end
 
-local status, output = PJass.check (settings.prefix,
-	settings.pjass.options, patch_scripts, settings.output.script)
+local status, output = PJass.check (map.settings.prefix,
+	map.settings.pjass.options, patch, map.settings.output.script)
 
 if status then
 	io.stdout:write (output)
