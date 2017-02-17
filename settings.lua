@@ -148,11 +148,11 @@ do
 	end
 end
 
--- Reads and processes the configuration file specified within `arg [1]`, then
+-- Reads and processes the file specified by `configuration (string)`, then
 -- returns the settings `table`. When an error is encountered, returns `nil`
 -- along with a `message (string)`.
-function Settings.read ()
-	local chunk, message = loadfile (arg [1])
+function Settings.read (configuration)
+	local chunk, message = loadfile (configuration)
 
 	if not chunk then
 		return nil, 'parse error: ' .. message

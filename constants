@@ -25,7 +25,7 @@ map constants %d.%d.%d
 end
 
 local Settings = require ('map.settings')
-local settings, message = Settings.read ()
+local settings, message = Settings.read (arg [1])
 
 if not settings then
 	io.stderr:write (message, '\n')
