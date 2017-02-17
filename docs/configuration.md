@@ -27,8 +27,6 @@ Enables/disables [debugging] (debugging.md). This flag indicates whether to
 allow supported statements prefixed with the `debug` keyword to be built into
 the map.
 
-[debugging]: debugging.md
-
 #### `input` _(`table`)_
 #### `input.map` _(`string`)_
 
