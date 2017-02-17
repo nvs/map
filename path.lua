@@ -53,4 +53,84 @@ function Path.copy (source_path, destination_path)
 	return status
 end
 
+local directory_separator = package.config:sub (1, 1)
+
+-- Returns the directory (`string`) portion of a `path (string)`. Optionally
+-- takes `levels (integer)`, indicating the number levels to remove from the
+-- `path` (defaults to `1`).
+--
+-- Based upon the POSIX.1-2008 utility `dirname ()`; however, the directory
+-- separator specified within Lua is used.
+function Path.directory_name (path, levels)
+	levels = levels or 1
+
+	if type (path) ~= 'string'
+		or type (levels) ~= 'number'
+	then
+		return nil
+	end
+
+	if path == '' then
+		return '.'
+	end
+
+	path = String.strip_trailing_character (path, directory_separator)
+
+	if path == '' then
+		return directory_separator
+	end
+
+	path = path:sub (1, String.last_index_of (path, directory_separator))
+
+	if path == '' then
+		return '.'
+	end
+
+	path = String.strip_trailing_character (path, directory_separator)
+
+	if path == '' then
+		return directory_separator
+	end
+
+	if levels <= 1 then
+		return path
+	else
+		return Path.directory_name (path, levels - 1)
+	end
+end
+
+-- Returns the non-directory portion (`string`) of a `path (string)`. If
+-- provided, an attempt is made to strip a `suffix (string)` from the `path`.
+--
+-- Based upon the POSIX.1-2008 utility `basename ()`; however, the directory
+-- separator specified within Lua is used.
+function Path.base_name (path, suffix)
+	if type (path) ~= 'string'
+		or suffix and type (suffix) ~= 'string'
+	then
+		return nil
+	end
+
+	if path == '' then
+		return '.'
+	end
+
+	path = String.strip_trailing_character (path, directory_separator)
+
+	if path == '' then
+		return directory_separator
+	end
+
+	path = path:sub (String.last_index_of (path, directory_separator) + 1)
+
+	if suffix and #suffix > 0
+		and path ~= suffix
+		and path:sub (-#suffix) == suffix
+	then
+		return path:sub (1, -#suffix - 1)
+	else
+		return path
+	end
+end
+
 return Path
