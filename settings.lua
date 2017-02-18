@@ -101,7 +101,7 @@ do
 		errors = errors or {}
 
 		for key, B_value in pairs (B) do
-			local name
+			local name = name
 
 			if name then
 				name = name .. '.' .. key
