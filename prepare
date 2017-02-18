@@ -1,5 +1,6 @@
 #!/usr/bin/env lua
 
+local Header = require ('map.header')
 local Map = require ('map.common')
 local Path = require ('map.path')
 
@@ -48,10 +49,20 @@ end
 local status = Path.is_readable (map.settings.output.map)
 	or Path.copy (map.settings.input.map, map.settings.output.map)
 
-if status then
-	io.stdout:write ('Prepare: OK', '\n')
-	os.exit (0)
-else
-	io.stderr:write ('Prepare: Failure', '\n')
+if not status then
+	io.stderr:write ('error preparing map', '\n')
 	os.exit (1)
 end
+
+local header = {
+	name = map.settings.map.name
+}
+
+local status = Header.write (map.settings.output.map, header)
+
+if not status then
+	io.stderr:write ('error writing header', '\n')
+end
+
+io.stdout:write ('prepare: ok', '\n')
+os.exit (0)

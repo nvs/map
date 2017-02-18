@@ -20,6 +20,12 @@ values) must be set to either `true` or `false`.
 
 ### General Settings
 
+#### `map` _(`table`)_
+#### `map.name` _(`string`)_
+
+The name of the map. Used by the 'prepare' command to update the map name in
+the header of the map archive.
+
 #### `flags` _(`table`)_
 #### `flags.debug` _(`boolean`)_
 

@@ -7,6 +7,10 @@ do
 	local unpack = table.unpack or unpack
 
 	local configuration = {
+		map = {
+			name = 'string'
+		},
+
 		flags = {
 			debug = 'boolean'
 		},
