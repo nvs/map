@@ -52,7 +52,7 @@ local function merge_constants (name)
 	if status then
 		io.stdout:write (name, 'OK', '\n')
 	else
-		io.stdout:write (name, 'Failure', '\n')
+		io.stderr:write (name, 'Failure', '\n')
 	end
 
 	return status
