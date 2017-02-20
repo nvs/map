@@ -6,6 +6,25 @@ local validate
 do
 	local unpack = table.unpack or unpack
 
+	local flags = {}
+	flags.__index = flags
+
+	function flags.__call (self, object)
+		self.object = object
+
+		return self
+	end
+
+	local function has_flags (object)
+		return type (object) == 'table' and getmetatable (object) == flags
+	end
+
+	local function set (options)
+		local self = {}
+
+		return setmetatable (self, flags)
+	end
+
 	local configuration = {
 		map = {
 			name = 'string'
@@ -120,8 +139,10 @@ do
 
 			if type (B_value) == 'string' then
 				B_type = B_value
+			elseif has_flags (B_value) and type (B_value.object) == 'string' then
+				B_type = B_value.object
 			else
-				B_type = type (B_value)
+				B_type = 'table'
 			end
 
 			if A_value == nil then
@@ -129,6 +150,10 @@ do
 			elseif A_type ~= B_type then
 				table.insert (errors, { 'bad type', name, A_type, B_type })
 			elseif B_type == 'table' then
+				if has_flags (B_value) then
+					B_value = B_value.object
+				end
+
 				if #B_value > 0 then
 					local B_element_type = B_value [1]
 
