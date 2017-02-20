@@ -61,9 +61,10 @@ function W3I.read (map, directory, prefix, block, input)
 		return text
 	end
 
-	-- TODO:
-	-- Transform the replacement integer `value (number)` to its four byte
-	-- repsentation. Otherwise, this won't function as intended for writing.
+	-- TODO: Transform integer into byte representation
+	--
+	-- The integer `value (number)` must be transformed into its four-byte
+	-- representation, otherwise, this won't work as intended for writing.
 	local function read_integer (value)
 		local bytes = { read (4, value):byte (1, -1) }
 		local integer = 0
