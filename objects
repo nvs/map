@@ -49,9 +49,9 @@ Grimex.log (output_log_path, output)
 os.remove (map.settings.output.globals)
 
 if status then
-	io.stdout:write ('Objects: OK', '\n')
+	io.stdout:write ('objects: ok', '\n')
 	os.exit (0)
 else
-	io.stderr:write ('Objects: Failure', '\n')
+	io.stderr:write ('objects: failure', '\n')
 	os.exit (1)
 end

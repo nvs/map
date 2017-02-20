@@ -35,9 +35,9 @@ local status = Optimizer.optimize (map.settings.prefix,
 	map.settings.output.map, optimized, map.settings.optimizer.tweaks)
 
 if status then
-	io.stdout:write ('Optimize: OK', '\n')
+	io.stdout:write ('optimize: ok', '\n')
 	os.exit (0)
 else
-	io.stderr:write ('Optimize: Failure', '\n')
+	io.stderr:write ('optimize: failure', '\n')
 	os.exit (1)
 end

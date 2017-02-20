@@ -47,12 +47,10 @@ local function merge_constants (name)
 		map.settings.output.directory, 'grimex-constants-' .. name .. '.txt')
 	Grimex.log (output_log_path, output)
 
-	name = name:gsub ('^%l', string.upper) .. ' Settings: '
-
 	if status then
-		io.stdout:write (name, 'OK', '\n')
+		io.stdout:write (name .. ' settings: ok', '\n')
 	else
-		io.stderr:write (name, 'Failure', '\n')
+		io.sterr:write (name .. ' settings: failure', '\n')
 	end
 
 	return status
