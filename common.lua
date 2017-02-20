@@ -21,7 +21,7 @@ function Map.load_files (pair)
 			table.insert (files, file)
 		else
 			if #missing == 0 then
-				table.insert (missing, 'Error:')
+				table.insert (missing, 'error:')
 			end
 
 			table.insert (missing, string.format (	'\tno file \'%s\'', file))
