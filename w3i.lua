@@ -35,8 +35,6 @@ local W3I = {}
 -- }
 -- ```
 --
--- Note that if a string is empty, it will be represented by `nil`.
---
 -- If an error is encountered, `nil` is returned.
 function W3I.read (map, directory, prefix, block, input)
 	local file_path = MPQEditor.export (map, 'war3map.w3i', directory, prefix)
