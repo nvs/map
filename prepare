@@ -3,6 +3,7 @@
 local Header = require ('map.header')
 local Map = require ('map.common')
 local Path = require ('map.path')
+local W3I = require ('map.w3i')
 
 local options = {
 	['--version'] = Map.version
@@ -62,6 +63,19 @@ local status = Header.write (map.settings.output.map, header)
 
 if not status then
 	io.stderr:write ('error writing header', '\n')
+	os.exit (1)
+end
+
+local information = {
+	name = map.settings.map.name
+}
+
+local status = W3I.write (information, map.settings.output.map,
+	map.settings.output.directory, map.settings.prefix)
+
+if not status then
+	io.stderr:write ('error updating w3i', '\n')
+	os.exit (1)
 end
 
 io.stdout:write ('prepare: ok', '\n')

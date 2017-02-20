@@ -24,7 +24,7 @@ values) must be set to either `true` or `false`.
 #### `map.name` _(`string`)_
 
 The name of the map. Used by the 'prepare' command to update the map name in
-the header of the map archive.
+the header of the map archive, as well as the 'war3map.w3i' file.
 
 #### `flags` _(`table`)_
 #### `flags.debug` _(`boolean`)_
