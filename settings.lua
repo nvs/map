@@ -2,7 +2,6 @@ local Path = require ('map.path')
 
 local Settings = {}
 
-local validate
 do
 	local unpack = table.unpack or unpack
 
@@ -154,7 +153,7 @@ do
 	-- specification that `A` should follow. Returns `true (boolean)` if `A`
 	-- validates against `B`. Otherwise, returns `nil` with an error `message
 	-- (string)`.
-	function validate (A, B, name, errors)
+	function Settings.validate (A, B, name, errors)
 		B = B or configuration
 		errors = errors or {}
 
@@ -201,7 +200,7 @@ do
 						end
 					end
 				else
-					validate (A_value, B_value, name, errors)
+					Settings.validate (A_value, B_value, name, errors)
 				end
 			end
 		end
@@ -226,7 +225,7 @@ function Settings.read (configuration)
 
 	local settings = chunk ()
 
-	local is_valid, message = validate (settings)
+	local is_valid, message = Settings.validate (settings)
 
 	if not is_valid then
 		return nil, message
