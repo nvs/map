@@ -37,7 +37,13 @@ if not Globals.write (map.settings.output.globals, map.globals) then
 end
 
 local function merge_constants (name)
-	local files = Map.load_files (map.settings.constants [name])
+	local files, message = Map.load_files (map.settings.constants [name])
+
+	if not files then
+		io.stderr:write (message)
+		return nil
+	end
+
 	table.insert (files, 1, map.settings.output.globals)
 
 	local status, output = Grimex.constants (
