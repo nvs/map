@@ -59,7 +59,7 @@ local header = {
 	name = map.settings.map.name
 }
 
-local status = Header.write (map.settings.output.map, header)
+local status = Header.write (header, map.settings.output.map)
 
 if not status then
 	io.stderr:write ('error writing header', '\n')
