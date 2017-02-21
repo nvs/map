@@ -13,21 +13,27 @@ include the file extension when specifying files.
 
 ## Settings
 
-All settings are required to exist, and behavior is not tested for situations
-where they are absent. If it is desired to remove or clear a setting, use an
-empty string (`''`) and/or an empty table (`{}`). Flags (i.e. `boolean`
+Settings can either be required or optional. Their status is listed below,
+along with any relevent default values. Note that if a `table` is optional, it
+can be omitted in its entirety. However, once included, all its required
+subsettings must be provided.
+
+If a setting is required and it is desired to remove or clear its value, use
+an empty string (`''`) and/or an empty table (`{}`). Flags (i.e. `boolean`
 values) must be set to either `true` or `false`.
 
 ### General Settings
 
-#### `map` _(`table`)_
-#### `map.name` _(`string`)_
+#### `map` _(`table`) Optional_
+#### `map.name` _(`string`) Optional_
 
 The name of the map. Used by the 'prepare' command to update the map name in
 the header of the map archive, as well as the 'war3map.w3i' file.
 
-#### `flags` _(`table`)_
-#### `flags.debug` _(`boolean`)_
+#### `flags` _(`table`) Optional_
+#### `flags.debug` _(`boolean`) Optional_
+
+_Default: `false`_
 
 Enables/disables [debugging] (debugging.md). This flag indicates whether to
 allow supported statements prefixed with the `debug` keyword to be built into
@@ -58,7 +64,7 @@ The path to the directory that contains the files 'common.j' and 'blizzard.j'.
 The file list containing JASS scripts that are provided by Warcraft 3 itself.
 Typically, these are the 'common.j' and 'blizzard.j'.
 
-#### `scripts` _(`table`)_
+#### `scripts` _(`table`) Optional_
 #### `scripts.directory` _(`string`)_
 
 The path to the directory that contains the project's JASS scripts.
@@ -67,14 +73,14 @@ The path to the directory that contains the project's JASS scripts.
 
 The file list that represents the JASS portion of the project.
 
-#### `imports` _(`table`)_
+#### `imports` _(`table`) Optional_
 #### `imports.directory` _(`string`)_
 
 The path to the directory that contains all files to be imported into the
 working map. Note that subdirectory structure is preserved during the import
 process.
 
-#### `objects` _(`table`)_
+#### `objects` _(`table`) Optional_
 #### `objects.directory` _(`string`)_
 
 The path to the directory containing files used during object loading.
@@ -83,8 +89,8 @@ The path to the directory containing files used during object loading.
 
 The file list containing all Lua files to use during object loading.
 
-#### `constants` _(`table`)_
-#### `constants.gameplay` _(`table`)_
+#### `constants` _(`table`) Optional_
+#### `constants.gameplay` _(`table`) Optional_
 #### `constants.gameplay.directory` _(`string`)_
 
 The path to the directory containing files used when loading gameplay related
@@ -95,7 +101,7 @@ constants.
 The file list containing all Lua files used when loading gameplay related
 constants.
 
-#### `constants.interface` _(`table`)_
+#### `constants.interface` _(`table`) Optional_
 #### `constants.interface.directory` _(`string`)_
 
 The path to the directory containing files used when loading interface related
@@ -108,18 +114,18 @@ constants.
 
 ### Command Settings
 
-#### `prefix` _(`string`)_
+#### `prefix` _(`string`) Optional_
 
 A prefix to put before all commands. On Windows, this should probably be set
 to an empty string (`''`). On other systems, the use of Wine will probably be
 necessary, and the prefix should be adjusted accordingly.
 
-#### `pjass` _(`table`)_
-#### `pjass.options` _(`table`)_
+#### `pjass` _(`table`) Optional_
+#### `pjass.options` _(`table`) Optional_
 
 A list of options to provide to pjass.
 
-#### `optimizer` _(`table`)_
-#### `optimizer.tweaks` _(`string`)_
+#### `optimizer` _(`table`) Optional_
+#### `optimizer.tweaks` _(`string`) Optional_
 
 The path to the optimizer tweaks file.

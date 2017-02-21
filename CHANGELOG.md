@@ -16,6 +16,22 @@
   outcome. Note that other errors continue to write to 'stderr'.
 - The 'prepare' command has been reworked, and will no longer be destructive
   by default. The '--force' flag can be used to overwrite an existing file.
+- The following settings have been made optional (see
+  [docs/configuration.md]):
+    - `flags`
+    - `flags.default` (`false`)
+    - `map`
+    - `map.name`
+    - `scripts`
+    - `imports`
+    - `objects`
+    - `constants`
+    - `constants.gameplay`
+    - `constants.interface`
+    - `prefix`
+    - `pjass`
+    - `optimizer`
+    - `optimizer.tweaks`
 
 ### Removed
 - The following configuration settings have been removed:
