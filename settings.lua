@@ -20,7 +20,9 @@ do
 	end
 
 	local function set (options)
-		local self = {}
+		local self = {
+			optional = options.optional
+		}
 
 		return setmetatable (self, flags)
 	end
@@ -146,7 +148,9 @@ do
 			end
 
 			if A_value == nil then
-				table.insert (errors, { 'missing', name, B_type })
+				if not has_flags (B_value) or not B_value.optional then
+					table.insert (errors, { 'missing', name, B_type })
+				end
 			elseif A_type ~= B_type then
 				table.insert (errors, { 'bad type', name, A_type, B_type })
 			elseif B_type == 'table' then
