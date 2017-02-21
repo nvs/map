@@ -49,7 +49,9 @@ function Shell.escape_arguments (...)
 
 	local output = {}
 
-	for _, argument in ipairs (arguments) do
+	for index = 1, #arguments do
+		argument = arguments [index]
+
 		if type (argument) == 'table' then
 			table.insert (output, Shell.escape_arguments (argument))
 		elseif type (argument) == 'string' then
