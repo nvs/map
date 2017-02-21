@@ -39,9 +39,9 @@ local output_log_path = Path.join (
 Grimex.log (output_log_path, output)
 
 if status then
-	io.stdout:write ('Imports: OK', '\n')
+	io.stdout:write ('imports: ok', '\n')
 	os.exit (0)
 else
-	io.stderr:write ('Imports: Failure', '\n')
+	io.stderr:write ('imports: failure', '\n')
 	os.exit (1)
 end
