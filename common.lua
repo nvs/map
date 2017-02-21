@@ -136,6 +136,7 @@ end
 --
 -- ```
 -- {
+--     command = '', -- The executed command.
 --     settings = {
 --         -- The results of `Settings.read ()`.
 --     },
@@ -170,7 +171,9 @@ function Map.initialize (options)
 		index = index + 1
 	end
 
-	local map = {}
+	local map = {
+		command = Path.base_name (arg [0])
+	}
 
 	local settings, message = Settings.read (arg [index])
 
