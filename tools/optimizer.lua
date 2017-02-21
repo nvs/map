@@ -21,7 +21,7 @@ function Optimizer.optimize (prefix, map, output, tweaks)
 	local status = Shell.execute {
 		command = Shell.escape_arguments (prefix,
 			Optimizer.executable, map, '--do', output, '--checkall',
-			'--tweak', tweaks, '--exit')
+			tweaks and '--tweak', tweaks, '--exit')
 	}
 
 	-- Remove output upon failure.

@@ -28,12 +28,20 @@ do
 	end
 
 	local configuration = {
-		map = {
-			name = 'string'
+		map = set {
+			optional = true
+		} {
+			name = set {
+				optional = true
+			} 'string'
 		},
 
-		flags = {
-			debug = 'boolean'
+		flags = set {
+			optional = true
+		} {
+			debug = set {
+				optional = true
+			} 'boolean'
 		},
 
 		input = {
@@ -52,33 +60,45 @@ do
 			}
 		},
 
-		scripts = {
+		scripts = set {
+			optional = true
+		} {
 			directory = 'string',
 			files = {
 				'string'
 			}
 		},
 
-		imports = {
+		imports = set {
+			optional = true
+		} {
 			directory = 'string'
 		},
 
-		objects = {
+		objects = set {
+			optional = true
+		} {
 			directory = 'string',
 			files = {
 				'string'
 			}
 		},
 
-		constants = {
-			gameplay = {
+		constants = set {
+			optional = true
+		} {
+			gameplay = set {
+				optional = true
+			} {
 				directory = 'string',
 				files = {
 					'string'
 				}
 			},
 
-			interface = {
+			interface = set {
+				optional = true
+			} {
 				directory = 'string',
 				files = {
 					'string'
@@ -86,16 +106,26 @@ do
 			}
 		},
 
-		prefix = 'string',
+		prefix = set {
+			optional = true
+		} 'string',
 
-		pjass = {
-			options = {
+		pjass = set {
+			optional = true
+		} {
+			options = set {
+				optional = true
+			} {
 				'string'
 			}
 		},
 
-		optimizer = {
-			tweaks = 'string'
+		optimizer = set {
+			optional = true
+		} {
+			tweaks = set {
+				optional = true
+			} 'string'
 		}
 	}
 
@@ -198,6 +228,32 @@ function Settings.read (configuration)
 	if not is_valid then
 		return nil, message
 	end
+
+	-- These are optional settings that have 'default' values needed for tools
+	-- to function properly.
+	settings.map = settings.map or {}
+	settings.flags = settings.flags or {
+		debug = false
+	}
+	settings.scripts = settings.scripts or {
+		directory = settings.output.directory,
+		files = {}
+	}
+	settings.objects = settings.objects or {
+		directory = settings.output.directory,
+		files = {}
+	}
+	settings.constants = settings.constants or {}
+	settings.constants.gameplay = settings.constants.gameplay or {
+		directory = settings.output.directory,
+		files = {}
+	}
+	settings.constants.interface = settings.constants.interface or {
+		directory = settings.output.directory,
+		files = {}
+	}
+	settings.pjass = settings.pjass or {}
+	settings.optimizer = settings.optimizer or {}
 
 	-- If prefix is an empty string, we set it to `nil`. This is necessary to
 	-- ensure the first command line argument is not an empty string.
