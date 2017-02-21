@@ -52,6 +52,15 @@ do
 			name = 'string'
 		},
 
+		environment = set {
+			optional = true
+		} {
+			directory = 'string',
+			files = {
+				'string'
+			}
+		},
+
 		patch = {
 			directory = 'string',
 			files = {
@@ -237,6 +246,10 @@ function Settings.read (configuration)
 	settings.flags = settings.flags or {
 		debug = false
 	}
+	settings.environment = settings.environment or {
+		directory = settings.output.directory,
+		files = {}
+	}
 	settings.scripts = settings.scripts or {
 		directory = settings.output.directory,
 		files = {}
@@ -261,6 +274,12 @@ function Settings.read (configuration)
 	settings.pjass = settings.pjass or {}
 	settings.optimizer = settings.optimizer or {}
 
+	return settings
+end
+
+-- Does final checks on the provided `settings (table)`. This is intended to
+-- be called after loading a customized environment.
+function Settings.finalize (settings)
 	-- If prefix is an empty string, we set it to `nil`. This is necessary to
 	-- ensure the first command line argument is not an empty string.
 	if settings.prefix == '' then
@@ -274,8 +293,6 @@ function Settings.read (configuration)
 	settings.output.script = settings.output.map .. '.j'
 	settings.output.globals = Path.join (
 		settings.output.directory, 'globals.lua')
-
-	return settings
 end
 
 return Settings

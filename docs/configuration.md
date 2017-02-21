@@ -54,6 +54,24 @@ The path to the directory where the project work files will be placed.
 
 The name used when creating the output map and script files.
 
+#### `environment` _(`table`) Optional_
+#### `environment.directory` _(`string`)_
+
+The path to the directory containing files used during environment loading.
+
+#### `environment.files` _(`table`)_
+
+The file list containing all Lua files to use during environment loading. Note
+that these scripts can access the default environment (see `Map.initialize ()`
+for details on the provided `table`). This is exposed in the following manner.
+
+```
+local map = ...
+```
+
+It is possible, and intended, for users to be able to modify the environment
+as they see fit. All this is done before any command is executed.
+
 #### `patch` _(`table`)_
 #### `patch.directory` _(`string`)_
 
