@@ -31,16 +31,19 @@ if not map then
 	os.exit (1)
 end
 
-local status, output = true
+local files, message = Map.load_files (map.settings.imports)
 
-if map.settings.imports then
-	status, output = Grimex.imports (map.settings.prefix,
-		map.settings.output.map, map.settings.imports.directory)
-
-	output_log_path = Path.join (
-		map.settings.output.directory, 'grimex-imports.txt')
-	Grimex.log (output_log_path, output)
+if not files then
+	io.stderr:write (message)
+	os.exit (1)
 end
+
+local status, output = Grimex.imports (map.settings.prefix,
+	map.settings.output.map, files)
+
+output_log_path = Path.join (
+	map.settings.output.directory, 'grimex-imports.txt')
+Grimex.log (output_log_path, output)
 
 if status then
 	io.stdout:write ('imports: ok', '\n')

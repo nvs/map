@@ -72,7 +72,10 @@ do
 		imports = set {
 			optional = true
 		} {
-			directory = 'string'
+			directory = 'string',
+			files = {
+				'string'
+			}
 		},
 
 		objects = set {
@@ -236,6 +239,10 @@ function Settings.read (configuration)
 		debug = false
 	}
 	settings.scripts = settings.scripts or {
+		directory = settings.output.directory,
+		files = {}
+	}
+	settings.imports = settings.imports or {
 		directory = settings.output.directory,
 		files = {}
 	}

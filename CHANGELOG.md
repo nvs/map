@@ -10,6 +10,7 @@
 - The following configuration settings have been added:
     - `map.name` _(For header and w3i support in 'prepare')_
     - `output.name` _(Used in naming the output map and script)_
+    - `imports.files` _(For specifying import files)_
 
 ### Changed
 - The 'check' command now displays parse results to 'stdout' regardless of the

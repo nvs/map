@@ -76,9 +76,11 @@ The file list that represents the JASS portion of the project.
 #### `imports` _(`table`) Optional_
 #### `imports.directory` _(`string`)_
 
-The path to the directory that contains all files to be imported into the
-working map. Note that subdirectory structure is preserved during the import
-process.
+The path to the directory that contains files used during importing.
+
+#### `imports.files` _(`table`)_
+
+The file list containing all Lua files to use during importing.
 
 #### `objects` _(`table`) Optional_
 #### `objects.directory` _(`string`)_
