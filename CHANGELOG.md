@@ -1,12 +1,14 @@
 # Map Changelog
 
 ## [Unreleased]
+
+## [0.2.0] - 2017-02-21
 ### Added
 - A '--version' option can be passed to commands to get the current map tools
   version number.
 - Maps with the `.w3m` extension (RoC) are now supported.
-- Limited support for the map header and 'war3map.w3i' file has been added to
-  the 'prepare' command.
+- Support for the map header and 'war3map.w3i' file has been added to the
+  'prepare' command.
 - A standardized map environment now exists for all commands. This map
   environment can be customized by the user using the `environment` setting.
 - The following configuration settings have been added:
@@ -22,15 +24,15 @@
 - The 'imports' command now works upon a list of Lua files (like the 'objects'
   and 'constants' commands), rather than a single directory.
 - The following settings are now used to list files (rather than using
-  separate `directory` and `files` settings):
+  separate `directory` and `files` settings for each category):
     - `patch`
     - `scripts`
     - `imports`
     - `objects`
     - `constants.gameplay`
     - `constants.interface`
-- The following settings have been made optional (meaning they can be absent,
-  and the map tools should function properly):
+- The following settings have been made optional (meaning that they can be
+  absent and the map tools should function properly):
     - `flags`
     - `flags.default` (`false`)
     - `map`
@@ -82,6 +84,7 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.1.2...develop
+[Unreleased]: https://github.com/nvs/map/compare/v0.2.0...develop
+[0.2.0]: https://github.com/nvs/map/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/nvs/map/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/nvs/map/compare/v0.1.0...v0.1.1

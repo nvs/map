@@ -1,5 +1,5 @@
 return {
 	major = 0,
-	minor = 1,
-	patch = 1
+	minor = 2,
+	patch = 0
 }
