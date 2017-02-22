@@ -8,6 +8,7 @@
 - Limited support for the map header and 'war3map.w3i' file has been added to
   the 'prepare' command.
 - The following configuration settings have been added:
+    - `environment` _(For environment customization)_
     - `map.name` _(For header and w3i support in 'prepare')_
     - `output.name` _(Used in naming the output map and script)_
     - `imports.files` _(For specifying import files)_

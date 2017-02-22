@@ -125,6 +125,38 @@ function Map.build_script (scripts, settings)
 	return true
 end
 
+-- Takes the provided `map (table)` environment and attempts to load
+-- environment plugins provided by the user via the `environment` setting.
+local function load_environment (map)
+	local files = Map.load_files (map.settings.environment)
+	local messages = {}
+
+	for _, file in ipairs (files) do
+		local chunk, message = loadfile (file)
+
+		if chunk then
+			chunk (map)
+		else
+			table.insert (messages, message)
+		end
+	end
+
+	if #messages > 0 then
+		table.insert (messages, 1, 'parse error:')
+
+		return nil, table.concat (messages, '\n\t')
+	end
+
+	-- Ensure that any changes will pass basic validation.
+	local is_valid, message = Settings.validate (map.settings)
+
+	if not is_valid then
+		return nil, message
+	end
+
+	return true
+end
+
 -- Takes the provided `options (table)`, where keys represent command otions,
 -- and each cooresponding value is a `function` to execute. By default, will
 -- run `options ['--help']` if no arguments are passed to the command.
@@ -136,6 +168,7 @@ end
 --
 -- ```
 -- {
+--     command = '', -- The executed command.
 --     settings = {
 --         -- The results of `Settings.read ()`.
 --     },
@@ -170,7 +203,9 @@ function Map.initialize (options)
 		index = index + 1
 	end
 
-	local map = {}
+	local map = {
+		command = Path.base_name (arg [0])
+	}
 
 	local settings, message = Settings.read (arg [index])
 
@@ -186,6 +221,14 @@ function Map.initialize (options)
 		map.patch = Map.parse_scripts (patch_scripts, settings)
 		map.scripts = Map.parse_scripts (map_scripts, settings)
 		map.globals = Globals.process (unpack (map.scripts))
+
+		local status, message = load_environment (map)
+
+		if not status then
+			return nil, message .. '\n'
+		end
+
+		Settings.finalize (map.settings)
 
 		return map, output
 	else

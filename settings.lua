@@ -2,7 +2,6 @@ local Path = require ('map.path')
 
 local Settings = {}
 
-local validate
 do
 	local unpack = table.unpack or unpack
 
@@ -51,6 +50,15 @@ do
 		output = {
 			directory = 'string',
 			name = 'string'
+		},
+
+		environment = set {
+			optional = true
+		} {
+			directory = 'string',
+			files = {
+				'string'
+			}
 		},
 
 		patch = {
@@ -154,7 +162,7 @@ do
 	-- specification that `A` should follow. Returns `true (boolean)` if `A`
 	-- validates against `B`. Otherwise, returns `nil` with an error `message
 	-- (string)`.
-	function validate (A, B, name, errors)
+	function Settings.validate (A, B, name, errors)
 		B = B or configuration
 		errors = errors or {}
 
@@ -201,7 +209,7 @@ do
 						end
 					end
 				else
-					validate (A_value, B_value, name, errors)
+					Settings.validate (A_value, B_value, name, errors)
 				end
 			end
 		end
@@ -226,7 +234,7 @@ function Settings.read (configuration)
 
 	local settings = chunk ()
 
-	local is_valid, message = validate (settings)
+	local is_valid, message = Settings.validate (settings)
 
 	if not is_valid then
 		return nil, message
@@ -237,6 +245,10 @@ function Settings.read (configuration)
 	settings.map = settings.map or {}
 	settings.flags = settings.flags or {
 		debug = false
+	}
+	settings.environment = settings.environment or {
+		directory = settings.output.directory,
+		files = {}
 	}
 	settings.scripts = settings.scripts or {
 		directory = settings.output.directory,
@@ -262,6 +274,12 @@ function Settings.read (configuration)
 	settings.pjass = settings.pjass or {}
 	settings.optimizer = settings.optimizer or {}
 
+	return settings
+end
+
+-- Does final checks on the provided `settings (table)`. This is intended to
+-- be called after loading a customized environment.
+function Settings.finalize (settings)
 	-- If prefix is an empty string, we set it to `nil`. This is necessary to
 	-- ensure the first command line argument is not an empty string.
 	if settings.prefix == '' then
@@ -275,8 +293,6 @@ function Settings.read (configuration)
 	settings.output.script = settings.output.map .. '.j'
 	settings.output.globals = Path.join (
 		settings.output.directory, 'globals.lua')
-
-	return settings
 end
 
 return Settings
