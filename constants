@@ -22,18 +22,18 @@ Options:
   --help       Displays this help message.
 ]])
 
-	os.exit (0)
+	Map.exit (0)
 end
 
 local map, message = Map.initialize (options)
 
 if not map then
 	io.stderr:write (message)
-	os.exit (1)
+	Map.exit (1)
 end
 
 if not Globals.write (map.settings.output.globals, map.globals) then
-	os.exit (1)
+	Map.exit (1, map)
 end
 
 local function merge_constants (name)
@@ -67,7 +67,7 @@ status = merge_constants ('interface') and status
 os.remove (map.settings.output.globals)
 
 if status then
-	os.exit (0)
+	Map.exit (0, map)
 else
-	os.exit (1)
+	Map.exit (1, map)
 end

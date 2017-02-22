@@ -151,6 +151,13 @@ local function load_environment (map)
 	return true
 end
 
+-- Removes any all files specified within `files (table)`.
+function Map.cleanup (files)
+	for _, file in ipairs (files) do
+		os.remove (file)
+	end
+end
+
 -- Takes the provided `options (table)`, where keys represent command otions,
 -- and each cooresponding value is a `function` to execute. By default, will
 -- run `options ['--help']` if no arguments are passed to the command.
@@ -162,6 +169,9 @@ end
 --
 -- ```
 -- {
+--     cleanup = {
+--         -- A table to add files to automatically remove upon exit.
+--     },
 --     command = '', -- The executed command.
 --     settings = {
 --         -- The results of `Settings.read ()`.
@@ -212,6 +222,7 @@ function Map.initialize (options)
 	local status, output = Map.check_scripts (settings)
 
 	if status then
+		map.cleanup = {}
 		map.patch = Map.parse_scripts (settings.patch)
 		map.scripts = Map.parse_scripts (settings.scripts)
 		map.globals = Globals.process (unpack (map.scripts))
@@ -219,6 +230,10 @@ function Map.initialize (options)
 		local status, message = load_environment (map)
 
 		if not status then
+			-- Make some attempt to cleanup files that may have been specified
+			-- during environment customization.
+			Map.cleanup (map and map.cleanup)
+
 			return nil, message .. '\n'
 		end
 
@@ -240,6 +255,13 @@ map %s %d.%d.%d
 ]], Path.base_name (arg [0]), Version.major, Version.minor, Version.patch))
 
 	os.exit (0)
+end
+
+-- Simple wrapper for the `os.exit ()` function, allowing cleanup of any
+-- specified files.
+function Map.exit (code, map)
+	Map.cleanup (map and map.cleanup)
+	os.exit (code)
 end
 
 return Map

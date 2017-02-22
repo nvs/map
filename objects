@@ -22,25 +22,25 @@ Options:
   --help       Displays this help message.
 ]])
 
-	os.exit (0)
+	Map.exit (0)
 end
 
 local map, message = Map.initialize (options)
 
 if not map then
 	io.stderr:write (message)
-	os.exit (1)
+	Map.exit (1)
 end
 
 if not Globals.write (map.settings.output.globals, map.globals) then
-	os.exit (1)
+	Map.exit (1, map)
 end
 
 local status, message = Map.check_files (map.settings.objects)
 
 if not status then
 	io.stderr:write (message)
-	os.exit (1)
+	Map.exit (1, map)
 end
 
 local status, output = Grimex.objects (
@@ -55,8 +55,8 @@ os.remove (map.settings.output.globals)
 
 if status then
 	io.stdout:write ('objects: ok', '\n')
-	os.exit (0)
+	Map.exit (0, map)
 else
 	io.stderr:write ('objects: failure', '\n')
-	os.exit (1)
+	Map.exit (1, map)
 end

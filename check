@@ -19,15 +19,15 @@ Options:
   --help       Displays this help message.
 ]])
 
-	os.exit (0)
+	Map.exit (0)
 end
 
 local status, output = Map.initialize (options)
 
 if status == nil then
 	io.stderr:write (output)
-	os.exit (1)
+	Map.exit (1)
 else
 	io.stdout:write (output)
-	os.exit (status and 0 or 1)
+	Map.exit (status and 0 or 1, status)
 end

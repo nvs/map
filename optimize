@@ -20,14 +20,14 @@ Options:
   --help       Displays this help message.
 ]])
 
-	os.exit (0)
+	Map.exit (0)
 end
 
 local map, message = Map.initialize (options)
 
 if not map then
 	io.stderr:write (message)
-	os.exit (1)
+	Map.exit (1)
 end
 
 local optimized = map.settings.output.map:gsub ('%.w3x$', '-optimized.w3x')
@@ -36,8 +36,8 @@ local status = Optimizer.optimize (map.settings.prefix,
 
 if status then
 	io.stdout:write ('optimize: ok', '\n')
-	os.exit (0)
+	Map.exit (0, map)
 else
 	io.stderr:write ('optimize: failure', '\n')
-	os.exit (1)
+	Map.exit (1, map)
 end

@@ -27,7 +27,7 @@ Options:
   --help       Displays this help message.
 ]])
 
-	os.exit (0)
+	Map.exit (0)
 end
 
 local force
@@ -40,7 +40,7 @@ local map, message = Map.initialize (options)
 
 if not map then
 	io.stderr:write (message)
-	os.exit (1)
+	Map.exit (1)
 end
 
 if force and Path.is_readable (map.settings.output.map) then
@@ -52,7 +52,7 @@ local status = Path.is_readable (map.settings.output.map)
 
 if not status then
 	io.stderr:write ('error preparing map', '\n')
-	os.exit (1)
+	Map.exit (1, map)
 end
 
 local header = {
@@ -63,7 +63,7 @@ local status = Header.write (header, map.settings.output.map)
 
 if not status then
 	io.stderr:write ('error writing header', '\n')
-	os.exit (1)
+	Map.exit (1, map)
 end
 
 local information = {
@@ -75,8 +75,8 @@ local status = W3I.write (information, map.settings.output.map,
 
 if not status then
 	io.stderr:write ('error updating w3i', '\n')
-	os.exit (1)
+	Map.exit (1, map)
 end
 
 io.stdout:write ('prepare: ok', '\n')
-os.exit (0)
+Map.exit (0, map)

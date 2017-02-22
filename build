@@ -23,18 +23,18 @@ Options:
   --help       Displays this help message.
 ]])
 
-	os.exit (0)
+	Map.exit (0)
 end
 
 local map, message = Map.initialize (options)
 
 if not map then
 	io.stderr:write (message)
-	os.exit (1)
+	Map.exit (1)
 end
 
 if not Map.build_script (map.scripts, map.settings) then
-	os.exit (1)
+	Map.exit (1, map)
 end
 
 local status, output = PJass.check (map.settings.prefix,
@@ -42,8 +42,8 @@ local status, output = PJass.check (map.settings.prefix,
 
 if status then
 	io.stdout:write (output)
-	os.exit (0)
+	Map.exit (0, map)
 else
 	io.stderr:write (output)
-	os.exit (1)
+	Map.exit (1, map)
 end
