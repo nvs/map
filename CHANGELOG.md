@@ -7,6 +7,8 @@
 - Maps with the `.w3m` extension (RoC) are now supported.
 - Limited support for the map header and 'war3map.w3i' file has been added to
   the 'prepare' command.
+- A standardized map environment now exists for all commands. This map
+  environment can be customized by the user using the `environment` setting.
 - The following configuration settings have been added:
     - `environment` _(For environment customization)_
     - `map.name` _(For header and w3i support in 'prepare')_
