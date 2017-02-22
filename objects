@@ -36,17 +36,16 @@ if not Globals.write (map.settings.output.globals, map.globals) then
 	os.exit (1)
 end
 
-local files, message = Map.load_files (map.settings.objects)
+local status, message = Map.check_files (map.settings.objects)
 
-if not files then
+if not status then
 	io.stderr:write (message)
 	os.exit (1)
 end
 
-table.insert (files, 1, map.settings.output.globals)
-
 local status, output = Grimex.objects (
-	map.settings.prefix, map.settings.output.map, files)
+	map.settings.prefix, map.settings.output.map,
+	map.settings.output.globals, map.settings.objects)
 
 local output_log_path = Path.join (
 	map.settings.output.directory, 'grimex-objects.txt')

@@ -55,44 +55,29 @@ do
 		environment = set {
 			optional = true
 		} {
-			directory = 'string',
-			files = {
-				'string'
-			}
+			'string'
 		},
 
 		patch = {
-			directory = 'string',
-			files = {
-				'string'
-			}
+			'string'
 		},
 
 		scripts = set {
 			optional = true
 		} {
-			directory = 'string',
-			files = {
-				'string'
-			}
+			'string'
 		},
 
 		imports = set {
 			optional = true
 		} {
-			directory = 'string',
-			files = {
-				'string'
-			}
+			'string'
 		},
 
 		objects = set {
 			optional = true
 		} {
-			directory = 'string',
-			files = {
-				'string'
-			}
+			'string'
 		},
 
 		constants = set {
@@ -101,19 +86,13 @@ do
 			gameplay = set {
 				optional = true
 			} {
-				directory = 'string',
-				files = {
-					'string'
-				}
+				'string'
 			},
 
 			interface = set {
 				optional = true
 			} {
-				directory = 'string',
-				files = {
-					'string'
-				}
+				'string'
 			}
 		},
 
@@ -246,31 +225,13 @@ function Settings.read (configuration)
 	settings.flags = settings.flags or {
 		debug = false
 	}
-	settings.environment = settings.environment or {
-		directory = settings.output.directory,
-		files = {}
-	}
-	settings.scripts = settings.scripts or {
-		directory = settings.output.directory,
-		files = {}
-	}
-	settings.imports = settings.imports or {
-		directory = settings.output.directory,
-		files = {}
-	}
-	settings.objects = settings.objects or {
-		directory = settings.output.directory,
-		files = {}
-	}
+	settings.environment = settings.environment or {}
+	settings.scripts = settings.scripts or {}
+	settings.imports = settings.imports or {}
+	settings.objects = settings.objects or {}
 	settings.constants = settings.constants or {}
-	settings.constants.gameplay = settings.constants.gameplay or {
-		directory = settings.output.directory,
-		files = {}
-	}
-	settings.constants.interface = settings.constants.interface or {
-		directory = settings.output.directory,
-		files = {}
-	}
+	settings.constants.gameplay = settings.constants.gameplay or {}
+	settings.constants.interface = settings.constants.interface or {}
 	settings.pjass = settings.pjass or {}
 	settings.optimizer = settings.optimizer or {}
 

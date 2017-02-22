@@ -55,11 +55,6 @@ The path to the directory where the project work files will be placed.
 The name used when creating the output map and script files.
 
 #### `environment` _(`table`) Optional_
-#### `environment.directory` _(`string`)_
-
-The path to the directory containing files used during environment loading.
-
-#### `environment.files` _(`table`)_
 
 The file list containing all Lua files to use during environment loading. Note
 that these scripts can access the default environment (see `Map.initialize ()`
@@ -73,61 +68,29 @@ It is possible, and intended, for users to be able to modify the environment
 as they see fit. All this is done before any command is executed.
 
 #### `patch` _(`table`)_
-#### `patch.directory` _(`string`)_
-
-The path to the directory that contains the files 'common.j' and 'blizzard.j'.
-
-#### `patch.files` _(`table`)_
 
 The file list containing JASS scripts that are provided by Warcraft 3 itself.
 Typically, these are the 'common.j' and 'blizzard.j'.
 
 #### `scripts` _(`table`) Optional_
-#### `scripts.directory` _(`string`)_
-
-The path to the directory that contains the project's JASS scripts.
-
-#### `scripts.files` _(`table`)_
 
 The file list that represents the JASS portion of the project.
 
 #### `imports` _(`table`) Optional_
-#### `imports.directory` _(`string`)_
-
-The path to the directory that contains files used during importing.
-
-#### `imports.files` _(`table`)_
 
 The file list containing all Lua files to use during importing.
 
 #### `objects` _(`table`) Optional_
-#### `objects.directory` _(`string`)_
-
-The path to the directory containing files used during object loading.
-
-#### `objects.files` _(`table`)_
 
 The file list containing all Lua files to use during object loading.
 
 #### `constants` _(`table`) Optional_
 #### `constants.gameplay` _(`table`) Optional_
-#### `constants.gameplay.directory` _(`string`)_
-
-The path to the directory containing files used when loading gameplay related
-constants.
-
-#### `constants.gameplay.files` _(`table`)_
 
 The file list containing all Lua files used when loading gameplay related
 constants.
 
 #### `constants.interface` _(`table`) Optional_
-#### `constants.interface.directory` _(`string`)_
-
-The path to the directory containing files used when loading interface related
-constants.
-
-#### `constants.interface.files` _(`table`)_
 
 The file list containing all Lua files used when loading interface related
 constants.

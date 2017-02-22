@@ -11,13 +11,22 @@
     - `environment` _(For environment customization)_
     - `map.name` _(For header and w3i support in 'prepare')_
     - `output.name` _(Used in naming the output map and script)_
-    - `imports.files` _(For specifying import files)_
 
 ### Changed
 - The 'check' command now displays parse results to 'stdout' regardless of the
   outcome. Note that other errors continue to write to 'stderr'.
 - The 'prepare' command has been reworked, and will no longer be destructive
   by default. The '--force' flag can be used to overwrite an existing file.
+- The 'imports' command now works upon a list of Lua files (like the 'objects'
+  and 'constants' commands), rather than a single directory.
+- The following settings are now used to list files (rather than using
+  separate `directory` and `files` settings):
+    - `patch`
+    - `scripts`
+    - `imports`
+    - `objects`
+    - `constants.gameplay`
+    - `constants.interface`
 - The following settings have been made optional (see
   [docs/configuration.md]):
     - `flags`
@@ -38,6 +47,17 @@
 ### Removed
 - The following configuration settings have been removed:
     - `name` _(See `output.name` for replacement)_
+    - `patch.directory`
+    - `patch.files` _(See `patch` for replacement)_
+    - `scripts.directory`
+    - `scripts.files` _(See `scripts` for replacement)_
+    - `objects.directory`
+    - `objects.files` _(See `objects` for replacement)_
+    - `constants.gameplay.directory`
+    - `constants.gameplay.files` _(See `constants.gameplay` for replacement)_
+    - `constants.interface.directory`
+    - `constants.interface.files` _(See `constants.interface` for
+      replacement)_
 
 ### Fixed
 - Error display messages for missing or improperly typed configuration

@@ -37,14 +37,8 @@ if not Map.build_script (map.scripts, map.settings) then
 	os.exit (1)
 end
 
-local patch = {}
-
-for _, script in ipairs (map.patch) do
-	table.insert (patch, script.path)
-end
-
 local status, output = PJass.check (map.settings.prefix,
-	map.settings.pjass.options, patch, map.settings.output.script)
+	map.settings.pjass.options, map.settings.patch, map.settings.output.script)
 
 if status then
 	io.stdout:write (output)

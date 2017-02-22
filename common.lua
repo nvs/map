@@ -6,20 +6,14 @@ local Settings = require ('map.settings')
 
 local Map = {}
 
--- Takes the configuration setting `pair (table)` (i.e. `pair.directory
--- (string)` and `pair.files (table)`) and ensures that all files exist.
--- Returns a `table` containing the files with the directory appended upon
--- success. Otherwise, `nil` with an error message `string`.
-function Map.load_files (pair)
-	local files = {}
+-- Takes the configuration setting list of `files (table)` and ensures that
+-- they all exist. Returns `true (boolean)` if all files exist. Otherwise,
+-- `nil` with an error message `string`.
+function Map.check_files (files)
 	local missing = {}
 
-	for _, file in ipairs (pair.files) do
-		file = Path.join (pair.directory, file)
-
-		if Path.is_readable (file) then
-			table.insert (files, file)
-		else
+	for _, file in ipairs (files) do
+		if not Path.is_readable (file) then
 			if #missing == 0 then
 				table.insert (missing, 'error:')
 			end
@@ -30,41 +24,36 @@ function Map.load_files (pair)
 
 	if #missing > 0 then
 		return nil, table.concat (missing, '\n') .. '\n'
-	else
-		return files
 	end
+
+	return true
 end
 
 -- Goes over the scripts specified in `settings (table)` (i.e. those in
 -- `settings.patch` and `settings.scripts`), ensuring they exist and are valid
 -- JASS syntax.
 --
--- Upon success, returns a `table` containing the patch scripts, a `table`
--- containing the map scripts, and a `string` containing the parse results. On
--- parse failure, returns `false` twice, followed by a `string` containing the
--- parse results. On error, returns `nil` twice, followed by a `string`
--- containing an error message.
+-- Upon sucess, returns `true (boolean)`, and a `string` containing the parse
+-- results. On parse failure, returns `false`, followed by a `string`
+-- containing the parse results. On error, returns `nil`, followed by a
+-- `string` containing an error message.
 function Map.check_scripts (settings)
-	local patch_scripts, message = Map.load_files (settings.patch)
+	local status, message = Map.check_files (settings.patch)
 
-	if not patch_scripts then
-		return nil, nil, message
+	if not status then
+		return nil, message
 	end
 
-	local map_scripts, message = Map.load_files (settings.scripts)
+	local status, message = Map.check_files (settings.scripts)
 
-	if not map_scripts then
-		return nil, nil, message
+	if not status then
+		return nil, message
 	end
 
 	local status, output = PJass.check (settings.prefix,
-		settings.pjass.options, patch_scripts, map_scripts)
+		settings.pjass.options, settings.patch, settings.scripts)
 
-	if status then
-		return patch_scripts, map_scripts, output
-	else
-		return false, false, output
-	end
+	return status == true, output
 end
 
 -- Takes the provided `list (table)` of JASS scripts, processing each, and
@@ -128,10 +117,15 @@ end
 -- Takes the provided `map (table)` environment and attempts to load
 -- environment plugins provided by the user via the `environment` setting.
 local function load_environment (map)
-	local files = Map.load_files (map.settings.environment)
+	local status, message = Map.check_files (map.settings.environment)
+
+	if not status then
+		return nil, message
+	end
+
 	local messages = {}
 
-	for _, file in ipairs (files) do
+	for _, file in ipairs (map.settings.environment) do
 		local chunk, message = loadfile (file)
 
 		if chunk then
@@ -215,11 +209,11 @@ function Map.initialize (options)
 		return nil, message .. '\n'
 	end
 
-	local patch_scripts, map_scripts, output = Map.check_scripts (settings)
+	local status, output = Map.check_scripts (settings)
 
-	if patch_scripts then
-		map.patch = Map.parse_scripts (patch_scripts, settings)
-		map.scripts = Map.parse_scripts (map_scripts, settings)
+	if status then
+		map.patch = Map.parse_scripts (settings.patch)
+		map.scripts = Map.parse_scripts (settings.scripts)
 		map.globals = Globals.process (unpack (map.scripts))
 
 		local status, message = load_environment (map)
@@ -232,7 +226,7 @@ function Map.initialize (options)
 
 		return map, output
 	else
-		return patch_scripts, output
+		return status, output
 	end
 end
 
