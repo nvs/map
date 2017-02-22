@@ -27,8 +27,8 @@
     - `objects`
     - `constants.gameplay`
     - `constants.interface`
-- The following settings have been made optional (see
-  [docs/configuration.md]):
+- The following settings have been made optional (meaning they can be absent,
+  and the map tools should function properly):
     - `flags`
     - `flags.default` (`false`)
     - `map`
