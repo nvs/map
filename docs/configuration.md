@@ -30,6 +30,32 @@ values) must be set to either `true` or `false`.
 The name of the map. Used by the 'prepare' command to update the map name in
 the header of the map archive, as well as the 'war3map.w3i' file.
 
+#### `map.author` _(`String`) Optional_
+
+The author of the map. Used by the 'prepare' command to update the map author
+within the 'war3map.w3i' file.
+
+#### `map.description` _(`String`) Optional_
+
+The map description. Used by the 'prepare' command to update the description
+within the 'war3map.w3i' file.
+
+#### `map.loading` _(`table`) Optional_
+#### `map.loading.title` _(`string`) Optional_
+
+The first (smaller) line on the loading screen. Used by the 'prepare' command
+to update the title within the 'war3map.w3i' file.
+
+#### `map.loading.subtitle` _(`string`) Optional_
+
+The second (larger) line on the loading screen. Used by the 'prepare' command
+to update the subtitle within the 'war3map.w3i'.
+
+#### `map.loading.text` _(`string`) Optional_
+
+The description on the loading screen. Used by the 'prepare' command to update
+the description within the 'war3map.w3i'.
+
 #### `flags` _(`table`) Optional_
 #### `flags.debug` _(`boolean`) Optional_
 

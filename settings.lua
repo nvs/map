@@ -32,7 +32,31 @@ do
 		} {
 			name = set {
 				optional = true
-			} 'string'
+			} 'string',
+
+			author = set {
+				optional = true
+			} 'string',
+
+			description = set {
+				optional = true
+			} 'string',
+
+			loading = set {
+				optional = true
+			} {
+				text = set {
+					optional = true
+				} 'string',
+
+				title = set {
+					optional = true
+				} 'string',
+
+				subtitle = set {
+					optional = true
+				} 'string'
+			}
 		},
 
 		flags = set {
@@ -222,6 +246,7 @@ function Settings.read (configuration)
 	-- These are optional settings that have 'default' values needed for tools
 	-- to function properly.
 	settings.map = settings.map or {}
+	settings.map.loading = settings.map.loading or {}
 	settings.flags = settings.flags or {
 		debug = false
 	}

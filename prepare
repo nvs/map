@@ -67,7 +67,15 @@ if not status then
 end
 
 local information = {
-	name = map.settings.map.name
+	name = map.settings.map.name,
+	author = map.settings.map.author,
+	description = map.settings.map.description,
+
+	loading_screen = {
+		text = map.settings.map.loading.text,
+		title = map.settings.map.loading.title,
+		subtitle = map.settings.map.loading.subtitle
+	}
 }
 
 local status = W3I.write (information, map.settings.output.map,
