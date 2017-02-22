@@ -13,8 +13,8 @@ options ['--help'] = function ()
 	io.stdout:write ([[
 map prepare - Prepare the new working map
 
-Updates the working map within the output directory, rebuilding trigger string
-data if needed.
+Updates the working map within the output directory, updating the map header
+and war3map.w3i file is necessary.
 
 Usage:
   prepare [options]
