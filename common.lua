@@ -170,7 +170,7 @@ end
 -- ```
 -- {
 --     cleanup = {
---         -- A table to add files to automatically remove upon exit.
+--         -- Any file listed in this table will be removed upon exit.
 --     },
 --     command = '', -- The executed command.
 --     settings = {
