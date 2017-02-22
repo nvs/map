@@ -70,7 +70,7 @@ end
 -- Takes the provided `list (table)` of JASS scripts, processing each, and
 -- returning a `table` preserving the `list` order, where each script is
 -- represented by a `table` with the structure specified in `JASS.read ()`.
-function Map.parse_scripts (list, settings)
+function Map.parse_scripts (list)
 	local scripts = {}
 
 	for _, path in ipairs (list) do
