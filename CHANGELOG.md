@@ -1,6 +1,9 @@
 # Map Changelog
 
 ## [Unreleased]
+### Fixed
+- Commands that failed before initialization a map environment would produce a
+  Lua stack traceback.
 
 ## [0.2.0] - 2017-02-21
 ### Added
