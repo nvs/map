@@ -153,8 +153,10 @@ end
 
 -- Removes any all files specified within `files (table)`.
 function Map.cleanup (files)
-	for _, file in ipairs (files) do
-		os.remove (file)
+	if type (files) == 'table' then
+		for _, file in ipairs (files) do
+			os.remove (file)
+		end
 	end
 end
 

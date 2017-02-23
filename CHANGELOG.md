@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.2.1] - 2017-02-22
+### Fixed
+- Commands that failed before initialization a map environment would produce a
+  Lua stack traceback.
+
 ## [0.2.0] - 2017-02-21
 ### Added
 - A '--version' option can be passed to commands to get the current map tools
@@ -84,7 +89,8 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.2.0...develop
+[Unreleased]: https://github.com/nvs/map/compare/v0.2.1...develop
+[0.2.1]: https://github.com/nvs/map/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/nvs/map/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/nvs/map/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/nvs/map/compare/v0.1.0...v0.1.1
