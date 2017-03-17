@@ -4,8 +4,8 @@ A collection of Warcraft 3 map management tools.
 
 ## Dependencies
 
-This collection requires either [Lua] (https://www.lua.org) 5.1, 5.2, 5.3, or
-[LuaJIT] (https://luajit.org) 2.0.
+This collection requires either [Lua](https://www.lua.org) 5.1, 5.2, 5.3, or
+[LuaJIT](https://luajit.org) 2.0.
 
 Additionally, a valid Warcraft 3 installation is necessary. This allows proper
 access to the Warcraft 3 MPQ files (which are not included). You may want to
@@ -46,7 +46,7 @@ All commands should be executed from within the project's root directory (e.g.
 `map/check`). Depending on one's setup, it may be necessary to pass the
 command to the Lua binary (e.g. `lua map/check`).
 
-Each command expects a [configuration file] (docs/configuration.md) as an
+Each command expects a [configuration file](docs/configuration.md) as an
 input parameter (e.g. `map/check configuration.lua`). Additionally, all
 commands that make use of Lua files (i.e. 'constants' and 'objects') will have
-access to [JASS globals meeting specific criteria] (docs/globals.md).
+access to [JASS globals meeting specific criteria](docs/globals.md).
