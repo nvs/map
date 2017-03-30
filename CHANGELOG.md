@@ -1,6 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
+
+## [0.2.2] - 2017-03-30
 ### Fixed
 - Debugging functionality has been restored.
 
@@ -91,7 +93,8 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.2.1...develop
+[Unreleased]: https://github.com/nvs/map/compare/v0.2.2...develop
+[0.2.2]: https://github.com/nvs/map/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/nvs/map/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/nvs/map/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/nvs/map/compare/v0.1.1...v0.1.2
