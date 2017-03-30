@@ -92,6 +92,8 @@ function Map.build_script (scripts, settings)
 		return nil
 	end
 
+	Map.debug_scripts (scripts, settings)
+
 	script:write ('globals', '\n')
 
 	for index = 1, #scripts do
