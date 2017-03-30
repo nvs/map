@@ -1,6 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
+### Fixed
+- Debugging functionality has been restored.
 
 ## [0.2.1] - 2017-02-22
 ### Fixed
