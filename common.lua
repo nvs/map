@@ -73,7 +73,7 @@ function Map.parse_scripts (list)
 	return scripts
 end
 
--- Manges the 'debug' keyword for each of the JASS scripts listed in `scripts
+-- Manages the 'debug' keyword for each of the JASS scripts listed in `scripts
 -- (table)`, according to the flag provided in `settings (table)`.
 function Map.debug_scripts (scripts, settings)
 	for _, script in ipairs (scripts) do
