@@ -2,6 +2,8 @@ local String = require ('map.string')
 
 local Path = {}
 
+Path.separator = package.config:sub (1, 1)
+
 -- Returns a path (`string`) where all provided `string` arguments have been
 -- joined together. All other arguments types are ignored.
 function Path.join (...)
@@ -13,7 +15,7 @@ function Path.join (...)
 		end
 	end
 
-	return table.concat (elements, '/')
+	return table.concat (elements, Path.separator)
 end
 
 -- Returns a `boolean` indicating whether or not the specified `path (string)`
