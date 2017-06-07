@@ -83,7 +83,7 @@ end
 -- Takes the provided `strings (table)` and updates the trigger string data
 -- for the specified `map (string)`. Returns `nil` if an error is encountered.
 function WTS.write (map, strings, prefix)
-	local file_path = os.tmpname ()
+	local file_path = '.' .. os.tmpname ()
 	local file = io.open (file_path, 'wb')
 
 	local status
