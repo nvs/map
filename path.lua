@@ -2,6 +2,8 @@ local String = require ('map.string')
 
 local Path = {}
 
+local is_windows = package.config:sub (1, 1) == '\\'
+
 -- Returns a path (`string`) where all provided `string` arguments have been
 -- joined together. All other arguments types are ignored.
 function Path.join (...)
@@ -50,6 +52,22 @@ function Path.copy (source_path, destination_path)
 	end
 
 	return status
+end
+
+-- Returns a path (`string`) to a new temporary file. This function behaves
+-- exactly the same as `os.tmpname ()` on non-Windows systems. On Windows
+-- systems, the path makes use of the `TEMP` environment variable.
+--
+-- Credits to the [Penlight](https://github.com/stevedonovan/Penlight) project
+-- for this function (MIT License).
+function Path.temporary_name ()
+	local path = os.tmpname ()
+
+	if is_windows and not path:find (':') then
+		path = os.getenv ('TEMP') .. path
+	end
+
+	return path
 end
 
 local directory_separator = package.config:sub (1, 1)

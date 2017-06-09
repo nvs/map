@@ -5,6 +5,8 @@
 - An empty `settings.prefix` is now handled properly during environment load.
 - Windows-centric issues:
     - Argument quoting when passing internally to `cmd.exe` has been improved.
+    - Temporarily created paths now make use of the `TEMP` environment
+      variable and should be usable.
 
 ## [0.2.2] - 2017-03-30
 ### Fixed
