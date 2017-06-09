@@ -1,6 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
+
+## [0.2.3] - 2017-06-09
 ### Changed
 - When querying a command's version, the individual command is no longer
   mentioned (e.g. `map 0.2.3`).
@@ -106,7 +108,8 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.2.2...develop
+[Unreleased]: https://github.com/nvs/map/compare/v0.2.3...develop
+[0.2.3]: https://github.com/nvs/map/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/nvs/map/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/nvs/map/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/nvs/map/compare/v0.1.2...v0.2.0
