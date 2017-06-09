@@ -3,6 +3,8 @@
 ## [Unreleased]
 ### Fixed
 - An empty `settings.prefix` is now handled properly during environment load.
+- Windows-centric issues:
+    - Argument quoting when passing internally to `cmd.exe` has been improved.
 
 ## [0.2.2] - 2017-03-30
 ### Fixed
