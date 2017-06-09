@@ -243,6 +243,12 @@ function Settings.read (configuration)
 		return nil, message
 	end
 
+	-- If prefix is an empty string, we set it to `nil`. This is necessary to
+	-- ensure the first command line argument is not an empty string.
+	if settings.prefix == '' then
+		settings.prefix = nil
+	end
+
 	-- These are optional settings that have 'default' values needed for tools
 	-- to function properly.
 	settings.map = settings.map or {}
@@ -266,13 +272,6 @@ end
 -- Does final checks on the provided `settings (table)`. This is intended to
 -- be called after loading a customized environment.
 function Settings.finalize (settings)
-	-- If prefix is an empty string, we set it to `nil`. This is necessary to
-	-- ensure the first command line argument is not an empty string.
-	if settings.prefix == '' then
-		settings.prefix = nil
-	end
-
-	-- Setup the output files.
 	settings.output.map = Path.join (
 		settings.output.directory, settings.output.name ..
 		settings.input.map:match ('^.+(%..+)$'))

@@ -1,6 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
+### Fixed
+- An empty `settings.prefix` is now handled properly during environment load.
 
 ## [0.2.2] - 2017-03-30
 ### Fixed
