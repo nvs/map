@@ -4,6 +4,8 @@ local Path = require ('map.path')
 local PJass = require ('map.tools.pjass')
 local Settings = require ('map.settings')
 
+local unpack = table.unpack or unpack
+
 local Map = {}
 
 -- Takes the configuration setting list of `files (table)` and ensures that

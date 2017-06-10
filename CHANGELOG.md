@@ -7,6 +7,7 @@
     - Argument quoting when passing internally to `cmd.exe` has been improved.
     - Temporarily created paths now make use of the `TEMP` environment
       variable and should be usable.
+- Address situation where Lua is built without `unpack` compatibility.
 
 ## [0.2.2] - 2017-03-30
 ### Fixed
