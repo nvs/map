@@ -197,7 +197,7 @@ end
 -- Upon parse failure, returns `false` along with a `string` containing the
 -- parse results. Upon error, returns `nil` followed by a `string` containing
 -- an error message.
-function Map.initialize (options)
+function Map.initialize (options, command)
 	if #arg == 0 then
 		if options ['--help'] then
 			options ['--help'] ()
@@ -214,7 +214,7 @@ function Map.initialize (options)
 	end
 
 	local map = {
-		command = Path.base_name (arg [0])
+		command = command
 	}
 
 	local settings, message = Settings.read (arg [index])

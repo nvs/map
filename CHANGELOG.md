@@ -4,6 +4,8 @@
 ### Fixed
 - An empty `settings.prefix` is now handled properly during environment load.
 - Windows-centric issues:
+    - Can now handle the use of either forward or back slashes when specifying
+      the command (e.g. `lua map/imports`).
     - Argument quoting when passing internally to `cmd.exe` has been improved.
     - Temporarily created paths now make use of the `TEMP` environment
       variable and should be usable.
