@@ -1,6 +1,10 @@
 # Map Changelog
 
 ## [Unreleased]
+### Changed
+- When querying a command's version, the individual command is no longer
+  mentioned (e.g. `map 0.2.3`).
+
 ### Fixed
 - An empty `settings.prefix` is now handled properly during environment load.
 - Windows-centric issues:

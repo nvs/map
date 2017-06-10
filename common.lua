@@ -257,8 +257,8 @@ function Map.version ()
 	local Version = require ('map.version')
 
 	io.stdout:write (string.format ([[
-map %s %d.%d.%d
-]], Path.base_name (arg [0]), Version.major, Version.minor, Version.patch))
+map %d.%d.%d
+]], Version.major, Version.minor, Version.patch))
 
 	os.exit (0)
 end
