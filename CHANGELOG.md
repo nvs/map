@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+## [0.2.3] - 2017-06-09
+### Changed
+- When querying a command's version, the individual command is no longer
+  mentioned (e.g. `map 0.2.3`).
+
+### Fixed
+- An empty `settings.prefix` is now handled properly during environment load.
+- Windows-centric issues:
+    - Can now handle the use of either forward or back slashes when specifying
+      the command (e.g. `lua map/imports`).
+    - Argument quoting when passing internally to `cmd.exe` has been improved.
+    - Temporarily created paths now make use of the `TEMP` environment
+      variable and should be usable.
+- Address situation where Lua is built without `unpack` compatibility.
+
 ## [0.2.2] - 2017-03-30
 ### Fixed
 - Debugging functionality has been restored.
@@ -93,7 +108,8 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.2.2...develop
+[Unreleased]: https://github.com/nvs/map/compare/v0.2.3...develop
+[0.2.3]: https://github.com/nvs/map/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/nvs/map/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/nvs/map/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/nvs/map/compare/v0.1.2...v0.2.0

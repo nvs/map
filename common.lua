@@ -4,6 +4,8 @@ local Path = require ('map.path')
 local PJass = require ('map.tools.pjass')
 local Settings = require ('map.settings')
 
+local unpack = table.unpack or unpack
+
 local Map = {}
 
 -- Takes the configuration setting list of `files (table)` and ensures that
@@ -195,7 +197,7 @@ end
 -- Upon parse failure, returns `false` along with a `string` containing the
 -- parse results. Upon error, returns `nil` followed by a `string` containing
 -- an error message.
-function Map.initialize (options)
+function Map.initialize (options, command)
 	if #arg == 0 then
 		if options ['--help'] then
 			options ['--help'] ()
@@ -212,7 +214,7 @@ function Map.initialize (options)
 	end
 
 	local map = {
-		command = Path.base_name (arg [0])
+		command = command
 	}
 
 	local settings, message = Settings.read (arg [index])
@@ -254,9 +256,9 @@ end
 function Map.version ()
 	local Version = require ('map.version')
 
-	io.stdout:write (string.format ('map %s %d.%d.%d%s\n',
-		Path.base_name (arg [0]), Version.major,
-		Version.minor, Version.patch, Version.extra))
+	io.stdout:write (string.format ([[
+map %d.%d.%d%s
+]], Version.major, Version.minor, Version.patch, Version.extra))
 
 	os.exit (0)
 end

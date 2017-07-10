@@ -48,7 +48,7 @@ end
 -- Returns the status of the command, as either `true (boolean)` or `nil`,
 -- along with the `output (string)`.
 local function grimex_command (prefix, executable, map, ...)
-	local output_log_path = os.tmpname ()
+	local output_log_path = Path.temporary_name ()
 
 	-- Need to capture both 'stdout' and `stderr'.
 	local status = Shell.execute {

@@ -5,10 +5,19 @@ local is_windows = package.config:sub (1, 1) == '\\'
 -- Returns a `string` where the provided `argument (string)` has been
 -- escaped for use when passed to `os.execute ()` or `Shell.execute ()`.
 function Shell.escape_argument (argument)
+
+	-- Quoting command line arguments the 'right' way:
+	--
+	-- https://blogs.msdn.microsoft.com/twistylittlepassagesallalike/2011/04/23/everyone-quotes-command-line-arguments-the-wrong-way/
 	if is_windows then
 		if argument == '' then
 			argument = '""'
-		elseif argument:find ('[ \t\n\v"]') then
+
+		-- Deviate from the pattern used in the article by matching against
+		-- forward slashes as well. This resolves an issue where the first
+		-- argument (likely a command) contains forward slashes and is passed
+		-- to `cmd.exe`.
+		elseif argument:find ('[ \t\n\v"/]') then
 			argument = '"' .. argument:gsub ('(\\*)"', '%1%1\\"') ..
 				(argument:match ('\\+$') or '') .. '"'
 		end

@@ -26,7 +26,7 @@ Options:
 	Map.exit (0)
 end
 
-local map, message = Map.initialize (options)
+local map, message = Map.initialize (options, 'build')
 
 if not map then
 	io.stderr:write (message)

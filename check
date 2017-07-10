@@ -22,7 +22,7 @@ Options:
 	Map.exit (0)
 end
 
-local status, output = Map.initialize (options)
+local status, output = Map.initialize (options, 'check')
 
 if status == nil then
 	io.stderr:write (output)
