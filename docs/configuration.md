@@ -8,8 +8,8 @@ with this fact in mind.
 The only valid types within the configuration file are `boolean`, `string`,
 and `table`.  When listing files, please keep in mind that their order is
 respected. All paths are specified using a `string`, and expect the use of
-forwardslashes (i.e. `/`) when indicating directory separators. And be sure to
-include the file extension when specifying files.
+forward slashes (i.e. `/`) when indicating directory separators. And be sure
+to include the file extension when specifying files.
 
 ## General Settings
 
@@ -22,21 +22,21 @@ include the file extension when specifying files.
 - _Optional_
 
 The name of the map. Used by the 'prepare' command to update the map name in
-the header of the map archive, as well as the 'war3map.w3i' file.
+the header of the map archive, as well as the `war3map.w3i` file.
 
-### `map.author` _(`String`)_
+### `map.author` _(`string`)_
 
 - _Optional_
 
 The author of the map. Used by the 'prepare' command to update the map author
-within the 'war3map.w3i' file.
+within the `war3map.w3i` file.
 
-### `map.description` _(`String`)_
+### `map.description` _(`string`)_
 
 - _Optional_
 
 The map description. Used by the 'prepare' command to update the description
-within the 'war3map.w3i' file.
+within the `war3map.w3i` file.
 
 ### `map.loading` _(`table`)_
 
@@ -47,21 +47,21 @@ within the 'war3map.w3i' file.
 - _Optional_
 
 The first (smaller) line on the loading screen. Used by the 'prepare' command
-to update the title within the 'war3map.w3i' file.
+to update the title within the `war3map.w3i` file.
 
 ### `map.loading.subtitle` _(`string`)_
 
 - _Optional_
 
 The second (larger) line on the loading screen. Used by the 'prepare' command
-to update the subtitle within the 'war3map.w3i'.
+to update the subtitle within the `war3map.w3i`.
 
 ### `map.loading.text` _(`string`)_
 
 - _Optional_
 
 The description on the loading screen. Used by the 'prepare' command to update
-the description within the 'war3map.w3i'.
+the description within the `war3map.w3i`.
 
 ### `flags` _(`table`)_
 ### `flags.debug` _(`boolean`)_
@@ -69,7 +69,7 @@ the description within the 'war3map.w3i'.
 - _Optional_
 - _Default value: `false`_
 
-Enables/disables [debugging] (debugging.md). This flag indicates whether to
+Enables/disables [debugging](debugging.md). This flag indicates whether to
 allow supported statements prefixed with the `debug` keyword to be built into
 the map.
 
@@ -94,9 +94,9 @@ The name used when creating the output map and script files.
 
 The file list containing all Lua files to use during environment loading. Note
 that these scripts can access the default environment (see `Map.initialize ()`
-for details on the provided `table`). This is exposed in the following manner.
+for details on the provided `table`). This is exposed in the following manner:
 
-```
+``` lua
 local map = ...
 ```
 
@@ -105,8 +105,8 @@ as they see fit. All this is done before any command is executed.
 
 ### `patch` _(`table`)_
 
-The file list containing JASS scripts that are provided by Warcraft 3 itself.
-Typically, these are the 'common.j' and 'blizzard.j'.
+The file list containing JASS scripts that are provided by Warcraft III
+itself. Typically, these are the `common.j` and `blizzard.j`.
 
 ### `scripts` _(`table`)_
 

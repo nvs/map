@@ -6,13 +6,13 @@ lines (although, it is not known if performance is affected). It can safely be
 used in conjunction with the following JASS statements:
 
 - `set`
-- `if ...`
+- `if`
 - `call`
-- `loop ...`
+- `loop`
 
 For example:
 
-```
+``` jass
 function Debug_Example takes nothing returns nothing
     local index = 0
 
@@ -46,7 +46,7 @@ ignored by default. However, in an attempt to avoid potential side effects
 removed. With debugging disabled through the `flags.debug` setting, the above
 becomes:
 
-```
+``` jass
 function Debug_Example takes nothing returns nothing
     local index = 0
 
@@ -66,7 +66,7 @@ Now, if debugging is enabled by setting `flags.debug` to `true`, then all
 lines modified by the `debug` keyword are kept. The keyword itself is the only
 thing removed, and the rest of the code is left intact:
 
-```
+``` jass
 function Debug_Example takes nothing returns nothing
     local index = 0
 

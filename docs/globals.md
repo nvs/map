@@ -3,22 +3,22 @@
 All globals meeting specific criteria will be available within Lua scripts
 used during the 'constants' and 'objects' commands. They will be exposed
 through a global `table` named 'globals'. This includes those present within
-both the 'common.j' and 'blizzard.j', as well as any within user provided
+both the `common.j` and `blizzard.j`, as well as any within user provided
 scripts.
 
 The criteria for globals to be considered are as follows:
 
 1. The global must be declared as constant.
 2. The global must be one of the following types:
-    - Boolean
-    - String
-    - Real
-    - Integer
+    - `boolean`
+    - `string`
+    - `real`
+    - `integer`
 3. The global must be assigned a constant value.
 
 Examples of valid globals:
 
-```
+``` jass
 constant boolean BOOLEAN_A = true
 constant boolean BOOLEAN_B = false
 
@@ -39,7 +39,7 @@ constant integer INTEGER_F = 'A000'
 
 Examples of invalid globals:
 
-```
+``` jass
 boolean BOOLEAN_C = true
 constant boolean BOOLEAN_D = BOOLEAN_C
 constant boolean BOOLEAN_E = true and false
@@ -60,7 +60,7 @@ the global. Do realize that all values wil be of the Lua type `string`, and it
 is left up to the user to decide if they wish to transform these values
 further. For example:
 
-```
+``` lua
 globals.FALSE.jass_type               --> 'boolean'
 globals.FALSE.value                   --> 'false'
 
