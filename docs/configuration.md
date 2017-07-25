@@ -13,6 +13,10 @@ to include the file extension when specifying files.
 
 ## General Settings
 
+### `w3i` _(`table`)_
+
+- _Optional_
+
 ### `map` _(`table`)_
 
 - _Optional_
