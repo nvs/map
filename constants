@@ -25,11 +25,17 @@ Options:
 	Map.exit (0)
 end
 
-local map, message = Map.initialize (options, 'constants')
+local map
 
-if not map then
-	io.stderr:write (message)
-	Map.exit (1)
+do
+	local message
+
+	map, message = Map.initialize (options, 'constants')
+
+	if not map then
+		io.stderr:write (message)
+		Map.exit (1)
+	end
 end
 
 if not Globals.write (map.settings.output.globals, map.globals) then
@@ -44,7 +50,9 @@ local function merge_constants (name)
 		return nil
 	end
 
-	local status, output = Grimex.constants (
+	local output
+
+	status, output = Grimex.constants (
 		map.settings.prefix, map.settings.output.map,
 		map.settings.output.globals, map.settings.constants [name])
 

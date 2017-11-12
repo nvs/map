@@ -1,11 +1,12 @@
 local Grimex = require ('map.tools.grimex')
 local MPQEditor = require ('map.tools.mpqeditor')
+local Path = require ('map.path')
 local String = require ('map.string')
 
 local WTS = {}
 
--- Returns a `table` containing the contents of the trigger strings data from
--- the specified `map (string)`. The contents are accessed by their
+-- Returns a `table` containing the contents of the trigger strings data
+-- from the specified `map (string)`. The contents are accessed by their
 -- cooresponding index. If a matching string object was found, then the
 -- `string` text will be available. Otherwise, `false` will be returned.
 -- Comments are strictly ignored. Returns `nil` if an error was encountered.
@@ -81,7 +82,8 @@ function WTS.process (map, directory, prefix)
 end
 
 -- Takes the provided `strings (table)` and updates the trigger string data
--- for the specified `map (string)`. Returns `nil` if an error is encountered.
+-- for the specified `map (string)`. Returns `nil` if an error is
+-- encountered.
 function WTS.write (map, strings, prefix)
 	local file_path = Path.temporary_name ()
 	local file = io.open (file_path, 'wb')

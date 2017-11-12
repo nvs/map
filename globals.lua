@@ -28,8 +28,9 @@ local patterns = {
 }
 
 -- Returns a `string` after processing the provided `text (string)`. This
--- removes any comment that is present, and invalidates the text (i.e. returns
--- an empty string) if it contains more than one JASS string constant.
+-- removes any comment that is present, and invalidates the text (i.e.
+-- returns an empty string) if it contains more than one JASS string
+-- constant.
 local function validate_and_strip_comment (text)
 	local current
 	local previous
@@ -60,15 +61,15 @@ local function validate_and_strip_comment (text)
 end
 
 -- Takes the specified `line (string)`, expected to be a global declaration,
--- and determines if it meets the needed criteria to be exposed as a constant
--- global. If so, returns the following 'string' values: the global's name,
--- its JASS type, and its value.
+-- and determines if it meets the needed criteria to be exposed as a
+-- constant global. If so, returns the following 'string' values: the
+-- global's name, its JASS type, and its value.
 local function process (line)
-	local jass_type, name, value = line:match (
+	local value_type, name, value = line:match (
 		'^%s*constant%s+(%w+)%s+([%w_]+)%s*=%s*(.*)$')
 
-	for _, pattern in ipairs (patterns [jass_type] or {}) do
-		local jass_type = jass_type
+	for _, pattern in ipairs (patterns [value_type] or {}) do
+		local jass_type = value_type
 
 		value = validate_and_strip_comment (value)
 		value = String.strip_trailing (value, '%s')
@@ -78,18 +79,18 @@ local function process (line)
 			pattern = pattern [2]
 		end
 
-		local value = value:match (pattern)
+		local match = value:match (pattern)
 
-		if value then
-			return name, jass_type, value
+		if match then
+			return name, jass_type, match
 		end
 	end
 end
 
 -- Takes any number of script `table` objects (see `JASS.read ()` for the
 -- `table` specification) and returns a `table` containing all globals
--- contained within that meet specific crteria. For details, see the [globals
--- documentation] (docs/globals.md).
+-- contained within that meet specific crteria. For details, see the
+-- [globals documentation] (docs/globals.md).
 function Globals.process (...)
 	local scripts = { ... }
 	local globals = {}
@@ -113,9 +114,9 @@ end
 -- Takes the provided `globals (table)` and writes each global into the
 -- specified `file (string)`. This will create a Lua file that sets a global
 -- `table` named 'globals' when loaded.
-function Globals.write (file, globals)
-	os.remove (file)
-	local file = io.open (file, 'wb')
+function Globals.write (path, globals)
+	os.remove (path)
+	local file = io.open (path, 'wb')
 
 	if not file then
 		return nil

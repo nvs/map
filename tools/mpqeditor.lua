@@ -6,10 +6,10 @@ local MPQEditor = {}
 MPQEditor.executable = Path.join (
 	'map', 'external', 'mpqeditor', 'MPQEditor.exe')
 
--- Exports `file (string)` from the specified `map (string)` into the provided
--- `directory (string)`. Optionally takes a `prefix (string)` to place before
--- the executed command. Returns `true (boolean)` upon success, or `nil` upon
--- failure.
+-- Exports `file (string)` from the specified `map (string)` into the
+-- provided `directory (string)`. Optionally takes a `prefix (string)` to
+-- place before the executed command. Returns `true (boolean)` upon success,
+-- or `nil` upon failure.
 function MPQEditor.export (map, file, directory, prefix)
 	local path = Path.join (directory, file)
 

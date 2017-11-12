@@ -6,9 +6,7 @@ local is_windows = package.config:sub (1, 1) == '\\'
 -- escaped for use when passed to `os.execute ()` or `Shell.execute ()`.
 function Shell.escape_argument (argument)
 
-	-- Quoting command line arguments the 'right' way:
-	--
-	-- https://blogs.msdn.microsoft.com/twistylittlepassagesallalike/2011/04/23/everyone-quotes-command-line-arguments-the-wrong-way/
+	-- [Quoting command line arguments the 'right' way][1].
 	if is_windows then
 		if argument == '' then
 			argument = '""'
@@ -43,8 +41,8 @@ end
 -- - Arguments which are not `string` or `table` are ignored.
 --
 -- Returns a `string` where all matching arguments have been joined together
--- with a space as a delimiter. This value is safe to pass to `os.execute ()`
--- or `Shell.execute ()`.
+-- with a space as a delimiter. This value is safe to pass to `os.execute
+-- ()` or `Shell.execute ()`.
 function Shell.escape_arguments (...)
 	local arguments
 
@@ -59,7 +57,7 @@ function Shell.escape_arguments (...)
 	local output = {}
 
 	for index = 1, #arguments do
-		argument = arguments [index]
+		local argument = arguments [index]
 
 		if type (argument) == 'table' then
 			table.insert (output, Shell.escape_arguments (argument))
@@ -73,11 +71,11 @@ end
 
 -- Takes the provided `command (string)` and executes it in the same fashion
 -- as `os.execute ()`. Optionally, takes `stdout (string)` and `stderr
--- (string)` (in that order) to allow redirection of those file descriptors to
--- the provided locations.
+-- (string)` (in that order) to allow redirection of those file descriptors
+-- to the provided locations.
 --
--- Also, can take the above inputs as a single `table`, using named parameters
--- instead.
+-- Also, can take the above inputs as a single `table`, using named
+-- parameters instead.
 --
 -- Returns the same results that `os.execute ()` would give in Lua 5.2 or
 -- higher, regardless of the version used.
@@ -127,5 +125,9 @@ function Shell.execute (...)
 		return status_or_code, exit_or_signal, code
 	end
 end
+
+-- luacheck: no max comment line length
+--
+-- [1]: https://blogs.msdn.microsoft.com/twistylittlepassagesallalike/2011/04/23/everyone-quotes-command-line-arguments-the-wrong-way/
 
 return Shell

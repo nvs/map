@@ -256,9 +256,7 @@ function W3I.read (map, directory, prefix, block, input)
 	output.players = {}
 
 	-- (int) Maximum number of players:
-	local count = read_integer ()
-
-	for i = 1, count do
+	for i = 1, read_integer () do
 		output.players [i] = {}
 
 		-- (int) Internal player number:
@@ -306,9 +304,7 @@ function W3I.read (map, directory, prefix, block, input)
 	output.forces = {}
 
 	-- (int) Maximum number of forces:
-	local count = read_integer ()
-
-	for i = 1, count do
+	for i = 1, read_integer () do
 		output.forces [i] = {}
 
 		-- (int) Force flags:
@@ -342,11 +338,11 @@ function W3I.read (map, directory, prefix, block, input)
 	return output
 end
 
--- Uses the `information (table)` (see `W3I.read ()` for details) to upate the
--- 'war3map.w3i' for the provided `map (string)`. Uses the provided `directory
--- (string)` for temporary files. If provided, the `prefix (string)` will be
--- prepended to the command line. Returns `true (boolean)` upon success, or
--- `nil` if an error is encountered.
+-- Uses the `information (table)` (see `W3I.read ()` for details) to upate
+-- the 'war3map.w3i' for the provided `map (string)`. Uses the provided
+-- `directory (string)` for temporary files. If provided, the `prefix
+-- (string)` will be prepended to the command line. Returns `true (boolean)`
+-- upon success, or `nil` if an error is encountered.
 function W3I.write (information, map, directory, prefix)
 	local contents = {}
 

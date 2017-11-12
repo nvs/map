@@ -36,14 +36,18 @@ if not Globals.write (map.settings.output.globals, map.globals) then
 	Map.exit (1, map)
 end
 
-local status, message = Map.check_files (map.settings.objects)
+local status
+
+status, message = Map.check_files (map.settings.objects)
 
 if not status then
 	io.stderr:write (message)
 	Map.exit (1, map)
 end
 
-local status, output = Grimex.objects (
+local output
+
+status, output = Grimex.objects (
 	map.settings.prefix, map.settings.output.map,
 	map.settings.output.globals, map.settings.objects)
 

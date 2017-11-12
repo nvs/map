@@ -18,8 +18,8 @@ function Path.join (...)
 	return table.concat (elements, '/')
 end
 
--- Returns a `boolean` indicating whether or not the specified `path (string)`
--- is readable.
+-- Returns a `boolean` indicating whether or not the specified `path
+-- (string)` is readable.
 function Path.is_readable (path)
 	local file = io.open (path, 'rb')
 
@@ -58,8 +58,8 @@ end
 -- exactly the same as `os.tmpname ()` on non-Windows systems. On Windows
 -- systems, the path makes use of the `TEMP` environment variable.
 --
--- Credits to the [Penlight](https://github.com/stevedonovan/Penlight) project
--- for this function (MIT License).
+-- Credits to the [Penlight](https://github.com/stevedonovan/Penlight)
+-- project for this function (MIT License).
 function Path.temporary_name ()
 	local path = os.tmpname ()
 
@@ -117,7 +117,8 @@ function Path.directory_name (path, levels)
 end
 
 -- Returns the non-directory portion (`string`) of a `path (string)`. If
--- provided, an attempt is made to strip a `suffix (string)` from the `path`.
+-- provided, an attempt is made to strip a `suffix (string)` from the
+-- `path`.
 --
 -- Based upon the POSIX.1-2008 utility `basename ()`; however, the directory
 -- separator specified within Lua is used.

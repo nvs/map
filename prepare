@@ -59,7 +59,7 @@ local header = {
 	name = map.settings.map.name
 }
 
-local status = Header.write (header, map.settings.output.map)
+status = Header.write (header, map.settings.output.map)
 
 if not status then
 	io.stderr:write ('error writing header', '\n')
@@ -78,7 +78,7 @@ local information = {
 	}
 }
 
-local status = W3I.write (information, map.settings.output.map,
+status = W3I.write (information, map.settings.output.map,
 	map.settings.output.directory, map.settings.prefix)
 
 if not status then

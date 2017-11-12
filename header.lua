@@ -1,7 +1,7 @@
 local Header = {}
 
--- Reads the header of the specified `map (string)`, returning a `table` with
--- the following structure.
+-- Reads the header of the specified `map (string)`, returning a `table`
+-- with the following structure.
 --
 -- ```
 -- {
@@ -87,8 +87,8 @@ function Header.read (map, block, input)
 	return output
 end
 
--- Updates the `header (table)` for the provided `map (string)`. Returns `true
--- (boolean)` upon success, and `nil` if an error is encountered.
+-- Updates the `header (table)` for the provided `map (string)`. Returns
+-- `true (boolean)` upon success, and `nil` if an error is encountered.
 function Header.write (header, map)
 	local contents = {}
 
@@ -100,7 +100,7 @@ function Header.write (header, map)
 		return nil
 	end
 
-	local contents = table.concat (contents)
+	contents = table.concat (contents)
 
 	if #contents > 512 then
 		return nil

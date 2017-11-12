@@ -3,7 +3,7 @@ local Path = require ('map.path')
 local Settings = {}
 
 do
-	local unpack = table.unpack or unpack
+	local unpack = table.unpack or unpack -- luacheck: compat
 
 	local flags = {}
 	flags.__index = flags
@@ -165,17 +165,15 @@ do
 	-- specification that `A` should follow. Returns `true (boolean)` if `A`
 	-- validates against `B`. Otherwise, returns `nil` with an error `message
 	-- (string)`.
-	function Settings.validate (A, B, name, errors)
+	function Settings.validate (A, B, prefix, errors)
 		B = B or configuration
 		errors = errors or {}
 
 		for key, B_value in pairs (B) do
-			local name = name
+			local name = key
 
-			if name then
-				name = name .. '.' .. key
-			else
-				name = key
+			if prefix then
+				name = prefix .. '.' .. name
 			end
 
 			local A_value = A [key]
@@ -217,7 +215,7 @@ do
 			end
 		end
 
-		if not name and #errors > 0 then
+		if not prefix and #errors > 0 then
 			return nil, display (errors)
 		else
 			return true
@@ -229,18 +227,24 @@ end
 -- returns the settings `table`. When an error is encountered, returns `nil`
 -- along with a `message (string)`.
 function Settings.read (configuration)
-	local chunk, message = loadfile (configuration)
+	local settings
 
-	if not chunk then
-		return nil, 'parse error: ' .. message
+	do
+		local chunk, message = loadfile (configuration)
+
+		if not chunk then
+			return nil, 'parse error: ' .. message
+		end
+
+		settings = chunk ()
 	end
 
-	local settings = chunk ()
+	do
+		local is_valid, message = Settings.validate (settings)
 
-	local is_valid, message = Settings.validate (settings)
-
-	if not is_valid then
-		return nil, message
+		if not is_valid then
+			return nil, message
+		end
 	end
 
 	-- If prefix is an empty string, we set it to `nil`. This is necessary to

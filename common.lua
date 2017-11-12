@@ -4,7 +4,7 @@ local Path = require ('map.path')
 local PJass = require ('map.tools.pjass')
 local Settings = require ('map.settings')
 
-local unpack = table.unpack or unpack
+local unpack = table.unpack or unpack -- luacheck: compat
 
 local Map = {}
 
@@ -32,11 +32,11 @@ function Map.check_files (files)
 end
 
 -- Goes over the scripts specified in `settings (table)` (i.e. those in
--- `settings.patch` and `settings.scripts`), ensuring they exist and are valid
--- JASS syntax.
+-- `settings.patch` and `settings.scripts`), ensuring they exist and are
+-- valid JASS syntax.
 --
--- Upon sucess, returns `true (boolean)`, and a `string` containing the parse
--- results. On parse failure, returns `false`, followed by a `string`
+-- Upon sucess, returns `true (boolean)`, and a `string` containing the
+-- parse results. On parse failure, returns `false`, followed by a `string`
 -- containing the parse results. On error, returns `nil`, followed by a
 -- `string` containing an error message.
 function Map.check_scripts (settings)
@@ -46,13 +46,15 @@ function Map.check_scripts (settings)
 		return nil, message
 	end
 
-	local status, message = Map.check_files (settings.scripts)
+	status, message = Map.check_files (settings.scripts)
 
 	if not status then
 		return nil, message
 	end
 
-	local status, output = PJass.check (settings.prefix,
+	local output
+
+	status, output = PJass.check (settings.prefix,
 		settings.pjass.options, settings.patch, settings.scripts)
 
 	return status == true, output
@@ -75,8 +77,8 @@ function Map.parse_scripts (list)
 	return scripts
 end
 
--- Manages the 'debug' keyword for each of the JASS scripts listed in `scripts
--- (table)`, according to the flag provided in `settings (table)`.
+-- Manages the 'debug' keyword for each of the JASS scripts listed in
+-- `scripts (table)`, according to the flag provided in `settings (table)`.
 function Map.debug_scripts (scripts, settings)
 	for _, script in ipairs (scripts) do
 		JASS.debug (script, settings.flags.debug)
@@ -128,9 +130,10 @@ local function load_environment (map)
 	end
 
 	local messages = {}
+	local chunk
 
 	for _, file in ipairs (map.settings.environment) do
-		local chunk, message = loadfile (file)
+		chunk, message = loadfile (file)
 
 		if chunk then
 			chunk (map)
@@ -146,9 +149,9 @@ local function load_environment (map)
 	end
 
 	-- Ensure that any changes will pass basic validation.
-	local is_valid, message = Settings.validate (map.settings)
+	status, message = Settings.validate (map.settings)
 
-	if not is_valid then
+	if not status then
 		return nil, message
 	end
 
@@ -164,9 +167,10 @@ function Map.cleanup (files)
 	end
 end
 
--- Takes the provided `options (table)`, where keys represent command otions,
--- and each cooresponding value is a `function` to execute. By default, will
--- run `options ['--help']` if no arguments are passed to the command.
+-- Takes the provided `options (table)`, where keys represent command
+-- otions, and each cooresponding value is a `function` to execute. By
+-- default, will run `options ['--help']` if no arguments are passed to the
+-- command.
 --
 -- Then it attempts to initialize a map environment. This involves loading
 -- settings, parsing scripts, and loading globals. Upon success, returns a
@@ -195,8 +199,8 @@ end
 -- ```
 --
 -- Upon parse failure, returns `false` along with a `string` containing the
--- parse results. Upon error, returns `nil` followed by a `string` containing
--- an error message.
+-- parse results. Upon error, returns `nil` followed by a `string`
+-- containing an error message.
 function Map.initialize (options, command)
 	if #arg == 0 then
 		if options ['--help'] then
@@ -233,7 +237,7 @@ function Map.initialize (options, command)
 		map.scripts = Map.parse_scripts (settings.scripts)
 		map.globals = Globals.process (unpack (map.scripts))
 
-		local status, message = load_environment (map)
+		status, message = load_environment (map)
 
 		if not status then
 			-- Make some attempt to cleanup files that may have been specified

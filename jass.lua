@@ -1,9 +1,10 @@
 local JASS = {}
 
--- Modifies the provided JASS `script (table)` according to whether debugging
--- is `enabled (boolean)`. If enabled, the 'debug' keyword will simply be
--- removed from lines, allowing them to run. If disabled, which is the
--- default, lines affected by the 'debug' keyword will be removed completely.
+-- Modifies the provided JASS `script (table)` according to whether
+-- debugging is `enabled (boolean)`. If enabled, the 'debug' keyword will
+-- simply be removed from lines, allowing them to run. If disabled, which is
+-- the default, lines affected by the 'debug' keyword will be removed
+-- completely.
 function JASS.debug (script, enabled)
 	local lines = {}
 
@@ -38,7 +39,7 @@ function JASS.debug (script, enabled)
 			elseif A == 'debug' and (B == 'if' or B == 'loop') then
 				keyword = B
 				count = 1
-			elseif A == 'debug' then
+			elseif A == 'debug' then -- luacheck: ignore
 			else
 				table.insert (lines, line)
 			end
@@ -63,8 +64,8 @@ end
 -- }
 -- ```
 --
--- Note that the keywords used to open and close the globals declaration block
--- are preserved.
+-- Note that the keywords used to open and close the globals declaration
+-- block are preserved.
 --
 -- If an error is encountered, `nil` is returned.
 function JASS.read (path)
