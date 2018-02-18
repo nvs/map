@@ -140,6 +140,17 @@ do
 			tweaks = set {
 				optional = true
 			} 'string'
+		},
+
+		wurst = set {
+			optional = true
+		} {
+			java = set {
+				optional = true
+			} 'string',
+			path = set {
+				optional = true
+			} 'string'
 		}
 	}
 
@@ -269,6 +280,7 @@ function Settings.read (configuration)
 	settings.constants.interface = settings.constants.interface or {}
 	settings.pjass = settings.pjass or {}
 	settings.optimizer = settings.optimizer or {}
+	settings.wurst = settings.wurst or {}
 
 	return settings
 end

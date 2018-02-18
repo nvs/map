@@ -4,6 +4,9 @@
 ### Added
 - Luacheck is now used to perform linting and code analysis.
 
+### Changed
+- Wurst supported has been added for optimizing scripts.
+
 ## [0.2.3] - 2017-06-09
 ### Changed
 - When querying a command's version, the individual command is no longer

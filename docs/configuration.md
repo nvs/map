@@ -173,3 +173,19 @@ A list of options to provide to pjass.
 - _Optional_
 
 The path to the optimizer tweaks file.
+
+### `wurst` _(`table`)_
+
+- _Optional_
+
+### `wurst.java` _(`string`)_
+
+- _Optional_
+
+The Java executable.  Defaults to `java`.
+
+### `wurst.path` _(`string`)_
+
+- _Optional_
+
+The path to the Wurst installation.  Defaults to `~/.wurst`.
