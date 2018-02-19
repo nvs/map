@@ -1,133 +1,105 @@
-local Shell = {}
-
-local is_windows = package.config:sub (1, 1) == '\\'
-
--- Returns a `string` where the provided `argument (string)` has been
--- escaped for use when passed to `os.execute ()` or `Shell.execute ()`.
-function Shell.escape_argument (argument)
-
-	-- [Quoting command line arguments the 'right' way][1].
-	if is_windows then
-		if argument == '' then
-			argument = '""'
-
-		-- Deviate from the pattern used in the article by matching against
-		-- forward slashes as well. This resolves an issue where the first
-		-- argument (likely a command) contains forward slashes and is passed
-		-- to `cmd.exe`.
-		elseif argument:find ('[ \t\n\v"/]') then
-			argument = '"' .. argument:gsub ('(\\*)"', '%1%1\\"') ..
-				(argument:match ('\\+$') or '') .. '"'
-		end
-
-		argument = argument:gsub ('[()%%!^"<>&|]', '^%0')
-	else
-		if argument == '' then
-			argument = '\'\''
-		else
-			argument = '\'' .. argument:gsub ('\'', '\'\\\'\'') .. '\''
-		end
-	end
-
-	return argument
+-- luacheck: std lua53
+if _VERSION < 'Lua 5.3' then
+	-- For enhanced `os.execute ()` return code.
+	require ('compat53')
 end
 
--- Takes the provided arguments (which can be any Lua value) and processes
--- them in the following fashion:
---
--- - Any `string` arguments are escaped.
--- - Any `table` arguments are examined and have their contents processed.
---   Nesting of `table` elements is allowed.
--- - Arguments which are not `string` or `table` are ignored.
---
--- Returns a `string` where all matching arguments have been joined together
--- with a space as a delimiter. This value is safe to pass to `os.execute
--- ()` or `Shell.execute ()`.
-function Shell.escape_arguments (...)
-	local arguments
+local Path = require ('map.path')
 
-	if select ('#', ...) == 1
-		and type (...) == 'table'
-	then
+local Shell = {}
+
+local is_windows = Path.separator == '\\'
+
+-- Returns an escaped `string` that is safe to pass to `os.execute ()` or
+-- `Shell.execute ()`.  A variable number of arguments are processed in the
+-- following fashion:
+--
+-- - Any `string` arguments are escaped and joined together with a space as
+--   a delimiter.
+-- - Any `table `arguments are examined and have their contents processed in
+--   order.  Nesting of `table` elements is allowed.
+-- - All other types are ignored.
+function Shell.escape (...)
+	local arguments
+	local size = select ('#', ...)
+
+	if size == 1 and type (...) == 'table' then
 		arguments = ...
+		size = nil
 	else
 		arguments = { ... }
 	end
 
 	local output = {}
 
-	for index = 1, #arguments do
+	-- Do not use `ipairs ()` so that we may support `nil` arguments.
+	for index = 1, size or #arguments do
 		local argument = arguments [index]
+		local result
 
 		if type (argument) == 'table' then
-			table.insert (output, Shell.escape_arguments (argument))
+			result = Shell.escape (argument)
 		elseif type (argument) == 'string' then
-			table.insert (output, Shell.escape_argument (argument))
+			-- [Quoting command line arguments the 'right' way].
+			if is_windows then
+				if argument == '' then
+					argument = '""'
+
+				-- Deviate from the pattern used in the article by matching
+				-- against forward slashes as well.  This resolves an issue
+				-- where the first argument (likely a command) contains
+				-- forward slashes and is passed to `cmd.exe`.
+				elseif argument:find ('[ \t\n\v"/]') then
+					argument = '"' .. argument:gsub ('(\\*)"', '%1%1\\"') ..
+						(argument:match ('\\+$') or '') .. '"'
+				end
+
+				argument = argument:gsub ('[()%%!^"<>&|]', '^%0')
+			else
+				argument = '\'' .. argument:gsub ('\'', '\'\\\'\'') .. '\''
+			end
+
+			result = argument
 		end
+
+		output [#output + 1] = result
 	end
 
 	return table.concat (output, ' ')
 end
 
--- Takes the provided `command (string)` and executes it in the same fashion
--- as `os.execute ()`. Optionally, takes `stdout (string)` and `stderr
--- (string)` (in that order) to allow redirection of those file descriptors
--- to the provided locations.
---
--- Also, can take the above inputs as a single `table`, using named
--- parameters instead.
+-- Takes the provided `arguments (table)` and executes the contained
+-- `command (string)` in the same fashion as `os.execute ()`.  Optionally,
+-- takes `stdout (string)` and `stderr (string)` to allow redirection of
+-- those file descriptors to the provided locations.
 --
 -- Returns the same results that `os.execute ()` would give in Lua 5.2 or
--- higher, regardless of the version used.
-function Shell.execute (...)
-	local command, stdout, stderr
+-- higher (with some notable limitations in Lua 5.1).  See [compat-5.3]
+-- documentation for details.
+function Shell.execute (arguments)
+	assert (type (arguments) == 'table')
+	assert (type (arguments.command) == 'string')
 
-	if type (...) == 'table' then
-		local arguments = ...
+	local command = arguments.command
 
-		command = arguments.command
-		stdout = arguments.stdout
-		stderr = arguments.stderr
-	else
-		command, stdout, stderr = ...
+	if arguments.stdout then
+		assert (type (arguments.stdout) == 'string')
+
+		command = command .. ' >' .. arguments.stdout
 	end
 
-	if stdout then
-		command = command .. ' >' .. stdout
+	if arguments.stderr then
+		assert (type (arguments.stderr) == 'string')
+
+		command = command .. ' 2>' .. arguments.stderr
 	end
 
-	if stderr then
-		command = command .. ' 2>' .. stderr
-	end
-
-	-- We determine the version of Lua by examining the results of the
-	-- `os.execute ()` function.
-	local status_or_code, exit_or_signal, code = os.execute (command)
-
-	-- Lua 5.1 or LuaJIT without 5.2 compatibility:
-	if type (status_or_code) == 'number' then
-		if status_or_code == 0 then
-			return true, 'exit', status_or_code
-		else
-			if is_windows then
-				code = status_or_code
-
-			-- This apparently is only correct on Linux and/or Posix systems.
-			else
-				code = status_or_code / 256
-			end
-
-			return nil, 'exit', code
-		end
-
-	-- Lua 5.2, Lua 5.3, or LuaJIT with 5.2 compatibility:
-	else
-		return status_or_code, exit_or_signal, code
-	end
+	return os.execute (command)
 end
 
--- luacheck: no max comment line length
---
--- [1]: https://blogs.msdn.microsoft.com/twistylittlepassagesallalike/2011/04/23/everyone-quotes-command-line-arguments-the-wrong-way/
-
 return Shell
+
+-- luacheck: ignore 631
+--
+-- [compat-5.3]: https://github.com/keplerproject/lua-compat-5.3
+-- [Quoting command line arguments the 'right' way]: https://blogs.msdn.microsoft.com/twistylittlepassagesallalike/2011/04/23/everyone-quotes-command-line-arguments-the-wrong-way
