@@ -29,4 +29,13 @@ function MPQEditor.export (map, file, directory, prefix)
 	end
 end
 
+function MPQEditor.flush (map, prefix)
+	Shell.execute {
+		command = Shell.escape_arguments (
+			prefix, MPQEditor.executable, 'flush', map)
+	}
+
+	return true
+end
+
 return MPQEditor
