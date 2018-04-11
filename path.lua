@@ -72,6 +72,15 @@ end
 
 local directory_separator = package.config:sub (1, 1)
 
+-- Returns the path (a `string)` for the current user's home directory.
+-- Returns `nil` if the home directory cannot be discerened.
+function Path.home_directory ()
+	return os.getenv ('HOME')
+		or not is_windows and nil
+		or os.getenv ('USERPROFILE')
+		or os.getenv ('HOMEDRIVE') .. os.getenv ('HOMEPATH')
+end
+
 -- Returns the directory (`string`) portion of a `path (string)`. Optionally
 -- takes `levels (integer)`, indicating the number levels to remove from the
 -- `path` (defaults to `1`).
