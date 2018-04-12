@@ -1,7 +1,10 @@
 #!/usr/bin/env lua
 
 local Map = require ('map.common')
-local Optimizer = require ('map.tools.optimizer')
+local Path = require ('map.path')
+local Grimex = require ('map.tools.grimex')
+local MPQEditor = require ('map.tools.mpqeditor')
+local Wurst = require ('map.tools.wurst')
 
 local options = {
 	['--version'] = Map.version
@@ -30,9 +33,38 @@ if not map then
 	Map.exit (1)
 end
 
+if not (Path.is_readable (map.settings.output.map)
+	and Path.is_readable (map.settings.output.script))
+then
+	io.stderr:write ('optimize: failure', '\n')
+	Map.exit (1, map)
+end
+
 local optimized = map.settings.output.map:gsub ('%.w3x$', '-optimized.w3x')
-local status = Optimizer.optimize (map.settings.prefix,
-	map.settings.output.map, optimized, map.settings.optimizer.tweaks)
+local optimized_script = optimized .. '.j'
+
+if not Path.copy (map.settings.output.map, optimized) then
+	io.stderr:write ('optimize: failure', '\n')
+	Map.exit (1, map)
+end
+
+local status, output = Wurst.optimize (map.settings.wurst.java,
+	map.settings.wurst.path, optimized_script,
+	map.settings.patch, map.settings.output.script)
+
+if not status then
+	io.stderr:write (output)
+	Map.exit (1, map)
+end
+
+status, output = Grimex.imports (map.settings.prefix,
+	optimized, optimized_script, 'war3map.j')
+
+local output_log_path = Path.join (
+	map.settings.output.directory, 'grimex-optimize.txt')
+Grimex.log (output_log_path, output)
+
+MPQEditor.flush (optimized, map.settings.prefix)
 
 if status then
 	io.stdout:write ('optimize: ok', '\n')

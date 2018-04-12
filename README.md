@@ -7,6 +7,9 @@ A collection of Warcraft 3 map management tools.
 This collection requires either [Lua](https://www.lua.org) 5.1, 5.2, 5.3, or
 [LuaJIT](https://luajit.org) 2.0.
 
+To use the `optimize` command, a valid [Wurst](https://wurstlang.org/)
+installation is required.  By extension, this also means Java.
+
 Additionally, a valid Warcraft 3 installation is necessary. This allows proper
 access to the Warcraft 3 MPQ files (which are not included). You may want to
 verify that the registry key `HKEY_CURRENT_USER\Software\Blizzard
