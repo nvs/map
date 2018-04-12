@@ -1,6 +1,6 @@
 # Map Changelog
 
-## [Unreleased]
+## [0.2.4] - 2018-04-11
 ### Added
 - Luacheck is now used to perform linting and code analysis.
 

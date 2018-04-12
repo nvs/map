@@ -1,6 +1,5 @@
 return {
 	major = 0,
-	minor = 3,
-	patch = 0,
-	extra = '-alpha'
+	minor = 2,
+	patch = 4
 }
