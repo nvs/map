@@ -164,16 +164,6 @@ necessary, and the prefix should be adjusted accordingly.
 
 A list of options to provide to pjass.
 
-### `optimizer` _(`table`)_
-
-- _Optional_
-
-### `optimizer.tweaks` _(`string`)_
-
-- _Optional_
-
-The path to the optimizer tweaks file.
-
 ### `wurst` _(`table`)_
 
 - _Optional_

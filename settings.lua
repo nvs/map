@@ -134,14 +134,6 @@ do
 			}
 		},
 
-		optimizer = set {
-			optional = true
-		} {
-			tweaks = set {
-				optional = true
-			} 'string'
-		},
-
 		wurst = set {
 			optional = true
 		} {

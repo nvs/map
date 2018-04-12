@@ -7,6 +7,9 @@
 ### Changed
 - Wurst supported has been added for optimizing scripts.
 
+### Removed
+- Support for Vexorian's Optimizer has been removed.
+
 ## [0.2.3] - 2017-06-09
 ### Changed
 - When querying a command's version, the individual command is no longer
