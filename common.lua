@@ -262,7 +262,7 @@ function Map.version ()
 
 	io.stdout:write (string.format ([[
 map %d.%d.%d%s
-]], Version.major, Version.minor, Version.patch, Version.extra))
+]], Version.major, Version.minor, Version.patch, Version.extra or ''))
 
 	os.exit (0)
 end
