@@ -1,45 +1,59 @@
 local String = {}
 
--- Returns the `integer` index within `text (string)` of the last occurrence
--- of the specified `character (string)`.
-function String.last_index_of (text, character)
-	local character_byte = string.byte (character)
+local function trim (text, left, right, pattern)
+	assert (type (text) == 'string')
 
-	for index = #text, 1, -1 do
-		if text:byte (index) == character_byte then
-			return index
+	if pattern == nil then
+		pattern = '%s+'
+	end
+
+	assert (type (pattern) == 'string')
+
+	if text == '' then
+		return ''
+	end
+
+	pattern = '^' .. pattern
+
+	if left then
+		local _, index = text:find (pattern)
+
+		if index and index > 0 then
+			text = text:sub (index + 1)
 		end
 	end
 
-	return 0
+	if right and text ~= '' then
+		local _, index = text:reverse ():find (pattern)
+
+		if index and index > 0 then
+			text = text:sub (1, #text - index)
+		end
+	end
+
+	return text
 end
 
--- Returns a `string` where the specified `character (string`) has been
--- stripped from the end of the `text (string)`.
-function String.strip_trailing_character (text, character)
-	local character_byte = string.byte (character)
-
-	for index = #text, 1, -1 do
-		if text:byte (index) ~= character_byte then
-			return text:sub (1, index)
-		end
-	end
-
-	return ''
+-- Removes leading characters from `text` (`string`) that match an optional
+-- non-anchored `pattern` (`string`) and returns the resultant `string`.  If
+-- `pattern` is not provided, then white space (i.e. `%s+`) is removed.
+function String.trim_left (text, pattern)
+	return trim (text, true, false, pattern)
 end
 
--- Returns a `string` where contents matching the specified pattern of
--- `characters (string)` have been stripped from the end of `text (string)`.
-function String.strip_trailing (text, characters)
-	local pattern = '^[' .. characters .. ']'
+-- Removes trailing characters from `text` (`string`) that match an optional
+-- non-anchored `pattern` (`string`) and returns the resultant `string`.  If
+-- `pattern` is not provided, then white space (i.e. `%s+`) is removed.
+function String.trim_right (text, pattern)
+	return trim (text, false, true, pattern)
+end
 
-	for index = #text, 1, -1 do
-		if not text:find (pattern, index) then
-			return text:sub (1, index)
-		end
-	end
-
-	return ''
+-- Removes leading and trailing characters from `text` (`string`) that match
+-- an optional non-anchored `pattern` (`string`) and returns the resultant
+-- `string`.  If `pattern` is not provided, then white space (i.e. `%s+`) is
+-- removed.
+function String.trim (text, pattern)
+	return trim (text, true, true, pattern)
 end
 
 return String

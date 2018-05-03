@@ -44,7 +44,7 @@ function WTS.process (map, directory, prefix)
 	-- }
 	-- ```
 	for line in file:lines () do
-		line = String.strip_trailing (line, '\r')
+		line = String.trim_right (line, '\r+')
 
 		if count > 0 then
 			if line:match ('^%s*{.*$') then

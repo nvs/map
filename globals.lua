@@ -72,7 +72,7 @@ local function process (line)
 		local jass_type = value_type
 
 		value = validate_and_strip_comment (value)
-		value = String.strip_trailing (value, '%s')
+		value = String.trim_right (value)
 
 		if type (pattern) == 'table' then
 			jass_type = jass_type .. '.' .. pattern [1]
