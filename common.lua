@@ -15,7 +15,7 @@ function Map.check_files (files)
 	local missing = {}
 
 	for _, file in ipairs (files) do
-		if not Path.is_readable (file) then
+		if not Path.is_file (file) then
 			if #missing == 0 then
 				table.insert (missing, 'error:')
 			end

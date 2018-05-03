@@ -22,7 +22,7 @@ function MPQEditor.export (map, file, directory, prefix)
 			'extract', map, file, directory, '/fp')
 	}
 
-	if Path.is_readable (path) then
+	if Path.is_file (path) then
 		return path
 	else
 		return nil

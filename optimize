@@ -33,8 +33,8 @@ if not map then
 	Map.exit (1)
 end
 
-if not (Path.is_readable (map.settings.output.map)
-	and Path.is_readable (map.settings.output.script))
+if not (Path.is_file (map.settings.output.map)
+	and Path.is_file (map.settings.output.script))
 then
 	io.stderr:write ('optimize: failure', '\n')
 	Map.exit (1, map)

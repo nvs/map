@@ -43,11 +43,11 @@ if not map then
 	Map.exit (1)
 end
 
-if force and Path.is_readable (map.settings.output.map) then
+if force and Path.is_file (map.settings.output.map) then
 	os.remove (map.settings.output.map)
 end
 
-local status = Path.is_readable (map.settings.output.map)
+local status = Path.is_file (map.settings.output.map)
 	or Path.copy (map.settings.input.map, map.settings.output.map)
 
 if not status then

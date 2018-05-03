@@ -85,7 +85,7 @@ end
 -- for the specified `map (string)`. Returns `nil` if an error is
 -- encountered.
 function WTS.write (map, strings, prefix)
-	local file_path = Path.temporary_name ()
+	local file_path = Path.temporary_path ()
 	local file = io.open (file_path, 'wb')
 
 	local status

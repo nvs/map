@@ -13,11 +13,11 @@ local function execute (java, wurst, ...)
 	wurst = wurst or defaults.wurst
 
 	assert (type (java) == 'string')
-	assert (Path.is_readable (wurst))
+	assert (Path.is_directory (wurst))
 
 	wurst = Path.join (wurst, 'wurstscript.jar')
 
-	local output_path = Path.temporary_name ()
+	local output_path = Path.temporary_path ()
 
 	local status = Shell.execute {
 		command = Shell.escape_arguments (java, '-jar', wurst, ...),

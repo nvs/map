@@ -12,7 +12,7 @@ PJass.executable = Path.join ('map', 'external', 'pjass', 'pjass.exe')
 -- Returns the status of the command, as either `true (boolean)` or `nil`,
 -- along with the `output (string)`.
 function PJass.check (prefix, options, ...)
-	local output_log_path = Path.temporary_name ()
+	local output_log_path = Path.temporary_path ()
 
 	-- The pjass command outputs to `stdout` regardless of its exit status.
 	local status = Shell.execute {
