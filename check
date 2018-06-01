@@ -1,33 +1,24 @@
 #!/usr/bin/env lua
 
-local Map = require ('map.common')
+local Tasks = require ('map.tasks')
 
-local options = {
-	['--version'] = Map.version
+return Tasks.run {
+	arguments = { ... },
+
+	tasks = {
+		'check'
+	},
+
+	help = [[
+# map check
+
+Parse Jass scripts and validate their syntax.
+
+## Usage
+    check [options]
+    check <configuration>
+
+## Options
+    --version    Displays the version number.
+    --help       Displays this help message.]]
 }
-
-options ['--help'] = function ()
-	io.stdout:write ([[
-map check - Parse JASS scripts and validate their syntax
-
-Usage:
-  check [options]
-  check <configuration>
-
-Options:
-  --version    Displays the version number.
-  --help       Displays this help message.
-]])
-
-	Map.exit (0)
-end
-
-local status, output = Map.initialize (options, 'check')
-
-if status == nil then
-	io.stderr:write (output)
-	Map.exit (1)
-else
-	io.stdout:write (output)
-	Map.exit (status and 0 or 1, status)
-end
