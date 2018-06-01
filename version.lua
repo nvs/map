@@ -1,5 +1,1 @@
-return {
-	major = 0,
-	minor = 2,
-	patch = 4
-}
+return 'map 0.2.4'
