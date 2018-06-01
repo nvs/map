@@ -1,75 +1,28 @@
 #!/usr/bin/env lua
 
-local Map = require ('map.common')
-local Path = require ('map.path')
-local Grimex = require ('map.tools.grimex')
-local MPQEditor = require ('map.tools.mpqeditor')
-local Wurst = require ('map.tools.wurst')
+local Tasks = require ('map.tasks')
 
-local options = {
-	['--version'] = Map.version
+return Tasks.run {
+	arguments = { ... },
+
+	tasks = {
+		'check',
+		'build',
+		'optimize'
+	},
+
+	help = [[
+# map optimize
+
+Optimizes the map.  This will build both a non-optimized version as well as
+one that is optimized.  Currently, the only optimizations performed are done
+on the map script via Wurst.
+
+## Usage
+    optimize [options]
+    optimize <configuration>
+
+## Options
+    --version    Displays the version number.
+    --help       Displays this help message.]]
 }
-
-options ['--help'] = function ()
-	io.stdout:write ([[
-map optimize - Create an optimized version of the working map
-
-Usage:
-  optimize [options]
-  optimize <configuration>
-
-Options:
-  --version    Displays the version number.
-  --help       Displays this help message.
-]])
-
-	Map.exit (0)
-end
-
-local map, message = Map.initialize (options, 'optimize')
-
-if not map then
-	io.stderr:write (message)
-	Map.exit (1)
-end
-
-if not (Path.is_file (map.settings.output.map)
-	and Path.is_file (map.settings.output.script))
-then
-	io.stderr:write ('optimize: failure', '\n')
-	Map.exit (1, map)
-end
-
-local optimized = map.settings.output.map:gsub ('%.w3x$', '-optimized.w3x')
-local optimized_script = optimized .. '.j'
-
-if not Path.copy (map.settings.output.map, optimized) then
-	io.stderr:write ('optimize: failure', '\n')
-	Map.exit (1, map)
-end
-
-local status, output = Wurst.optimize (map.settings.wurst.java,
-	map.settings.wurst.path, optimized_script,
-	map.settings.patch, map.settings.output.script)
-
-if not status then
-	io.stderr:write (output)
-	Map.exit (1, map)
-end
-
-status, output = Grimex.imports (map.settings.prefix,
-	optimized, optimized_script, 'war3map.j')
-
-local output_log_path = Path.join (
-	map.settings.output.directory, 'grimex-optimize.txt')
-Grimex.log (output_log_path, output)
-
-MPQEditor.flush (optimized, map.settings.prefix)
-
-if status then
-	io.stdout:write ('optimize: ok', '\n')
-	Map.exit (0, map)
-else
-	io.stderr:write ('optimize: failure', '\n')
-	Map.exit (1, map)
-end
