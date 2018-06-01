@@ -1,49 +1,26 @@
 #!/usr/bin/env lua
 
-local Map = require ('map.common')
-local PJass = require ('map.tools.pjass')
+local Tasks = require ('map.tasks')
 
-local options = {
-	['--version'] = Map.version
+return Tasks.run {
+	arguments = { ... },
+	tasks = {
+		'check',
+		'build'
+	},
+
+	help = [[
+# map build
+
+Builds the map, including but not limited to parsing and combining Jass
+scripts, inlining trigger strings, processing constants and objects, and
+importing files.
+
+## Usage
+    build [options]
+    build <configuration>
+
+## Options
+    --version    Displays the version number.
+    --help       Displays this help message.]]
 }
-
-options ['--help'] = function ()
-	io.stdout:write ([[
-map build - Combine JASS scripts into a single file
-
-Validates the syntax of the JASS scripts, then combines them into a single
-file. The result is placed in the output directory.
-
-Usage:
-  build [options]
-  build <configuration>
-
-Options:
-  --version    Displays the version number.
-  --help       Displays this help message.
-]])
-
-	Map.exit (0)
-end
-
-local map, message = Map.initialize (options, 'build')
-
-if not map then
-	io.stderr:write (message)
-	Map.exit (1)
-end
-
-if not Map.build_script (map.scripts, map.settings) then
-	Map.exit (1, map)
-end
-
-local status, output = PJass.check (map.settings.prefix,
-	map.settings.pjass.options, map.settings.patch, map.settings.output.script)
-
-if status then
-	io.stdout:write (output)
-	Map.exit (0, map)
-else
-	io.stderr:write (output)
-	Map.exit (1, map)
-end
