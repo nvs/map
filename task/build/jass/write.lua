@@ -1,4 +1,4 @@
-local PJass = require ('map.tools.pjass')
+local PJass = require ('map.tool.pjass')
 
 return function (state)
 	local script_path = state.settings.output.file .. '.j'

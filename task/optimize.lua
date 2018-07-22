@@ -1,7 +1,7 @@
 local Path = require ('map.path')
-local PJass = require ('map.tools.pjass')
+local PJass = require ('map.tool.pjass')
 local W3X = require ('map.file.w3x')
-local Wurst = require ('map.tools.wurst')
+local Wurst = require ('map.tool.wurst')
 
 local defaults = {
 	java = 'java',

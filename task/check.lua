@@ -1,5 +1,5 @@
 local Path = require ('map.path')
-local PJass = require ('map.tools.pjass')
+local PJass = require ('map.tool.pjass')
 
 local function check_existence (paths, missing)
 	for _, path in ipairs (paths) do
