@@ -56,8 +56,11 @@ function INI.pack (io, input)
 	for section, contents in pairs (input) do
 		local count = 0
 
-		for _ in pairs (contents) do
-			count = count + 1
+		-- Increment count only for sections.
+		if type (contents) == 'table' then
+			for _ in pairs (contents) do
+				count = count + 1
+			end
 		end
 
 		-- Do not write empty sections.

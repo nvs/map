@@ -1,5 +1,9 @@
 # Map Changelog
 
+## [Unreleased]
+### Fixed
+- Ensure that only sections are written in `*.ini` files.
+
 ## [0.3.0] - 2018-07-22
 ### Changed
 - Environment functionality has been enhanced and has changed drastically.
