@@ -1,5 +1,26 @@
 # Map Changelog
 
+## [0.3.0] - 2018-07-22
+### Changed
+- Environment functionality has been enhanced and has changed drastically.
+- Performance when building a map has improved.
+- The `build` command now encompases the functionality of the removed
+  commands (e.g. processing constants and objects and importing files).
+- The `build` command will now inline trigger strings in Jass scripts,
+  object definitions, and constants.
+- A PJass check is now performed on the optimized script.
+- Configuration settings have changed.
+
+### Removed
+- The following commands have been removed:
+  - `prepare`
+  - `objects`
+  - `constants`
+  - `imports`
+- MPQEditor is no longer supported or included.
+- The Grim Extension Pack is no longer supported or included.
+- Functionality regarding the `debug` keyword is no longer supported.
+
 ## [0.2.4] - 2018-04-11
 ### Added
 - Luacheck is now used to perform linting and code analysis.
@@ -116,7 +137,8 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.2.4...develop
+[Unreleased]: https://github.com/nvs/map/compare/v0.3.0...develop
+[0.3.0]: https://github.com/nvs/map/compare/v0.2.4...v0.3.0
 [0.2.4]: https://github.com/nvs/map/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/nvs/map/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/nvs/map/compare/v0.2.1...v0.2.2
