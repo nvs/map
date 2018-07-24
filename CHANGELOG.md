@@ -1,6 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
+
+## [0.3.1] - 2018-07-23
 ### Fixed
 - Ensure that only sections are written in `*.ini` files.
 - Objects definitions can now be passed via reference.
@@ -142,7 +144,8 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.3.0...develop
+[Unreleased]: https://github.com/nvs/map/compare/v0.3.1...develop
+[0.3.1]: https://github.com/nvs/map/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/nvs/map/compare/v0.2.4...v0.3.0
 [0.2.4]: https://github.com/nvs/map/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/nvs/map/compare/v0.2.2...v0.2.3
