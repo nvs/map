@@ -1,6 +1,6 @@
 local Objects = require ('map.file.war3map.objects')
 
--- Deals with the `war3map.w3u` (Destructables).
+-- Deals with the `war3map.w3b` (Destructables).
 local W3B = {}
 
 function W3B.unpack (io)

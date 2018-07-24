@@ -1,6 +1,6 @@
 local Objects = require ('map.file.war3map.objects')
 
--- Deals with the `war3map.w3u` (Buffs).
+-- Deals with the `war3map.w3h` (Buffs).
 local W3H = {}
 
 function W3H.unpack (io)
