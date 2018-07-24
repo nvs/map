@@ -51,9 +51,6 @@ return function (state)
 		-- Split the unified objects table into its respective categories.
 		for id, object in pairs (state.environment.objects) do
 			categories [object.type] [id] = object
-
-			-- Unset the category type, or it will conflict when packing.
-			object.type = nil
 		end
 
 		for name, extension in pairs (objects) do

@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Ensure that only sections are written in `*.ini` files.
+- Objects definitions can now be passed via reference.
 
 ## [0.3.0] - 2018-07-22
 ### Changed
