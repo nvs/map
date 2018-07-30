@@ -65,6 +65,7 @@ function Tasks.run (input)
 	end
 
 	if settings then
+		table.insert (state.tasks, 'settings')
 		state.settings = settings
 
 		while #state.tasks > 0 do

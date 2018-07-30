@@ -70,7 +70,9 @@ parameter (e.g. `map/check configuration.lua`).
 A configuration file is nothing more than a valid Lua file that returns a
 `table` with the settings specified below.  The only valid types within the
 configuration file are `boolean`, `string`, and `table`.  When listing
-files, please keep in mind that their order is respected.
+files and directories, please keep in mind that their order is respected.
+It should be noted that a directory's tree will be walked, looking for
+matching files.
 
 Below is a sample configuration file, with settings divided into categories
 representing their respective commands.  Unless method, a setting is
@@ -82,15 +84,17 @@ return {
 
     -- ## Check
 
-    -- The file list containing Jass scripts that are dependencies of those
-    -- specified in `scripts`.  Typically, these are the `common.j` and
-    -- `blizzard.j` provided by Warcraft III itself.
+    -- The file list containing Jass scripts (i.e. files with the extension
+    -- `.j` that are dependencies of those specified in `scripts`.
+    -- Typically, these are the `common.j` and `blizzard.j` provided by
+    -- Warcraft III itself.
     patch = {
         'common.j',
         'blizzard.j'
     },
 
-    -- The file list containing Jass scripts to be parsed and combined.
+    -- The file list containing Jass scripts (i.e. files with the extension
+    -- `.j`) to be parsed and combined.
     scripts = {
         'path/to/some/file.j'
     },
@@ -121,9 +125,9 @@ return {
         name = 'My Map.w3x'
     },
 
-    -- A list that represents Lua files that can be used to access and
-    -- change the map environment.  This includes but is not limited to
-    -- objects, constants, and imports.
+    -- A list that represents Lua files (files with the extension `.lua`)
+    -- that can be used to access and change the map environment.  This
+    -- includes but is not limited to objects, constants, and imports.
     build = {
         'create-objects.lua',
         'list-imports.lua'
