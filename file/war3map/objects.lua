@@ -107,7 +107,6 @@ function Objects.unpack (io, extra)
 		end
 	end
 
-
 	local output = {}
 
 	unpack ('i4')
