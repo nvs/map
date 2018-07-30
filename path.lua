@@ -250,13 +250,13 @@ function Path.extension (path)
 		return ''
 	end
 
-	local index = path:find ('.', 1, true)
+	local index = path:reverse ():find ('.', 1, true)
 
 	if not index then
 		return ''
 	end
 
-	return path:sub (index)
+	return path:sub (#path - index + 1)
 end
 
 -- `Path.home_directory ()`

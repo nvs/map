@@ -1,6 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
+### Fixed
+- `Path.extension ()` properly finds the last dot in a path.
 
 ## [0.3.1] - 2018-07-23
 ### Fixed
