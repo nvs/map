@@ -23,8 +23,7 @@ The following dependencies must be met to utilize this library:
 - [LuaFileSystem] `>= 1.7.0`
 - [lua-stormlib]
 - [compat-5.3] `>= 0.5` (for Lua `< 5.3` or LuaJIT)
-- [PJass]
-- [Wurst] (for the `optimize` command)
+- [Wurst]
 
 To make use of **Map** it is recommended to place it directly within your
 project's root directory.  That is, as `project/map`.  This can be achieved
@@ -37,7 +36,6 @@ _Other installation locations are neither tested or supported._
 [LuaFileSystem]: https://github.com/keplerproject/luafilesystem
 [lua-stormlib]: https://github.com/nvs/lua-stormlib
 [compat-5.3]: https://github.com/keplerproject/lua-compat-5.3
-[PJass]: https://github.com/lep/pjass
 [Wurst]: https://wurstlang.org
 
 ## Caveats
@@ -74,44 +72,21 @@ files and directories, please keep in mind that their order is respected.
 It should be noted that a directory's tree will be walked, looking for
 matching files.
 
-Below is a sample configuration file, with settings divided into categories
-representing their respective commands.  Unless method, a setting is
+Below is a sample configuration file.  Unless mentioned, a setting is
 required.
 
 ``` lua
 -- # Settings
 return {
 
-    -- ## Check
-
     -- The file list containing Jass scripts (i.e. files with the extension
-    -- `.j` that are dependencies of those specified in `scripts`.
-    -- Typically, these are the `common.j` and `blizzard.j` provided by
-    -- Warcraft III itself.
-    patch = {
-        'common.j',
-        'blizzard.j'
-    },
-
-    -- The file list containing Jass scripts (i.e. files with the extension
-    -- `.j`) to be parsed and combined.
+    -- `.j`) to be parsed and combined.  It is recommended to include those
+    -- provided by Warcraft III itself (i.e. `common.j` and `blizzard.j`).
     scripts = {
+        'common.j',
+        'blizzard.j',
         'path/to/some/file.j'
     },
-
-    -- A list that represents how to invoke PJass.  This should include the
-    -- executable and any desired options.
-    pjass = {
-        nil, -- Could have a prefix here.  For example, `wine`.
-       'pjass',
-
-        -- Check your version of PJass for options.
-        '-rb'
-    },
-
-    -- ## Build
-    --
-    -- All required settings from the check command must be specified.
 
     -- The path to the map file that will be used as the basis for the
     -- working map.
@@ -132,11 +107,6 @@ return {
         'create-objects.lua',
         'list-imports.lua'
     },
-
-    -- ## Optimize
-    --
-    -- All required settings from both the check and build commands must be
-    -- specified.
 
     -- The command to invoke the Java executable.  This is *optional*, with
     -- the default specified below.
@@ -257,7 +227,6 @@ available.  For example:
 
 ``` lua
 local map = ...
-
 
 print (map.constants.interface.FrameDef.LUMBER) --> `nil`
 map.constants.interface.FrameDef.LUMBER = 'Not Lumber'

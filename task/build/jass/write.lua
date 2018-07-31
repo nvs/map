@@ -1,32 +1,16 @@
-local PJass = require ('map.tool.pjass')
+local Wurst = require ('map.tool.wurst')
 
 return function (state)
 	local script_path = state.settings.output.file .. '.j'
-	local script = assert (io.open (script_path, 'wb'))
-
-	script:write ('globals\n')
-
-	for _, line in ipairs (state.jass.globals) do
-		script:write (line, '\n')
-	end
-
-	script:write ('endglobals\n')
-
-	for _, line in ipairs (state.jass.non_globals) do
-		script:write (line, '\n')
-	end
-
-	script:write ('\n')
-	script:close ()
-
-	local status, output = PJass.run (state.settings.pjass,
-		state.settings.patch, script_path)
+	local status, message = Wurst.run (state.settings.java,
+		state.settings.wurst and state.settings.wurst.directory,
+		'-out', script_path, state.settings.scripts)
 
 	if not status then
-		return nil, output
+		return nil, message
 	end
 
 	io.stdout:write ('- ', script_path, '\n')
 
-	return true, output
+	return true
 end

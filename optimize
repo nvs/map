@@ -6,7 +6,6 @@ return Tasks.run {
 	arguments = { ... },
 
 	tasks = {
-		'check',
 		'build',
 		'optimize'
 	},

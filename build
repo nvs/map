@@ -5,7 +5,6 @@ local Tasks = require ('map.tasks')
 return Tasks.run {
 	arguments = { ... },
 	tasks = {
-		'check',
 		'build'
 	},
 

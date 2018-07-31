@@ -16,12 +16,14 @@ return function (state)
 		local messages = {}
 
 		for _, file in ipairs (state.settings.build) do
-			local chunk, message = loadfile (file)
+			if Path.is_file (file) then
+				local chunk, message = loadfile (file)
 
-			if chunk then
-				chunk (state.environment)
-			else
-				table.insert (messages, message)
+				if chunk then
+					chunk (state.environment)
+				else
+					table.insert (messages, message)
+				end
 			end
 		end
 
