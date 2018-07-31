@@ -1,6 +1,12 @@
 # Map Changelog
 
 ## [Unreleased]
+### Changed
+- Configuration settings that take a list of files now support directories
+  as well.  The entire directory tree will be walked.
+
+### Fixed
+- `Path.extension ()` properly finds the last dot in a path.
 
 ## [0.3.1] - 2018-07-23
 ### Fixed
