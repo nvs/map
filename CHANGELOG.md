@@ -1,6 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
+
+## [0.4.0] - 2018-07-30
 ### Changed
 - Configuration settings that take a list of files now support directories
   as well.  The entire directory tree will be walked.
@@ -155,7 +157,8 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.3.1...develop
+[Unreleased]: https://github.com/nvs/map/compare/v0.4.0...develop
+[0.4.0]: https://github.com/nvs/map/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/nvs/map/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/nvs/map/compare/v0.2.4...v0.3.0
 [0.2.4]: https://github.com/nvs/map/compare/v0.2.3...v0.2.4
