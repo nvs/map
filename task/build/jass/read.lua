@@ -4,6 +4,7 @@ if _VERSION < 'Lua 5.3' then
 end
 
 local Jass = require ('map.file.jass')
+local Path = require ('map.path')
 local String = require ('map.string')
 
 -- Valid non-escaped characters are the ASCII printable characters (i.e.
@@ -102,42 +103,36 @@ local function is_literal_constant (line)
 	end
 end
 
-local function read_jass (files, state, is_script)
+local function read_jass (files, globals)
 	for _, path in ipairs (files) do
-		local file = assert (io.open (path, 'rb'))
-		local in_globals = false
+		if Path.is_file (path) then
+			local file = assert (io.open (path, 'rb'))
+			local in_globals = false
 
-		for line in file:lines () do
-			if line:find ('^%s*globals') then
-				in_globals = true
-			elseif line:find ('^%s*endglobals') then
-				in_globals = false
-			elseif in_globals then
-				if is_script then
-					state.jass.globals [#state.jass.globals + 1] = line
+			for line in file:lines () do
+				if line:find ('^%s*globals') then
+					in_globals = true
+				elseif line:find ('^%s*endglobals') then
+					break
+				elseif in_globals then
+					local name, value = is_literal_constant (line)
+
+					if name then
+						globals [name] = value
+					end
 				end
-
-				local name, value = is_literal_constant (line)
-
-				if name then
-					state.environment.globals [name] = value
-				end
-			elseif is_script then
-				state.jass.non_globals [#state.jass.non_globals + 1] = line
 			end
 		end
 	end
 end
 
 return function (state)
-	state.environment.globals = {}
-	state.jass = {
-		globals = {},
-		non_globals = {}
-	}
+	local globals = {}
 
-	read_jass (state.settings.patch, state, false)
-	read_jass (state.settings.scripts, state, true)
+	read_jass (state.settings.patch, globals)
+	read_jass (state.settings.scripts, globals)
+
+	state.environment.globals = globals
 
 	return true
 end
