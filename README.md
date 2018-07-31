@@ -23,8 +23,7 @@ The following dependencies must be met to utilize this library:
 - [LuaFileSystem] `>= 1.7.0`
 - [lua-stormlib]
 - [compat-5.3] `>= 0.5` (for Lua `< 5.3` or LuaJIT)
-- [PJass]
-- [Wurst] (for the `optimize` command)
+- [Wurst]
 
 To make use of **Map** it is recommended to place it directly within your
 project's root directory.  That is, as `project/map`.  This can be achieved
@@ -37,7 +36,6 @@ _Other installation locations are neither tested or supported._
 [LuaFileSystem]: https://github.com/keplerproject/luafilesystem
 [lua-stormlib]: https://github.com/nvs/lua-stormlib
 [compat-5.3]: https://github.com/keplerproject/lua-compat-5.3
-[PJass]: https://github.com/lep/pjass
 [Wurst]: https://wurstlang.org
 
 ## Caveats
@@ -97,16 +95,6 @@ return {
     -- `.j`) to be parsed and combined.
     scripts = {
         'path/to/some/file.j'
-    },
-
-    -- A list that represents how to invoke PJass.  This should include the
-    -- executable and any desired options.
-    pjass = {
-        nil, -- Could have a prefix here.  For example, `wine`.
-       'pjass',
-
-        -- Check your version of PJass for options.
-        '-rb'
     },
 
     -- ## Build

@@ -5,6 +5,9 @@
 - Configuration settings that take a list of files now support directories
   as well.  The entire directory tree will be walked.
 
+### Removed
+- PJass is no longer supported.
+
 ### Fixed
 - `Path.extension ()` properly finds the last dot in a path.
 
