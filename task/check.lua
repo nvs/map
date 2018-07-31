@@ -5,7 +5,7 @@ return function (state)
 	local output = Path.temporary_path ()
 	local status, message = Wurst.run (state.settings.java,
 		state.settings.wurst and state.settings.wurst.directory,
-		'-out', output, state.settings.patch, state.settings.scripts)
+		'-out', output, state.settings.scripts)
 
 	os.remove (output)
 

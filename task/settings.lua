@@ -37,7 +37,6 @@ local function load_files (paths, extension)
 end
 
 return function (state)
-	state.settings.patch = load_files (state.settings.patch, '.j')
 	state.settings.scripts = load_files (state.settings.scripts, '.j')
 	state.settings.build = load_files (state.settings.build, '.lua')
 

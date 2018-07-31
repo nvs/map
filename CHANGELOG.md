@@ -7,6 +7,7 @@
 
 ### Removed
 - PJass is no longer supported.
+- The `patch` setting has been removed.
 
 ### Fixed
 - `Path.extension ()` properly finds the last dot in a path.

@@ -27,8 +27,7 @@ return function (state)
 
 	local status, message = Wurst.run (state.settings.java,
 		state.settings.wurst and state.settings.wurst.directory,
-		'-out', optimized_script, state.settings.patch,
-		state.settings.scripts, optimize)
+		'-out', optimized_script, state.settings.scripts, optimize)
 
 	if not status then
 		return nil, message
