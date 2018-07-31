@@ -4,6 +4,7 @@
 ### Changed
 - Configuration settings that take a list of files now support directories
   as well.  The entire directory tree will be walked.
+- Wurst is now used to check and build the `war3map.j`.
 
 ### Removed
 - PJass is no longer supported.
