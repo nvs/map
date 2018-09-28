@@ -26,7 +26,7 @@ local is_endianness = {
 }
 
 -- Returns an interator `function` that, each time it is called, returns
--- the padding (a `number)` and the format (a `string)` for the next
+-- the padding (a `number`) and the format (a `string`) for the next
 -- non-configuration style option present within `options` (a `string`).
 -- Note that format may include endianness (but never alignment).
 --
