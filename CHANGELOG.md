@@ -1,6 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
+
+## [0.5.0] - 2018-09-27
 ### Changed
 - The `source` setting has been added.  It includes a way to specify the
   project's `directory`, as well as a means to `include` Jass files that
@@ -164,7 +166,8 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.4.0...develop
+[Unreleased]: https://github.com/nvs/map/compare/v0.5.0...develop
+[0.5.0]: https://github.com/nvs/map/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/nvs/map/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/nvs/map/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/nvs/map/compare/v0.2.4...v0.3.0
