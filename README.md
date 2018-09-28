@@ -79,14 +79,25 @@ required.
 -- # Settings
 return {
 
-    -- The file list containing Jass scripts (i.e. files with the extension
-    -- `.j`) to be parsed and combined.  It is recommended to include those
-    -- provided by Warcraft III itself (i.e. `common.j` and `blizzard.j`).
-    scripts = {
-        'common.j',
-        'blizzard.j',
-        'path/to/some/file.j'
-    },
+    -- Settings used to build the project's `war3map.j`.
+    source = {
+        -- This is the directory containing the project's source files.
+        -- Typically, this will contain all Jass files to be parsed and
+        -- combined.  Additionally, Wurst files should be found within.
+        directory = 'path/to/project',
+
+        -- Sometimes it is desired to have Jass files be located outside of
+        -- the project's directory.  Include those paths here.  This is
+        -- *optional*, and by default is empty.
+        --
+        -- This support only extends to Jass files, and as such other file
+        -- types will not be considered.
+        include = {
+            'common.j',
+            'blizzard.j',
+            'path/to/some/other/project'
+        }
+    }
 
     -- The path to the map file that will be used as the basis for the
     -- working map.

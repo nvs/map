@@ -129,7 +129,7 @@ end
 return function (state)
 	local globals = {}
 
-	read_jass (state.settings.scripts, globals)
+	read_jass (state.settings.source.jass, globals)
 
 	state.environment.globals = globals
 

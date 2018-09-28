@@ -1,6 +1,13 @@
 # Map Changelog
 
 ## [Unreleased]
+### Changed
+- The `source` setting has been added.  It includes a way to specify the
+  project's `directory`, as well as a means to `include` Jass files that
+  exist outside the project.
+
+### Removed
+- The `scripts` setting has been removed.
 
 ## [0.4.0] - 2018-07-30
 ### Changed

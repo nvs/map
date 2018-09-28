@@ -25,19 +25,21 @@ local function load_files (paths, extension)
 
 	for _, path in ipairs (paths) do
 		process_entry (path, extension, list, exists)
-
-		-- Include any directories, as these will be passed to Wurst.
-		if Path.is_directory (path) and not exists [path] then
-			exists [path] = true
-			list [#list + 1] = path
-		end
 	end
 
 	return list
 end
 
 return function (state)
-	state.settings.scripts = load_files (state.settings.scripts, '.j')
+	local source = {
+		state.settings.source.directory
+	}
+
+	for _, entry in ipairs (state.settings.source.include or {}) do
+		source [#source + 1] = entry
+	end
+
+	state.settings.source.jass = load_files (source, '.j')
 	state.settings.build = load_files (state.settings.build, '.lua')
 
 	return true
