@@ -111,11 +111,16 @@ return {
         name = 'My Map.w3x'
     },
 
-    -- A list that represents Lua files (files with the extension `.lua`)
-    -- that can be used to access and change the map environment.  This
-    -- includes but is not limited to objects, constants, and imports.
+    -- A list of Lua files (files with the extension `.lua`) that can be
+    -- used to access and change the map environment.  Directories can be
+    -- specified as well, and will be recursively traversed.
+    --
+    -- Note that the ordering specified here is preserved.  However, when
+    -- traversing directories, entries within are sorted using
+    -- `table.sort ()`.  This should represent alphanumeric sorting.
     build = {
         'create-objects.lua',
+        'path/to/some-directory',
         'list-imports.lua'
     },
 

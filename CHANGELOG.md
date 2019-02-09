@@ -1,6 +1,9 @@
 # Map Changelog
 
 ## [Unreleased]
+### Changed
+- Directories listed in `build` now have their entries sorted
+  alphanumerically, rather than the LFS default.
 
 ## [0.5.0] - 2018-09-27
 ### Changed

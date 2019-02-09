@@ -5,11 +5,18 @@ local function process_entry (path, extension, list, exists)
 	if exists [path] then -- luacheck: ignore 542
 		-- Do not process an entry multiple times.
 	elseif Path.is_directory (path) then
+		local entries = {}
+
 		for entry in LFS.dir (path) do
 			if entry ~= '.' and entry ~= '..' then
-				process_entry (Path.join (path, entry),
-					extension, list, exists)
+				table.insert (entries, entry)
 			end
+		end
+
+		table.sort (entries)
+
+		for _, entry in ipairs (entries) do
+			process_entry (Path.join (path, entry), extension, list, exists)
 		end
 	elseif Path.is_file (path)
 		and Path.extension (path) == extension
