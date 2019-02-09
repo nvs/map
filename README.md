@@ -219,7 +219,7 @@ An object 'type' must be one of the following strings:
 - `destructable`
 - `doodad`
 - `unit`
-- `quest`
+- `upgrade`
 - `item`
 - `buff`
 
