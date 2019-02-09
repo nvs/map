@@ -5,6 +5,9 @@
 - Directories listed in `build` now have their entries sorted
   alphanumerically, rather than the LFS default.
 
+### Fixed
+- Maps lacking a trigger strings file will no longer raise an error.
+
 ## [0.5.0] - 2018-09-27
 ### Changed
 - The `source` setting has been added.  It includes a way to specify the

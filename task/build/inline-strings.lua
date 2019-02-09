@@ -9,13 +9,15 @@ local function replace (input, replacement)
 end
 
 return function (state)
-	local function replacement (index)
-		return state.strings [tonumber (index)]
-	end
+	if state.strings then
+		local function replacement (index)
+			return state.strings [tonumber (index)]
+		end
 
-	replace (state.environment.information, replacement)
-	replace (state.environment.objects, replacement)
-	replace (state.environment.constants, replacement)
+		replace (state.environment.information, replacement)
+		replace (state.environment.objects, replacement)
+		replace (state.environment.constants, replacement)
+	end
 
 	-- If we are inlining all strings, then we have no use for them after
 	-- this point.
