@@ -1,5 +1,3 @@
-local Jass = require ('map.file.jass')
-
 local function replace (input, replacement)
 	for key, value in pairs (input) do
 		if type (value) == 'table' then
