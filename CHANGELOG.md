@@ -4,6 +4,8 @@
 ### Changed
 - Directories listed in `build` now have their entries sorted
   alphanumerically, rather than the LFS default.
+- Constant literal globals are now considered from multiple globals blocks
+  within a single file.
 
 ### Fixed
 - Maps lacking a trigger strings file will no longer raise an error.

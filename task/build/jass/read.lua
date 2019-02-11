@@ -113,7 +113,7 @@ local function read_jass (files, globals)
 				if line:find ('^%s*globals') then
 					in_globals = true
 				elseif line:find ('^%s*endglobals') then
-					break
+					in_globals = false
 				elseif in_globals then
 					local name, value = is_literal_constant (line)
 
