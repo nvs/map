@@ -71,7 +71,7 @@ local function is_literal_constant (line)
 	elseif type == 'string' then
 		-- Count the number of string delimiters on the line.  The presence
 		-- of more than two invalidates the string for our purposes.
-		local count = select (2, value:gsub ('[^\\]?"', ''))
+		local count = select (2, value:gsub ('\\"', ''):gsub ('"', ''))
 
 		if count > 2 then
 			return nil

@@ -9,6 +9,7 @@
 
 ### Fixed
 - Maps lacking a trigger strings file will no longer raise an error.
+- Properly identify cosntant literal strings.
 
 ## [0.5.0] - 2018-09-27
 ### Changed
