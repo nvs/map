@@ -1,6 +1,10 @@
 # Map Changelog
 
 ## [Unreleased]
+
+- N/A
+
+## [0.6.0] - 2019-02-12
 ### Changed
 - Directories listed in `build` now have their entries sorted
   alphanumerically, rather than the LFS default.
@@ -180,7 +184,8 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.5.0...develop
+[Unreleased]: https://github.com/nvs/map/compare/v0.6.0...master
+[0.6.0]: https://github.com/nvs/map/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/nvs/map/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/nvs/map/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/nvs/map/compare/v0.3.0...v0.3.1
