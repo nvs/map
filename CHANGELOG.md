@@ -6,10 +6,15 @@
   alphanumerically, rather than the LFS default.
 - Constant literal globals are now considered from multiple globals blocks
   within a single file.
+- An `output.directories` table has been added that allows specifying the
+  location to place built maps for the `build` and `optimize` commands.
 
 ### Fixed
 - Maps lacking a trigger strings file will no longer raise an error.
 - Properly identify cosntant literal strings.
+
+### Removed
+- The `output.directory` setting has been removed.
 
 ## [0.5.0] - 2018-09-27
 ### Changed

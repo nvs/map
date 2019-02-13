@@ -13,10 +13,14 @@ local defaults = {
 return function (state)
 	io.stdout:write ('Optimizing...\n')
 
-	local map = state.settings.output.file
-	local optimized = map:gsub ('%.w3x$', '-optimized.w3x')
-	local optimized_script = optimized .. '.j'
+	local map = state.settings.output.files.build
+	local optimized = state.settings.output.files.optimize
 
+	if map == optimized then
+		optimized = map:gsub ('%.w3x$', '-optimized.w3x')
+	end
+
+	local optimized_script = optimized .. '.j'
 	local optimize = defaults.optimize
 
 	if type (state.settings.wurst) == 'table' then

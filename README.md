@@ -104,8 +104,11 @@ return {
     input = 'path/to/map.w3x',
 
     output = {
-        -- The directory in which to place the generated output files.
-        directory = 'tmp',
+        -- The directories in which to place the generated output files.
+        directories = {
+            build = 'tmp',
+            optimize = 'tmp/opt'
+        },
 
         -- The name used when creating the output files.
         name = 'My Map.w3x'

@@ -6,7 +6,10 @@ return function (state)
 	-- Load state settings into environment.
 	state.environment.settings = {
 		output = {
-			directory = state.settings.output.directory,
+			directories = {
+				build = state.settings.output.directories.build,
+				optimize = state.settings.output.directories.optimize
+			},
 			name = state.settings.output.name
 		}
 	}
@@ -35,13 +38,23 @@ return function (state)
 
 	-- Load environment settings into state.  Nothing should be accessing
 	-- environment settings directly.
-	state.settings.output.directory =
-		state.environment.settings.output.directory
+	state.settings.output.directories =
+		state.environment.settings.output.directories
 	state.settings.output.name = state.environment.settings.output.name
-	state.settings.output.file = Path.join (
-		state.settings.output.directory, state.settings.output.name)
+	state.settings.output.files = {
+		build = Path.join (
+			state.settings.output.directories.build,
+			state.settings.output.name),
+		optimize = Path.join (
+			state.settings.output.directories.optimize,
+			state.settings.output.name)
+	}
 
 	state.environment.settings = nil
+
+	for _, directory in pairs (state.settings.output.directories) do
+		Path.create_directory (directory)
+	end
 
 	return true
 end

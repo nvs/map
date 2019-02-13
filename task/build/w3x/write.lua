@@ -21,16 +21,17 @@ local constants = {
 }
 
 return function (state)
-	assert (Path.copy (state.settings.input, state.settings.output.file))
+	local map = state.settings.output.files.build
+	assert (Path.copy (state.settings.input, map))
 
 	-- Header.
 	do
-		local file = assert (io.open (state.settings.output.file, 'r+'))
+		local file = assert (io.open (map, 'r+'))
 		assert (W3X.header_pack (file, state.environment.header))
 		file:close ()
 	end
 
-	local w3x = assert (W3X.open (state.settings.output.file, 'r+'))
+	local w3x = assert (W3X.open (map, 'r+'))
 
 	-- Information.
 	do
@@ -88,7 +89,7 @@ return function (state)
 	end
 
 	-- Script.
-	assert (w3x:add (state.settings.output.file .. '.j', 'war3map.j'))
+	assert (w3x:add (map .. '.j', 'war3map.j'))
 
 	-- Imports.
 	do
@@ -126,7 +127,7 @@ return function (state)
 	w3x:close (true)
 
 	-- Report success.
-	io.stdout:write ('- ', state.settings.output.file, '\n')
+	io.stdout:write ('- ', map, '\n')
 
 	return true
 end
