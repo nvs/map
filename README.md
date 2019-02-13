@@ -53,7 +53,7 @@ The following commands are provided by the collection:
   combining Jass scripts, inlining trigger strings, processing constants
   and objects, and importing files.
 - `optimize`: Optimizes the map.  This will build both a non-optimized
-  version as well as one that is optimize.  Currently, the only
+  version as well as one that is optimized.  Currently, the only
   optimizations performed are done on the map script via [Wurst].
 
 All commands should be executed from within the project's root directory
