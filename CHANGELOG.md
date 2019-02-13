@@ -1,8 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
-
-- N/A
+### Added
+- Sort Jass files according to dependencies within globals blocks.
 
 ## [0.6.0] - 2019-02-12
 ### Changed
