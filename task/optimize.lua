@@ -32,7 +32,8 @@ return function (state)
 	local status, message = Wurst.run (state.settings.java,
 		state.settings.wurst and state.settings.wurst.directory,
 		'-out', optimized_script, state.settings.source.jass,
-		state.settings.source.directory, optimize)
+		state.settings.source.directory, optimize,
+		'-runcompiletimefunctions')
 
 	if not status then
 		return nil, message

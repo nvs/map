@@ -1,7 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
-- N/A
+### Added
+- Merge Wurst generated objects, if they exist.
 
 ## [0.6.1] - 2019-02-13
 ### Added

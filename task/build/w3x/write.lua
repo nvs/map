@@ -41,6 +41,23 @@ return function (state)
 		file:close ()
 	end
 
+	local wurst_objects
+
+	-- Wurst objects.
+	do
+		local path = Path.join (
+			'_build', 'objectEditingOutput', 'wurstCreatedObjects.w3o')
+
+		if Path.exists (path) then
+			local W3O = require ('map.file.war3map.w3o')
+			local file = assert (io.open (path))
+			wurst_objects = assert (W3O.unpack (file))
+			file:close ()
+		else
+			wurst_objects = {}
+		end
+	end
+
 	-- Objects.
 	do
 		local categories = {}
@@ -56,6 +73,17 @@ return function (state)
 
 		for name, extension in pairs (objects) do
 			local category = categories [name]
+
+			if wurst_objects [extension] then
+				for id, object in pairs (wurst_objects [extension]) do
+					if category [id] then
+						error ('object id collision: ' .. id)
+					end
+
+					category [id] = object
+				end
+			end
+
 			local path = 'war3map.' .. extension
 			local library = require ('map.file.' .. path)
 			local size = library.packsize (category)

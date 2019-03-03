@@ -5,7 +5,7 @@ return function (state)
 	local status, message = Wurst.run (state.settings.java,
 		state.settings.wurst and state.settings.wurst.directory,
 		'-out', script_path, state.settings.source.jass,
-		state.settings.source.directory)
+		state.settings.source.directory, '-runcompiletimefunctions')
 
 	if not status then
 		return nil, message
