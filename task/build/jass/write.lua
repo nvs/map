@@ -27,7 +27,6 @@ return function (state)
 			file:write (path, '\n')
 		end
 
-		file:write ('\n')
 		file:close ()
 	end
 

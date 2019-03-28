@@ -1,7 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
-- N/A
+### Fixed
+- Fix Wurst complaining about empty lines present in `wurst.dependencies`.
 
 ## [0.6.3] - 2019-03-27
 ### Added
