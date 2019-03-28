@@ -138,6 +138,11 @@ return {
         -- value will be OS dependent.
         directory = '/home/user/.wurst',
 
+        -- A list of directories to be placed in an automatically created
+        -- `wurst.dependencies` file.  Relative paths will be appended to
+        -- project's root directory.
+        dependencies = {},
+
         -- Options to be passed to Wurst for script optimization.
         optimize = {
             '-opt',

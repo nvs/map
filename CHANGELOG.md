@@ -1,7 +1,9 @@
 # Map Changelog
 
 ## [Unreleased]
-- N/A
+- Automatically handle the following Wurst related paths:
+  - `wurst`
+  - `wurst.dependencies`
 
 ## [0.6.2] - 2019-03-02
 ### Added
