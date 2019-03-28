@@ -1,6 +1,10 @@
 # Map Changelog
 
 ## [Unreleased]
+- N/A
+
+## [0.6.3] - 2019-03-27
+### Added
 - Automatically handle the following Wurst related paths:
   - `wurst`
   - `wurst.dependencies`
@@ -193,7 +197,8 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.6.2...master
+[Unreleased]: https://github.com/nvs/map/compare/v0.6.3...master
+[0.6.3]: https://github.com/nvs/map/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/nvs/map/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/nvs/map/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/nvs/map/compare/v0.5.0...v0.6.0
