@@ -3,6 +3,8 @@
 ## [Unreleased]
 ### Fixed
 - Fix Wurst complaining about empty lines present in `wurst.dependencies`.
+- Fix Wurst being unable to find packages due to a missing
+  `wurst.dependencies` when using the `build` and `optimize` commands.
 
 ## [0.6.3] - 2019-03-27
 ### Added

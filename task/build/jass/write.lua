@@ -28,6 +28,14 @@ return function (state)
 		end
 
 		file:close ()
+
+		-- Needed to ensure that Wurst dependencies will be found upon using
+		-- the build/optimize commands.
+		local link = Path.join (
+			state.settings.source.directory,
+			'wurst.dependencies')
+		os.remove (link)
+		assert (Path.create_link ('../wurst.dependencies', link, true))
 	end
 
 	local script_path = state.settings.output.files.build .. '.j'
