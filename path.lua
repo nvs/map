@@ -309,6 +309,14 @@ function Path.create_directories (path)
 	return Path.create_directory (path)
 end
 
+-- Returns a `boolean` indicating whether the a link named `name` (`string`)
+-- was successfully created referencing the `source` (`string`) object.
+-- Optionally, takes a flag indicating whether to create a `symbolic` link.
+-- Defaults to creating a hard link.  Returns `nil` upon failure.
+function Path.create_link (source, name, symbolic)
+	return LFS.link (source, name, symbolic)
+end
+
 -- Returns the path (`string`) to a new temporary file.  In general, this
 -- function behaves exactly the same as `os.tmpname ()`.
 --
