@@ -141,14 +141,9 @@ return function (state)
 		end
 
 		local size = WTS.packsize (strings)
-
-		if size > 0 then
-			local file = w3x:open ('war3map.wts', 'w', size)
-			assert (WTS.pack (file, strings))
-			file:close ()
-		else
-			w3x:remove ('war3map.wts')
-		end
+		local file = w3x:open ('war3map.wts', 'w', size)
+		assert (WTS.pack (file, strings))
+		file:close ()
 	end
 
 	-- Close and compact.
