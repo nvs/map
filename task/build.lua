@@ -2,6 +2,7 @@ local Tasks = require ('map.tasks')
 
 return function (state)
 	local tasks = {
+		'check',
 		'build.environment',
 		'build.w3x.read',
 		'build.jass.read',
