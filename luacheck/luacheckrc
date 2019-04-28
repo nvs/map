@@ -1,0 +1,3 @@
+-- luacheck: std min+luacheckrc
+stds.wc3 = require ('map.luacheck.wc3')
+std = 'wc3'
