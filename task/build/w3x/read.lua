@@ -20,7 +20,7 @@ local constants = {
 }
 
 return function (state)
-	local w3x = assert (W3X.open (state.settings.input))
+	local w3x = assert (W3X.open (state.settings.input.map))
 
 	-- Information.
 	do
