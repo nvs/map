@@ -1,8 +1,6 @@
 local Tasks = require ('map.tasks')
 
 return function (state)
-	io.stdout:write ('Building...\n')
-
 	local tasks = {
 		'build.environment',
 		'build.w3x.read',
