@@ -21,8 +21,8 @@ local constants = {
 }
 
 return function (state)
-	local map = state.settings.output.files.build
-	assert (Path.copy (state.settings.input, map))
+	local map = state.settings.output.file
+	assert (Path.copy (state.settings.input.map, map))
 
 	local w3x = assert (W3X.open (map, 'r+'))
 
@@ -110,7 +110,12 @@ return function (state)
 	end
 
 	-- Script.
-	assert (w3x:add (map .. '.j', 'war3map.j'))
+	do
+		assert (state.environment.information.is_lua)
+
+		w3x:remove ('war3map.j')
+		assert (w3x:add (map .. '.lua', 'war3map.lua'))
+	end
 
 	-- Imports.
 	do

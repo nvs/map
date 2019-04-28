@@ -9,7 +9,7 @@ return function (state)
 		'build.jass.read',
 		'build.inline-strings',
 		'build.user-files',
-		'build.jass.write',
+		'build.script',
 		'build.w3x.write'
 	}
 
