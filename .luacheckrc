@@ -17,11 +17,6 @@ max_line_length = 76
 include_files = {
 	'build',
 	'check',
-	'constants',
-	'imports',
-	'objects',
-	'optimize',
-	'prepare',
 
 	'**/*.lua'
 }

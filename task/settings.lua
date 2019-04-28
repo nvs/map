@@ -38,15 +38,6 @@ local function load_files (paths, extension)
 end
 
 return function (state)
-	local source = {
-		state.settings.source.directory
-	}
-
-	for _, entry in ipairs (state.settings.source.include or {}) do
-		source [#source + 1] = entry
-	end
-
-	state.settings.source.jass = load_files (source, '.j')
 	state.settings.build = load_files (state.settings.build, '.lua')
 
 	return true

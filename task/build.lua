@@ -5,7 +5,6 @@ return function (state)
 		'check',
 		'build.environment',
 		'build.w3x.read',
-		'build.jass.read',
 		'build.inline-strings',
 		'build.user-files',
 		'build.script',
