@@ -24,13 +24,6 @@ return function (state)
 	local map = state.settings.output.files.build
 	assert (Path.copy (state.settings.input, map))
 
-	-- Header.
-	do
-		local file = assert (io.open (map, 'r+'))
-		assert (W3X.header_pack (file, state.environment.header))
-		file:close ()
-	end
-
 	local w3x = assert (W3X.open (map, 'r+'))
 
 	-- Information.
