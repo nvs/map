@@ -3,6 +3,11 @@
 ## [Unreleased]
 - N/A
 
+## [0.6.5] - 2019-04-28
+### Fixed
+- Ensure that a WTS file is always written. This addresses an
+  incompatibility introduced with built maps and 1.31 PTR.
+
 ## [0.6.4] - 2019-03-27
 ### Fixed
 - Fix Wurst complaining about empty lines present in `wurst.dependencies`.
@@ -203,8 +208,9 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.6.4...master
-[0.6.3]: https://github.com/nvs/map/compare/v0.6.3...v0.6.4
+[Unreleased]: https://github.com/nvs/map/compare/v0.6.5...master
+[0.6.5]: https://github.com/nvs/map/compare/v0.6.4...v0.6.5
+[0.6.4]: https://github.com/nvs/map/compare/v0.6.3...v0.6.4
 [0.6.3]: https://github.com/nvs/map/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/nvs/map/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/nvs/map/compare/v0.6.0...v0.6.1
