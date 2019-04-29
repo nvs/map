@@ -122,7 +122,7 @@ return function (state)
 		return
 	end
 
-	io.stdout:write ('\n- ', path, '\n')
+	io.stdout:write ('\nOutput: ', path, '\n')
 
 	return true
 end

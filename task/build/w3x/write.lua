@@ -148,7 +148,7 @@ return function (state)
 	w3x:close (true)
 
 	-- Report success.
-	io.stdout:write ('- ', map, '\n')
+	io.stdout:write ('Output: ', map, '\n')
 
 	return true
 end
