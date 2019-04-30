@@ -1,21 +1,20 @@
 local Path = require ('map.path')
+local Utils = require ('map.utils')
 
 return function (state)
-	state.settings.build = state.settings.build or {}
+	local build = Utils.load_files ({ state.settings.input.build }, '.lua')
+	state.settings.build = nil
 
-	-- Load state settings into environment.
-	state.environment.settings = {
-		output = {
-			directory = state.settings.output.directory,
-			name = state.settings.output.name
-		}
-	}
+	-- Load settings into environment.  Clear what shouldn't be altered.
+	state.environment.settings = Utils.deep_copy (state.settings)
+	state.environment.settings.input = nil
+	state.environment.settings.source = nil
 
 	-- Run user build scripts.
 	do
 		local messages = {}
 
-		for _, file in ipairs (state.settings.build) do
+		for _, file in ipairs (build) do
 			if Path.is_file (file) then
 				local chunk, message = loadfile (file)
 
@@ -33,17 +32,22 @@ return function (state)
 		end
 	end
 
-	local directory = state.environment.settings.output.directory
-	local name = state.environment.settings.output.name
+	-- Process environment settings.
+	do
+		local output = state.environment.settings.output
+		local directory = output.direcdtory
+		local name = output.name
+
+		state.settings.output = {
+			directory = directory,
+			name = name,
+			file = Path.join (directory, name)
+		}
+
+		Path.create_directory (directory)
+	end
+
 	state.environment.settings = nil
-
-	state.settings.output = {
-		directory = directory,
-		name = name,
-		file = Path.join (directory, name)
-	}
-
-	Path.create_directory (directory)
 
 	return true
 end

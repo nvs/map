@@ -71,7 +71,7 @@ require (%q)
 end
 
 return function (state)
-	local root = state.settings.input.source
+	local root = state.settings.input.source.require
 	local modules, message = Modules.find (root)
 
 	if not modules then
@@ -86,17 +86,19 @@ return function (state)
 
 	table.sort (names)
 
-	local debug
+	local debug = state.settings.options.debug
 
-	if state.settings.debug then
-		local mode = state.settings.debug_mode or 'path'
+	if debug then
+		if debug == true then
+			debug = 'path'
+		end
 
-		if mode == 'path' then
+		if debug == 'path' then
 			debug = '@'
-		elseif mode == 'name' then
+		elseif debug == 'name' then
 			debug = '='
 		else
-			error ('invalid `debug_mode` specified')
+			error ('invalid `debug` mode specified')
 		end
 	end
 

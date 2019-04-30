@@ -3,7 +3,7 @@ local Path = require ('map.path')
 local Shell = require ('map.shell')
 
 return function (state)
-	local root = state.settings.input.source
+	local root = state.settings.input.source.require
 	local modules, message = Modules.find (root)
 
 	if not modules then
