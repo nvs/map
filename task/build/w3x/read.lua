@@ -20,14 +20,7 @@ local constants = {
 }
 
 return function (state)
-	-- Header.
-	do
-		local file = assert (io.open (state.settings.input))
-		state.environment.header = assert (W3X.header_unpack (file))
-		file:close ()
-	end
-
-	local w3x = assert (W3X.open (state.settings.input))
+	local w3x = assert (W3X.open (state.settings.input.map))
 
 	-- Information.
 	do

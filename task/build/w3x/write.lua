@@ -21,15 +21,8 @@ local constants = {
 }
 
 return function (state)
-	local map = state.settings.output.files.build
-	assert (Path.copy (state.settings.input, map))
-
-	-- Header.
-	do
-		local file = assert (io.open (map, 'r+'))
-		assert (W3X.header_pack (file, state.environment.header))
-		file:close ()
-	end
+	local map = state.settings.output.file
+	assert (Path.copy (state.settings.input.map, map))
 
 	local w3x = assert (W3X.open (map, 'r+'))
 
@@ -39,23 +32,6 @@ return function (state)
 		local file = assert (w3x:open ('war3map.w3i', 'w', size))
 		assert (W3I.pack (file, state.environment.information))
 		file:close ()
-	end
-
-	local wurst_objects
-
-	-- Wurst objects.
-	do
-		local path = Path.join (
-			'_build', 'objectEditingOutput', 'wurstCreatedObjects.w3o')
-
-		if Path.exists (path) then
-			local W3O = require ('map.file.war3map.w3o')
-			local file = assert (io.open (path))
-			wurst_objects = assert (W3O.unpack (file))
-			file:close ()
-		else
-			wurst_objects = {}
-		end
 	end
 
 	-- Objects.
@@ -73,17 +49,6 @@ return function (state)
 
 		for name, extension in pairs (objects) do
 			local category = categories [name]
-
-			if wurst_objects [extension] then
-				for id, object in pairs (wurst_objects [extension]) do
-					if category [id] then
-						error ('object id collision: ' .. id)
-					end
-
-					category [id] = object
-				end
-			end
-
 			local path = 'war3map.' .. extension
 			local library = require ('map.file.' .. path)
 			local size = library.packsize (category)
@@ -117,7 +82,12 @@ return function (state)
 	end
 
 	-- Script.
-	assert (w3x:add (map .. '.j', 'war3map.j'))
+	do
+		assert (state.environment.information.is_lua)
+
+		w3x:remove ('war3map.j')
+		assert (w3x:add (map .. '.lua', 'war3map.lua'))
+	end
 
 	-- Imports.
 	do
@@ -150,7 +120,7 @@ return function (state)
 	w3x:close (true)
 
 	-- Report success.
-	io.stdout:write ('- ', map, '\n')
+	io.stdout:write ('Output: ', map, '\n')
 
 	return true
 end

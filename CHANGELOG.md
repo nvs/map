@@ -3,6 +3,26 @@
 ## [Unreleased]
 - N/A
 
+## [0.7.0] - 2019-04-30
+### Added
+- Lua support.  This introduces new dependencies: `luac` (part of Lua) and
+  Luacheck.
+- A Luacheck Warcraft III standard has been introduced.
+
+### Changed
+- The `check` command now leverages Luacheck.  By default, a luacheckrc
+  provided by Map is used.  A user can provide their own as well.
+- The `build` command now functions conditionally, according to settings in
+  the configuration file.  Luacheck is used here as well.
+- The configuration file has changed extensively.  See the
+  [README](README.md) for details.  Of particular note is that settings are
+  now optional by default.
+
+### Removed
+- Jass support has been removed completely.
+- Support for maps built against patch versions earlier than 1.31 has been
+  removed.  This is a result of only supporting Lua.
+
 ## [0.6.5] - 2019-04-28
 ### Fixed
 - Ensure that a WTS file is always written. This addresses an
@@ -208,7 +228,8 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.6.5...master
+[Unreleased]: https://github.com/nvs/map/compare/v0.7.0...master
+[0.7.0]: https://github.com/nvs/map/compare/v0.6.5...v0.7.0
 [0.6.5]: https://github.com/nvs/map/compare/v0.6.4...v0.6.5
 [0.6.4]: https://github.com/nvs/map/compare/v0.6.3...v0.6.4
 [0.6.3]: https://github.com/nvs/map/compare/v0.6.2...v0.6.3

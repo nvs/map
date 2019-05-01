@@ -1,8 +1,5 @@
-local Flags = require ('map.file.flags')
-local IO = require ('map.io')
 local Imports = require ('map.file.war3map.imp')
 local LFS = require ('lfs')
-local Null = require ('map.io.null')
 local Path = require ('map.path')
 local Storm = require ('stormlib')
 
@@ -13,65 +10,6 @@ local W3X = {}
 -- for a [lua-stormlib] MPQ object).
 local MPQ = {}
 MPQ.__index = MPQ
-
-local map_flags = require ('map.file.map_flags')
-
-function W3X.header_unpack (io)
-	local function unpack (options)
-		return assert (IO.unpack (io, '<' .. options))
-	end
-
-	local function unpack_map_flags (option)
-		return Flags.unpack (map_flags, unpack (option))
-	end
-
-	local output = {
-		magic = unpack ('c4 xxxx'),
-		name = unpack ('z'),
-		flags = unpack_map_flags ('I4'),
-		players = unpack ('i4')
-	}
-
-	assert (output.magic == 'HM3W')
-
-	return output
-end
-
-function W3X.header_pack (io, input)
-	assert (type (input) == 'table')
-	assert (input.magic == 'HM3W')
-
-	local function pack (options, ...)
-		return assert (IO.pack (io, '<' .. options, ...))
-	end
-
-	local function pack_map_flags (option, value)
-		return pack (option, Flags.pack (map_flags, value))
-	end
-
-	pack ('c4 xxxx', input.magic)
-	pack ('z', input.name)
-	pack_map_flags ('I4', input.flags)
-	pack ('i4', input.players)
-	pack (('x'):rep (512 - io:seek ()))
-
-	return true
-end
-
-function W3X.header_packsize (input)
-	assert (type (input) == 'table')
-
-	local io = Null.open ()
-
-	if not W3X.header_pack (io, input) then
-		return nil
-	end
-
-	local size = io:seek ('end')
-	assert (size == 512)
-
-	return size
-end
 
 -- _The returned object provides functionality that differs from that
 -- provided by [lua-stormlib].  Refer to that library's documentation for

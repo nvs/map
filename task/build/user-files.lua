@@ -1,24 +1,20 @@
 local Path = require ('map.path')
+local Utils = require ('map.utils')
 
 return function (state)
-	state.settings.build = state.settings.build or {}
+	local build = Utils.load_files ({ state.settings.input.build }, '.lua')
+	state.settings.build = nil
 
-	-- Load state settings into environment.
-	state.environment.settings = {
-		output = {
-			directories = {
-				build = state.settings.output.directories.build,
-				optimize = state.settings.output.directories.optimize
-			},
-			name = state.settings.output.name
-		}
-	}
+	-- Load settings into environment.  Clear what shouldn't be altered.
+	state.environment.settings = Utils.deep_copy (state.settings)
+	state.environment.settings.input = nil
+	state.environment.settings.source = nil
 
 	-- Run user build scripts.
 	do
 		local messages = {}
 
-		for _, file in ipairs (state.settings.build) do
+		for _, file in ipairs (build) do
 			if Path.is_file (file) then
 				local chunk, message = loadfile (file)
 
@@ -36,25 +32,10 @@ return function (state)
 		end
 	end
 
-	-- Load environment settings into state.  Nothing should be accessing
-	-- environment settings directly.
-	state.settings.output.directories =
-		state.environment.settings.output.directories
-	state.settings.output.name = state.environment.settings.output.name
-	state.settings.output.files = {
-		build = Path.join (
-			state.settings.output.directories.build,
-			state.settings.output.name),
-		optimize = Path.join (
-			state.settings.output.directories.optimize,
-			state.settings.output.name)
-	}
-
+	-- Process environment settings.
+	state.settings.output = Utils.deep_copy (
+		state.environment.settings.output)
 	state.environment.settings = nil
-
-	for _, directory in pairs (state.settings.output.directories) do
-		Path.create_directory (directory)
-	end
 
 	return true
 end

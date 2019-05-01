@@ -1,18 +1,24 @@
+local Modules = require ('map.modules')
 local Path = require ('map.path')
-local Wurst = require ('map.tool.wurst')
+local Shell = require ('map.shell')
 
 return function (state)
-	local output = Path.temporary_path ()
-	local status, message = Wurst.run (state.settings.java,
-		state.settings.wurst and state.settings.wurst.directory,
-		'-out', output, state.settings.source.jass,
-		state.settings.source.directory)
+	local modules, message = Modules.load (state)
 
-	os.remove (output)
-
-	if not status then
-		return nil, message
+	if not modules then
+		error (message)
 	end
 
-	return true
+	local paths = {}
+
+	for _, path in pairs (modules) do
+		table.insert (paths, path)
+	end
+
+	local status = Shell.execute {
+		command = Shell.escape ('luacheck', '--default-config',
+			Path.join ('map', 'luacheck', 'luacheckrc'), '--quiet', paths)
+	}
+
+	return status
 end

@@ -7,23 +7,25 @@
 - [Caveats](#caveats)
 - [Commands](#commands)
 - [Configuration](#configuration)
+- [Coding with Map](#coding-with-map)
 - [Environment](#environment)
 
 ## Overview
 
-**Map** is a collection of Warcraft III map management tools for [Lua].
+**Map** is a collection of Warcraft III map management tools for [Lua].  It
 
 [Lua]: https://www.lua.org
 
 ## Installation
 
-The following dependencies must be met to utilize this library:
+**Map** can be run using [Lua] `>= 5.1` or [LuaJit] `>= 2.0`, so long as the
+following dependencies are satisfied:
 
-- [Lua] `>= 5.1` or [LuaJIT] `>= 2.0`
+- [Lua] `>= 5.1` (for `luac`)
 - [LuaFileSystem] `>= 1.7.0`
+- [Luacheck] `>= 0.23.0`
 - [lua-stormlib]
 - [compat-5.3] `>= 0.5` (for Lua `< 5.3` or LuaJIT)
-- [Wurst]
 
 To make use of **Map** it is recommended to place it directly within your
 project's root directory.  That is, as `project/map`.  This can be achieved
@@ -34,9 +36,9 @@ _Other installation locations are neither tested or supported._
 
 [LuaJIT]: https://luajit.org
 [LuaFileSystem]: https://github.com/keplerproject/luafilesystem
+[Luacheck]: https://github.com/mpeterv/luacheck
 [lua-stormlib]: https://github.com/nvs/lua-stormlib
 [compat-5.3]: https://github.com/keplerproject/lua-compat-5.3
-[Wurst]: https://wurstlang.org
 
 ## Caveats
 
@@ -48,13 +50,26 @@ _Other installation locations are neither tested or supported._
 
 The following commands are provided by the collection:
 
-- `check`: Parse JASS scripts and validate their syntax.
-- `build`: Builds the map, including but not limited to parsing and
-  combining Jass scripts, inlining trigger strings, processing constants
-  and objects, and importing files.
-- `optimize`: Optimizes the map.  This will build both a non-optimized
-  version as well as one that is optimized.  Currently, the only
-  optimizations performed are done on the map script via [Wurst].
+- `check`: Check Lua scripts using [Luacheck].  A custom Luacheck standard
+  representing the Lua environment in Warcraft III is provided, and used by
+  defult, by **Map**.  See the following files:
+
+  - [.luacheckrc](luacheck/luacheckrc)
+  - [Warcraft III globals](luacheck/wc3.lua)
+
+  Customization of one's [Luacheck] experience is supported, and encouraged.
+  Simply consult the [Luacheck documentation], and then follow the example
+  in the above `.luacheckrc` for how to include the custom Warcraft III
+  standard.
+
+[Luacheck documentation]: https://luacheck.readthedocs.io/en/stable
+
+- `build`: Packages the `war3map.lua`.  Depending on settings, may
+  optionally build the map as well.  If the map is built, then trigger
+  strings will be inlined within objects and user build files that have
+  access to an environment exposed by **Map** will be processed.  These can
+  be used to import files, create and modify objects, adjust constants, and
+  more.
 
 All commands should be executed from within the project's root directory
 (e.g. `map/check`).  Depending on setup, it may be necessary to pass the
@@ -67,99 +82,125 @@ parameter (e.g. `map/check configuration.lua`).
 
 A configuration file is nothing more than a valid Lua file that returns a
 `table` with the settings specified below.  The only valid types within the
-configuration file are `boolean`, `string`, and `table`.  When listing
-files and directories, please keep in mind that their order is respected.
-It should be noted that a directory's tree will be walked, looking for
-matching files.
+configuration file are `nil`, `boolean`, `string`, and `table`.
 
 Below is a sample configuration file.  Unless mentioned, a setting is
-required.
+optional.
 
 ``` lua
 -- # Settings
 return {
-
-    -- Settings used to build the project's `war3map.j`.
-    source = {
-        -- This is the directory containing the project's source files.
-        -- Typically, this will contain all Jass files to be parsed and
-        -- combined.  Additionally, Wurst files should be found within.
-        directory = 'path/to/project',
-
-        -- Sometimes it is desired to have Jass files be located outside of
-        -- the project's directory.  Include those paths here.  This is
-        -- *optional*, and by default is empty.
-        --
-        -- This support only extends to Jass files, and as such other file
-        -- types will not be considered.
-        include = {
-            'common.j',
-            'blizzard.j',
-            'path/to/some/other/project'
-        }
-    }
-
     -- The path to the map file that will be used as the basis for the
     -- working map.
-    input = 'path/to/map.w3x',
+    input = {
+        -- The path to the map file that will; be used as a basis for the
+        -- built map.  If absent, the `build` command will only attempt to
+        -- package the `war3map.lua`.
+        map = 'path/to/map.w3x',
 
+        -- The directory containing all user files that can be used to
+        -- access and change the map environment.  It will recursively
+        -- traveresed, and all Lua files within will be processed.
+        --
+        -- Note that when traversing directories, entries within are sorted
+        -- using `table.sort ()`.  This should represent alphanumeric
+        -- sorting.  This knowledge can be leveraged to ensure deterministic
+        -- behavior.
+        --
+        -- If not specified, then no user files will be processed.
+        build = 'path/to/user/files',
+
+        source = {
+            -- The directory to add to end of the `package.path`.  This will
+            -- then be utilized when searching for modules to include.  If
+            -- root module already exists on the `package.path`, this can be
+            -- omitted.
+            directory = 'path/to/include',
+
+            -- The name of the root module to `require`.  It must be on the
+            -- `package.path`.  This is **REQUIRED**.
+            require = 'name'
+        }
+    },
+
+    -- All values in this table are **REQUIRED**.
     output = {
-        -- The directories in which to place the generated output files.
-        directories = {
-            build = 'tmp',
-            optimize = 'tmp/opt'
-        },
+        -- The directory in which to place the generated output files.  This
+        -- directory will be created automatically if it does not exist.
+        directory = 'path/to/put/files',
 
-        -- The name used when creating the output files.
+        -- The name to use when creating the output map.  The `war3map.lua`
+        -- be named identically, with a `.lua` extension added.
         name = 'My Map.w3x'
     },
 
-    -- A list of Lua files (files with the extension `.lua`) that can be
-    -- used to access and change the map environment.  Directories can be
-    -- specified as well, and will be recursively traversed.
-    --
-    -- Note that the ordering specified here is preserved.  However, when
-    -- traversing directories, entries within are sorted using
-    -- `table.sort ()`.  This should represent alphanumeric sorting.
-    build = {
-        'create-objects.lua',
-        'path/to/some-directory',
-        'list-imports.lua'
-    },
-
-    -- The command to invoke the Java executable.  This is *optional*, with
-    -- the default specified below.
-    java = 'java',
-
-    -- Settings to be used with Wurst.  These are *optional*, with the
-    -- defaults specified below.
-    wurst = {
-        -- The directory containing the Wurst installation.  Note that this
-        -- value will be OS dependent.
-        directory = '/home/user/.wurst',
-
-        -- A list of directories to be placed in an automatically created
-        -- `wurst.dependencies` file.  Relative paths will be appended to
-        -- project's root directory.
-        dependencies = {},
-
-        -- Options to be passed to Wurst for script optimization.
-        optimize = {
-            '-opt',
-            '-inline',
-            '-localOptimizations'
-        }
+    options = {
+        -- Indicates whether to enable debug mode.  This will cause file
+        -- names and line numbers in error messages to reflect the original
+        -- locations.  This will require a bit of extra memory.
+        --
+        -- By default, this option is disabled.  Listed are the accepted
+        -- values for debug mode.  Note that 'path', the default mode should
+        -- `true` be specified, will display the file path.  Setting the
+        -- option to 'name' will only display the module's name.
+        debug = false or nil or true or 'path' or 'name'
     }
 }
 ```
 
+With the above in mind, here is an example of the absolute minimum supported
+configuration file.  This will build the `war3map.lua`, and nothing else.
+
+```lua
+return {
+    input = {
+        source = {
+            require = 'name'
+        }
+    },
+
+    output = {
+        directory = 'tmp',
+        name = 'Map.w3x'
+    }
+}
+```
+
+## Coding with Map
+
+A typical [Lua] workflow involves utilizing [`require`] to break up projects
+into modules, as well as using it to include externally defined modules.  If
+you already do this, then you do not need to adjust your habits beyond the
+following stated limitations:
+
+1. Warcraft III's Lua environment does not include `require`.  Nor does it
+   have a concept of multiple files.  To overcome this, **Map** will provide
+   the needed plumbing when packaging the `war3map.lua` to make `require`
+   work as expected.
+2. Only modules on the Lua path `package.path` are supported. Modules using
+   C loaders on the `package.cpath` are not suppoted, and **Map** will
+   complain.
+3. Note that `luac` is used to identify uses of `require`, and the analysis
+   performed is rather naive.  Any clever uses of `require` will probably
+   be missed.  It is recommended to stick to literal `string` values (e.g.
+   `require ('name')`).
+4. Do not needlessly use `require`.  Any detected usages will cause those
+   modules to be packaged into the `war3map.lua`, even if their code is not
+   run.
+5. All moules are checked using [Luacheck], and warnings will be issued if
+   globals not included in the Warcraft III Lua environment are utilized.
+   Resolving such issues, if desired, and adjusting the `.luacheckrc`
+   accordingly, is left up to the user.
+
+[`require`]: https://www.lua.org/manual/5.3/manual.html#pdf-require
+
 ## Environment
 
-User build scripts (listed via `build` in configuration) are simply a
-convenience provided to ease reading and writing of map data.  All libraries
-provided by **Map**, as well as those that can be included via `require ()`,
-are available.  Additionally, a user build script has the option to access
-exposed map data via `...`.
+User build scripts (found within the directory specified by `input.build`)
+are simply a convenience provided to ease reading and writing of map data.
+All libraries provided by **Map**, as well as any on the `package.path`, can
+be included.  Additionally, a user build script has the convenience of
+accessing exposed map data (i.e. the environment) via `...`.
 
 ### Settings
 
@@ -178,7 +219,8 @@ map.settings.output.name = ''
 ### Information
 
 All values present within the `war3map.w3i` can be edited.  For details,
-please consult the source file for [W3I] handling.  For example:
+please consult the source file for [W3I](file/war3map/w3i.lua) handling.
+For example:
 
 ``` lua
 local map = ...
@@ -186,25 +228,10 @@ local map = ...
 map.information.map.name = 'A Map'
 ````
 
-[W3I]: https://github.com/nvs/map/blob/master/file/war3map/w3i.lua
-
-### Header
-
-All values present within the header of the map can be edited.  For details,
-please consult the source file for [W3X] header handling.
-
-``` lua
-local map = ...
-
-map.header.name = 'Another Map'
-```
-
-[W3X]: https://github.com/nvs/map/blob/master/file/w3x.lua
-
 ### Objects
 
 Object modifications for all object types (i.e. abilities, destructables,
-doodads, units, quests, items, and buffs) can be edited.  All object data
+doodads, units, upgrades, items, and buffs) can be edited.  All object data
 has been merged together.  This includes different object types, as well as
 those that are considered 'original' and 'custom'.
 
@@ -214,15 +241,31 @@ An object has the following general format:
 local map = ...
 
 map.objects ['A000'] = {
-    -- General:
     type = 'ability', -- Indicates the type of object.  See below.
-    base = 'ACfb' -- If present, implies a 'custom' object.
+    base = 'ACev' -- If present, implies a 'custom' object.
 
-    -- Modifications:
-    unam = {
+    -- Example of a modification that has no levels.
+    anam = {
         type = 'string',
         value = 'An Example'
-    }
+    },
+
+    -- Example of a modification that has levels.
+	atp1 = {
+		type = 'string',
+		values = {
+			[1] = 'Based on Evaion!'
+		}
+	},
+
+    -- Example of a modification that has 'custom' data.
+	Eev1 = {
+		data = 1,
+		type = 'unreal',
+		values = {
+			[1] = 0
+		}
+	}
 }
 ```
 
@@ -267,8 +310,6 @@ The following files are exposed:
 ``` lua
 local map = ...
 
-print (#map.imports)
-
 -- This will import the file and keep its existing name.
 map.imports ['path/to/file.j'] = true
 
@@ -280,74 +321,3 @@ map.imports ['path/to/other/file.j'] = 'war3map.j'
 -- structure.
 map.imports ['path/to/directory'] =  true
 ```
-
-### Globals
-
-All globals meeting specific criteria will be available within the user
-build scripts.  This includes those present within both the `common.j` and
-`blizzard.j`, as well as any within user provided scripts.  Do note that any
-changes to these values on the Lua side will not be reflected within a built
-map.
-
-For example:
-
-``` lua
-local map = ...
-
-for name, value in pairs (map.globals) do
-    print (name, value)
-end
-```
-
-The criteria for globals to be considered are as follows:
-
-1. The global must be declared as constant.
-2. The global must be one of the following types:
-    - `boolean`
-    - `string`
-    - `real`
-    - `integer`
-3. The global must be assigned a literal value.
-
-Examples of accepted globals:
-
-``` jass
-constant boolean BOOLEAN_A = true
-constant boolean BOOLEAN_B = false
-
-constant string STRING_A = ""
-constant string STRING_B = "Hello, world!"
-
-constant real REAL_A = 3.1415926
-constant real REAL_B = .50
-constant real REAL_C = 0.
-
-constant integer INTEGER_A = 1234
-constant integer INTEGER_B = 07
-constant integer INTEGER_C = 0xAFF
-constant integer INTEGER_D = $ABC1
-constant integer INTEGER_E = 'A'
-constant integer INTEGER_F = 'A000'
-```
-
-Examples of rejected globals:
-
-``` jass
-boolean BOOLEAN_C = true
-constant boolean BOOLEAN_D = BOOLEAN_C
-constant boolean BOOLEAN_E = true and false
-
-constant string STRING_C = "Multiple" + " " + "Parts"
-constant string STRING_D = STRING_B + " And you too!"
-
-constant real_C = REAL_A * 5.00
-constant real_D = globals.bj_PI
-
-integer INTEGER_G = 1
-constant integer_H = 5 + 5 + INTEGER_A
-```
-
-Both the name of the global as well as its contents are exposed, and an
-attempt is made to translate Jass types to their Lua equivalents.  However,
-this sometimes breaks down as Lua only has `number`, whereas Jass presents
-both `integer` and `real` types.

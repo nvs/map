@@ -1,17 +1,32 @@
 local Tasks = require ('map.tasks')
 
 return function (state)
-	io.stdout:write ('Building...\n')
+	local map = state.settings.input.map
+	local build = state.settings.input.build
 
 	local tasks = {
-		'build.environment',
-		'build.w3x.read',
-		'build.jass.read',
-		'build.inline-strings',
-		'build.user-files',
-		'build.jass.write',
-		'build.w3x.write'
+		'check',
+		'build.environment'
 	}
+
+	if map then
+		table.insert (tasks, 'build.w3x.read')
+		table.insert (tasks, 'build.inline-strings')
+	end
+
+	if build then
+		table.insert (tasks, 'build.user-files')
+	end
+
+	-- This step is done regardless of whether user files were handled.
+	table.insert (tasks, 'build.post-user-files')
+
+	-- The script was checked.  We can attempt to compile.
+	table.insert (tasks, 'build.script')
+
+	if map then
+		table.insert (tasks, 'build.w3x.write')
+	end
 
 	Tasks.add (state, tasks)
 

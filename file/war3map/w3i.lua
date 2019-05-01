@@ -49,13 +49,23 @@ function W3I.unpack (io)
 
 	local is_roc = output.type == 0x12
 	local is_tft = output.type == 0x19
+	local is_lua = output.type == 0x1C
 
-	if not (is_roc or is_tft) then
+	if not (is_roc or is_tft or is_lua) then
 		return nil
 	end
 
 	output.saves = unpack ('i4')
 	output.editor = unpack ('i4')
+
+	if is_lua then
+		output.version = {
+			major = unpack ('i4'),
+			minor = unpack ('i4'),
+			patch = unpack ('i4'),
+			build = unpack ('i4')
+		}
+	end
 
 	output.map = {
 		name = unpack ('z'),
@@ -107,7 +117,7 @@ function W3I.unpack (io)
 		}
 	end
 
-	if is_tft then
+	if is_tft or is_lua then
 		output.loading = {
 			background = unpack ('i4'),
 			model = unpack ('z'),
@@ -151,6 +161,10 @@ function W3I.unpack (io)
 				alpha = unpack ('B')
 			}
 		}
+	end
+
+	if is_lua then
+		output.is_lua = unpack ('i4') == 1
 	end
 
 	output.players = {}
@@ -227,7 +241,7 @@ function W3I.unpack (io)
 		output.units [index] = unit
 	end
 
-	if is_tft then
+	if is_tft or is_lua then
 		output.item_tables = {}
 
 		for index = 1, unpack ('i4') do
@@ -281,14 +295,22 @@ function W3I.pack (io, input)
 
 	local is_roc = input.type == 0x12
 	local is_tft = input.type == 0x19
+	local is_lua = input.type == 0x1C
 
-	if not (is_roc or is_tft) then
+	if not (is_roc or is_tft or is_lua) then
 		return nil
 	end
 
 	pack ('i4', input.type)
 	pack ('i4', input.saves)
 	pack ('i4', input.editor)
+
+	if is_lua then
+		pack ('i4', input.version.major)
+		pack ('i4', input.version.minor)
+		pack ('i4', input.version.patch)
+		pack ('i4', input.version.build)
+	end
 
 	pack ('z', input.map.name)
 	pack ('z', input.map.author)
@@ -324,7 +346,7 @@ function W3I.pack (io, input)
 		pack ('z', input.prologue.subtitle)
 	end
 
-	if is_tft then
+	if is_tft or is_lua then
 		pack ('i4', input.loading.background)
 		pack ('z', input.loading.model)
 		pack ('z', input.loading.text)
@@ -354,6 +376,10 @@ function W3I.pack (io, input)
 		pack ('B', input.environment.water.green)
 		pack ('B', input.environment.water.blue)
 		pack ('B', input.environment.water.alpha)
+	end
+
+	if is_lua then
+		pack ('i4', input.is_lua and 1 or 0)
 	end
 
 	pack ('i4', #input.players)
@@ -410,7 +436,7 @@ function W3I.pack (io, input)
 		end
 	end
 
-	if is_tft then
+	if is_tft or is_lua then
 		pack ('i4', #input.item_tables)
 
 		for _, item_table in ipairs (input.item_tables) do

@@ -1,53 +1,36 @@
-local LFS = require ('lfs')
-local Path = require ('map.path')
-
-local function process_entry (path, extension, list, exists)
-	if exists [path] then -- luacheck: ignore 542
-		-- Do not process an entry multiple times.
-	elseif Path.is_directory (path) then
-		local entries = {}
-
-		for entry in LFS.dir (path) do
-			if entry ~= '.' and entry ~= '..' then
-				table.insert (entries, entry)
-			end
-		end
-
-		table.sort (entries)
-
-		for _, entry in ipairs (entries) do
-			process_entry (Path.join (path, entry), extension, list, exists)
-		end
-	elseif Path.is_file (path)
-		and Path.extension (path) == extension
-	then
-		list [#list + 1] = path
-		exists [path] = true
-	end
-end
-
-local function load_files (paths, extension)
-	local list = {}
-	local exists = {}
-
-	for _, path in ipairs (paths) do
-		process_entry (path, extension, list, exists)
-	end
-
-	return list
-end
-
 return function (state)
-	local source = {
-		state.settings.source.directory
-	}
+	-- Input.
+	do
+		local input = state.settings.input or {}
+		input.source = input.source or {}
 
-	for _, entry in ipairs (state.settings.source.include or {}) do
-		source [#source + 1] = entry
+		state.settings.input = input
 	end
 
-	state.settings.source.jass = load_files (source, '.j')
-	state.settings.build = load_files (state.settings.build, '.lua')
+	-- Output.
+	do
+		local output = state.settings.output or {}
+		state.settings.output = output
+	end
+
+	-- Options.
+	do
+		local options = state.settings.options or {
+			debug = false
+		}
+
+		state.settings.options = options
+	end
+
+	-- Prepare the `package.path`.
+	do
+		local directory = state.settings.input.source.directory
+
+		if directory then
+			package.path = package.path .. string.format (
+				'%s/?.lua;%s/?/init.lua;', directory, directory)
+		end
+	end
 
 	return true
 end
