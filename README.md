@@ -1,5 +1,7 @@
 # Map
 
+[![License](https://img.shields.io/github/license/nvs/map.svg)](LICENSE)
+
 ## Contents
 
 - [Overview](#overview)
