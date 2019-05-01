@@ -11,9 +11,11 @@ return Tasks.run {
 	help = [[
 # map build
 
-Builds the map, including but not limited to parsing and combining Jass
-scripts, inlining trigger strings, processing constants and objects, and
-importing files.
+ Packages the `war3map.lua`.  Depending on settings, may optionally build
+ the map as well.  If the map is built, then trigger strings will be inlined
+ within objects and user build files that have access to an environment
+ exposed by Map will be processed.  These can be used to import files,
+ create and modify objects, adjust constants, and more.
 
 ## Usage
     build [options]

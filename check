@@ -12,7 +12,8 @@ return Tasks.run {
 	help = [[
 # map check
 
-Parse Jass scripts and validate their syntax.
+Check Lua modules using Luacheck.  A custom Luacheck standard representing
+the Lua environment in Warcraft III is provided, and used by defult.
 
 ## Usage
     check [options]
