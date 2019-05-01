@@ -28,7 +28,7 @@ return function (state)
 
 		if directory then
 			package.path = package.path .. string.format (
-				'%s/?.lua;%s/?/init.lua;', directory, directory)
+				';%s/?.lua;%s/?/init.lua', directory, directory)
 		end
 	end
 
