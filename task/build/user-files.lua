@@ -33,20 +33,8 @@ return function (state)
 	end
 
 	-- Process environment settings.
-	do
-		local output = state.environment.settings.output
-		local directory = output.direcdtory
-		local name = output.name
-
-		state.settings.output = {
-			directory = directory,
-			name = name,
-			file = Path.join (directory, name)
-		}
-
-		Path.create_directory (directory)
-	end
-
+	state.settings.output = Utils.deep_copy (
+		state.environment.settings.output)
 	state.environment.settings = nil
 
 	return true
