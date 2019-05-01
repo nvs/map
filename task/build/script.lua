@@ -71,8 +71,7 @@ require (%q)
 end
 
 return function (state)
-	local root = state.settings.input.source.require
-	local modules, message = Modules.find (root)
+	local modules, message = Modules.load (state)
 
 	if not modules then
 		error (message)
@@ -111,7 +110,7 @@ return function (state)
 		write_module (output, modules [name], name, debug)
 	end
 
-	write_footer (output, root)
+	write_footer (output, state.settings.input.source.require)
 
 	output:close ()
 

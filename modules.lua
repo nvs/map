@@ -108,10 +108,15 @@ end
 
 local Modules = {}
 
-function Modules.find (name)
+function Modules.load (state)
+	if state.modules then
+		return state.modules
+	end
+
 	local modules = {}
 	local errors = setmetatable ({}, Errors)
 
+	local name = state.settings.input.source.require
 	local path, message = find_module (name)
 
 	if path then
@@ -124,6 +129,8 @@ function Modules.find (name)
 	if #errors > 0 then
 		return nil, tostring (errors)
 	end
+
+	state.modules = modules
 
 	return modules
 end
