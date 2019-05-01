@@ -47,6 +47,7 @@ _Other installation locations are neither tested or supported._
 1. **TL;DR: Your mileage may vary.**  This library has not been
    extensively tested under any environment other than Linux.  Please
    backup any files before use.
+2. Only Lua is supported, now that Jass support has been removed.
 
 ## Commands
 
@@ -59,7 +60,7 @@ The following commands are provided by the collection:
   - [.luacheckrc](luacheck/luacheckrc)
   - [Warcraft III globals](luacheck/wc3.lua)
 
-  Customization of one's [Luacheck] experience is supported, and encouraged.
+  Customization of one's Luacheck experience is supported, and encouraged.
   Simply consult the [Luacheck documentation], and then follow the example
   in the above `.luacheckrc` for how to include the custom Warcraft III
   standard.
@@ -68,7 +69,7 @@ The following commands are provided by the collection:
 
 - `build`: Packages the `war3map.lua`.  Depending on settings, may
   optionally build the map as well.  If the map is built, then trigger
-  strings will be inlined within objects and user build files that have
+  strings will be inlined within objects, and user build files that have
   access to an environment exposed by **Map** will be processed.  These can
   be used to import files, create and modify objects, adjust constants, and
   more.
@@ -92,10 +93,8 @@ optional.
 ``` lua
 -- # Settings
 return {
-    -- The path to the map file that will be used as the basis for the
-    -- working map.
     input = {
-        -- The path to the map file that will; be used as a basis for the
+        -- The path to the map file that will be used as a basis for the
         -- built map.  If absent, the `build` command will only attempt to
         -- package the `war3map.lua`.
         map = 'path/to/map.w3x',
@@ -253,21 +252,21 @@ map.objects ['A000'] = {
     },
 
     -- Example of a modification that has levels.
-	atp1 = {
-		type = 'string',
-		values = {
-			[1] = 'Based on Evaion!'
-		}
-	},
+    atp1 = {
+        type = 'string',
+        values = {
+            [1] = 'Based on Evaion!'
+        }
+    },
 
     -- Example of a modification that has 'custom' data.
-	Eev1 = {
-		data = 1,
-		type = 'unreal',
-		values = {
-			[1] = 0
-		}
-	}
+    Eev1 = {
+        data = 1,
+        type = 'unreal',
+        values = {
+            [1] = 0
+        }
+    }
 }
 ```
 
