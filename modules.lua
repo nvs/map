@@ -7,11 +7,7 @@ local Shell = require ('map.shell')
 
 local function find_requires (path)
 	local command = Shell.escape ('luac', '-p', '-l', path)
-	local process = io.popen (command)
-
-	if not process then
-		return
-	end
+	local process = assert (io.popen (command))
 
 	local requires = {}
 	local state
