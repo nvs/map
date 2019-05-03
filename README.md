@@ -23,7 +23,7 @@
 **Map** can be run using [Lua] `>= 5.1` or [LuaJit] `>= 2.0`, so long as the
 following dependencies are satisfied:
 
-- [Lua] `>= 5.1` (for `luac`)
+- [Lua] `>= 5.1` (for [luac])
 - [LuaFileSystem] `>= 1.7.0`
 - [Luacheck] `>= 0.23.0`
 - [lua-stormlib]
@@ -36,6 +36,7 @@ submodule.
 
 _Other installation locations are neither tested or supported._
 
+[luac]: https://www.lua.org/manual/5.3/luac.html
 [LuaJIT]: https://luajit.org
 [LuaFileSystem]: https://github.com/keplerproject/luafilesystem
 [Luacheck]: https://github.com/mpeterv/luacheck
@@ -181,7 +182,7 @@ following stated limitations:
 2. Only modules on the Lua path `package.path` are supported. Modules using
    C loaders on the `package.cpath` are not suppoted, and **Map** will
    complain.
-3. Note that `luac` is used to identify uses of `require`, and the analysis
+3. Note that [luac] is used to identify uses of `require`, and the analysis
    performed is rather naive.  Any clever uses of `require` will probably
    be missed.  It is recommended to stick to literal `string` values (e.g.
    `require ('name')`).
