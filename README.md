@@ -101,7 +101,7 @@ return {
 
         -- The directory containing all user files that can be used to
         -- access and change the map environment.  It will recursively
-        -- traveresed, and all Lua files within will be processed.
+        -- traversed, and all Lua files within will be processed.
         --
         -- Note that when traversing directories, entries within are sorted
         -- using `table.sort ()`.  This should represent alphanumeric
