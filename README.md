@@ -14,7 +14,7 @@
 
 ## Overview
 
-**Map** is a collection of Warcraft III map management tools for [Lua].  It
+**Map** is a collection of Warcraft III map management tools for [Lua].
 
 [Lua]: https://www.lua.org
 
@@ -115,8 +115,8 @@ return {
         source = {
             -- The directory to add to end of the `package.path`.  This will
             -- then be utilized when searching for modules to include.  If
-            -- root module already exists on the `package.path`, this can be
-            -- omitted.
+            -- the root module already exists on the `package.path`, this
+            -- can be omitted.
             directory = 'path/to/include',
 
             -- The name of the root module to `require`.  It must be on the
@@ -132,14 +132,15 @@ return {
         directory = 'path/to/put/files',
 
         -- The name to use when creating the output map.  The `war3map.lua`
-        -- be named identically, with a `.lua` extension added.
+        -- will be named identically, with a `.lua` extension added.
         name = 'My Map.w3x'
     },
 
     options = {
         -- Indicates whether to enable debug mode.  This will cause file
         -- names and line numbers in error messages to reflect the original
-        -- locations.  This will require a bit of extra memory.
+        -- locations.  This will require a bit of extra memory when running
+        -- the map.
         --
         -- By default, this option is disabled.  Listed are the accepted
         -- values for debug mode.  Note that 'path', the default mode should
@@ -157,13 +158,13 @@ configuration file.  This will build the `war3map.lua`, and nothing else.
 return {
     input = {
         source = {
-            require = 'name'
+            require = 'name' -- Must be on the `package.path`.
         }
     },
 
     output = {
         directory = 'tmp',
-        name = 'Map.w3x'
+        name = 'Map.w3x' -- Output file named `Map.w3x.lua`.
     }
 }
 ```
