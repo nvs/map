@@ -3,6 +3,10 @@
 ## [Unreleased]
 - N/A
 
+## [0.7.1] - 2019-05-03
+### Fixed
+- Properly handle `package.path` with `input.source.directory.`
+
 ## [0.7.0] - 2019-04-30
 ### Added
 - Lua support.  This introduces new dependencies: `luac` (part of Lua) and
