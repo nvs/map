@@ -44,13 +44,6 @@ local to_name = {
 	[3] = 'string'
 }
 
--- Every four character identifier except these is considered a
--- modification.  This list should be kept to an absolute minimum.
-local ignored = {
-	type = true,
-	base = true
-}
-
 function Objects.unpack (io, extra)
 	extra = not not extra
 
@@ -127,8 +120,8 @@ function Objects.pack (io, input, extra)
 	local function pack_modifications (object, object_id)
 		local count = 0
 
-		for id, modification in pairs (object) do
-			if #id == 4 and not ignored [id] then
+		for _, modification in pairs (object) do
+			if type (modification) == 'type' then
 				if extra and modification.values then
 					for _ in pairs (modification.values) do
 						count = count + 1
@@ -142,7 +135,7 @@ function Objects.pack (io, input, extra)
 		pack ('i4', count)
 
 		for id, modification in pairs (object) do
-			if #id == 4 and not ignored [id] then
+			if type (modification) == 'type' then
 				local type = assert (from_name [modification.type])
 				local format = assert (modification_format [extra] [type])
 
