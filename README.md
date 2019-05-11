@@ -101,7 +101,7 @@ return {
         map = 'path/to/map.w3x',
 
         -- The directory containing all user files that can be used to
-        -- access and change the map environment.  It will recursively
+        -- access and change the map environment.  It will be recursively
         -- traversed, and all Lua files within will be processed.
         --
         -- Note that when traversing directories, entries within are sorted
