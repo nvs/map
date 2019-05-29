@@ -121,7 +121,7 @@ function Objects.pack (io, input, extra)
 		local count = 0
 
 		for _, modification in pairs (object) do
-			if type (modification) == 'type' then
+			if type (modification) == 'table' then
 				if extra and modification.values then
 					for _ in pairs (modification.values) do
 						count = count + 1
@@ -135,7 +135,7 @@ function Objects.pack (io, input, extra)
 		pack ('i4', count)
 
 		for id, modification in pairs (object) do
-			if type (modification) == 'type' then
+			if type (modification) == 'table' then
 				local type = assert (from_name [modification.type])
 				local format = assert (modification_format [extra] [type])
 
