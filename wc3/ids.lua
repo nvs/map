@@ -4787,7 +4787,8 @@ local unknown = {
 		'_DEBUG',
 		'_GV',
 		'__jarray',
-		'globals'
+		'globals',
+		'FourCC'
 	}
 }
 
