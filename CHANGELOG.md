@@ -1,7 +1,12 @@
 # Map Changelog
 
 ## [Unreleased]
-- N/A
+### Changed
+- Update WC3 ids for 1.30.0 and 1.31.1.
+
+### Fixed
+- Allow processing of object modifications that have ids that are not four
+  characters in length.
 
 ## [0.7.1] - 2019-05-03
 ### Fixed
