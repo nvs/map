@@ -5,7 +5,7 @@
 
 ## [0.7.2] - 2019-08-09
 ### Changed
-- Update WC3 ids for 1.30.0 and 1.31.1.
+- Update WC3 ids for 1.31.0 and 1.31.1.
 
 ### Fixed
 - Allow processing of object modifications that have ids that are not four
