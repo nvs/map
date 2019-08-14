@@ -181,7 +181,7 @@ following stated limitations:
    the needed plumbing when packaging the `war3map.lua` to make `require`
    work as expected.
 2. Only modules on the Lua path `package.path` are supported. Modules using
-   C loaders on the `package.cpath` are not suppoted, and **Map** will
+   C loaders on the `package.cpath` are not supported, and **Map** will
    complain.
 3. Note that [luac] is used to identify uses of `require`, and the analysis
    performed is rather naive.  Any clever uses of `require` will probably
