@@ -1,7 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
-- N/A
+### Fixed
+- Properly unpack unit tables in W3I file.
 
 ## [0.7.2] - 2019-08-09
 ### Changed

@@ -226,7 +226,8 @@ function W3I.unpack (io)
 		local unit = {
 			index = unpack ('i4'),
 			name = unpack ('z'),
-			columns = unpack ('i4')
+			columns = unpack ('i4'),
+			rows = {}
 		}
 
 		unit.type = { unpack (('i4'):rep (unit.columns)) }
