@@ -1,4 +1,4 @@
--- Globals in Warcraft III as of `1.31.0.1189 Public Test`.
+-- Globals in Warcraft III Lua as of `1.31.1.2614`.
 
 local ai = {
 	natives = {
