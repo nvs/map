@@ -4,6 +4,9 @@
 ### Added
 - Support for W3I changes in 1.32.
 
+### Changed
+- For the W3I table, `type` has been renamed to `format`.
+
 ### Fixed
 - Properly unpack unit tables in W3I file.
 
