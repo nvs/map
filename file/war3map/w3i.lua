@@ -254,7 +254,7 @@ function W3I.unpack (io)
 		output.units [index] = unit
 	end
 
-	if format >= 0x1C then
+	if format >= 0x19 then
 		output.item_tables = {}
 
 		for index = 1, unpack ('i4') do
@@ -306,19 +306,17 @@ function W3I.pack (io, input)
 
 	assert (io:seek ('set'))
 
-	local is_roc = input.type == 0x12
-	local is_tft = input.type == 0x19
-	local is_lua = input.type == 0x1C
+	local format = input.format
 
-	if not (is_roc or is_tft or is_lua) then
+	if not formats [format] then
 		return nil
 	end
 
-	pack ('i4', input.type)
+	pack ('i4', input.format)
 	pack ('i4', input.saves)
 	pack ('i4', input.editor)
 
-	if is_lua then
+	if format >= 0x1C then
 		pack ('i4', input.version.major)
 		pack ('i4', input.version.minor)
 		pack ('i4', input.version.patch)
@@ -346,7 +344,7 @@ function W3I.pack (io, input)
 	pack_map_flags ('I4', input.map.flags)
 	pack ('c1', input.tileset)
 
-	if is_roc then
+	if format == 0x12 then
 		pack ('i4', input.campaign.background)
 
 		pack ('z', input.loading.text)
@@ -357,9 +355,7 @@ function W3I.pack (io, input)
 		pack ('z', input.prologue.text)
 		pack ('z', input.prologue.title)
 		pack ('z', input.prologue.subtitle)
-	end
-
-	if is_tft or is_lua then
+	else
 		pack ('i4', input.loading.background)
 		pack ('z', input.loading.model)
 		pack ('z', input.loading.text)
@@ -391,8 +387,13 @@ function W3I.pack (io, input)
 		pack ('B', input.environment.water.alpha)
 	end
 
-	if is_lua then
+	if format >= 0x1C then
 		pack ('i4', input.is_lua and 1 or 0)
+	end
+
+	if format == 0x1F then
+		pack ('i4', input.quality)
+		pack ('i4', input.game_data_version)
 	end
 
 	pack ('i4', #input.players)
@@ -407,6 +408,11 @@ function W3I.pack (io, input)
 		pack ('f', player.start.y)
 		pack_bits ('I4', player.ally.low)
 		pack_bits ('I4', player.ally.high)
+
+		if format == 0x1F then
+			pack ('I4', player.enemy.low)
+			pack ('I4', player.enemy.high)
+		end
 	end
 
 	pack ('i4', #input.forces)
@@ -449,7 +455,7 @@ function W3I.pack (io, input)
 		end
 	end
 
-	if is_tft or is_lua then
+	if format >= 0x19 then
 		pack ('i4', #input.item_tables)
 
 		for _, item_table in ipairs (input.item_tables) do
