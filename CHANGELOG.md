@@ -1,6 +1,9 @@
 # Map Changelog
 
 ## [Unreleased]
+### Added
+- Support for W3I changes in 1.32.
+
 ### Fixed
 - Properly unpack unit tables in W3I file.
 
