@@ -410,8 +410,8 @@ function W3I.pack (io, input)
 		pack_bits ('I4', player.ally.high)
 
 		if format == 0x1F then
-			pack ('I4', player.enemy.low)
-			pack ('I4', player.enemy.high)
+			pack_bits ('I4', player.enemy.low)
+			pack_bits ('I4', player.enemy.high)
 		end
 	end
 
