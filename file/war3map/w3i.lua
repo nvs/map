@@ -20,6 +20,13 @@ local force_flags = {
 	[0x20] = 'share_advanced_control'
 }
 
+local formats = {
+	[0x12] = true, -- RoC
+	[0x19] = true, -- TFT
+	[0x1C] = true, -- Lua
+	[0x1F] = true -- Reforged
+}
+
 function W3I.unpack (io)
 	if not io then
 		return nil
@@ -44,21 +51,17 @@ function W3I.unpack (io)
 	assert (io:seek ('set'))
 
 	local output = {}
+	local format = unpack ('i4')
 
-	output.type = unpack ('i4')
-
-	local is_roc = output.type == 0x12
-	local is_tft = output.type == 0x19
-	local is_lua = output.type == 0x1C
-
-	if not (is_roc or is_tft or is_lua) then
+	if not formats [format] then
 		return nil
 	end
 
+	output.format = format
 	output.saves = unpack ('i4')
 	output.editor = unpack ('i4')
 
-	if is_lua then
+	if format >= 0x1C then
 		output.version = {
 			major = unpack ('i4'),
 			minor = unpack ('i4'),
@@ -98,7 +101,7 @@ function W3I.unpack (io)
 	output.map.flags = unpack_map_flags ('I4')
 	output.tileset = unpack ('c1')
 
-	if is_roc then
+	if format == 0x12 then
 		output.campaign = {
 			background = unpack ('i4')
 		}
@@ -115,9 +118,7 @@ function W3I.unpack (io)
 			title = unpack ('z'),
 			subtitle = unpack ('z')
 		}
-	end
-
-	if is_tft or is_lua then
+	else
 		output.loading = {
 			background = unpack ('i4'),
 			model = unpack ('z'),
@@ -163,8 +164,13 @@ function W3I.unpack (io)
 		}
 	end
 
-	if is_lua then
+	if format >= 0x1C then
 		output.is_lua = unpack ('i4') == 1
+	end
+
+	if format == 0x1F then
+		output.quality = unpack ('i4')
+		output.game_data_version = unpack ('i4')
 	end
 
 	output.players = {}
@@ -178,7 +184,8 @@ function W3I.unpack (io)
 				fixed = unpack ('i4')
 			},
 			name = unpack ('z'),
-			ally = {}
+			ally = {},
+			enemy = {}
 		}
 
 		player.start.x = unpack ('f')
@@ -186,6 +193,11 @@ function W3I.unpack (io)
 
 		player.ally.low = unpack_bits ('I4')
 		player.ally.high = unpack_bits ('I4')
+
+		if format == 0x1F then
+			player.enemy.low = unpack_bits ('I4')
+			player.enemy.high = unpack_bits ('I4')
+		end
 
 		output.players [index] = player
 	end
@@ -242,7 +254,7 @@ function W3I.unpack (io)
 		output.units [index] = unit
 	end
 
-	if is_tft or is_lua then
+	if format >= 0x1C then
 		output.item_tables = {}
 
 		for index = 1, unpack ('i4') do
