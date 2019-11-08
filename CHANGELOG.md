@@ -243,11 +243,13 @@
 - Commands now validate the specified configuration table, and will no longer
   proceed unless validation is successful.
 
-## 0.1.0 - 2017-02-06
+## [0.1.0] - 2017-02-06
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.7.0...master
+[Unreleased]: https://github.com/nvs/map/compare/v0.7.2...master
+[0.7.2]: https://github.com/nvs/map/compare/v0.7.1...v0.7.2
+[0.7.1]: https://github.com/nvs/map/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/nvs/map/compare/v0.6.5...v0.7.0
 [0.6.5]: https://github.com/nvs/map/compare/v0.6.4...v0.6.5
 [0.6.4]: https://github.com/nvs/map/compare/v0.6.3...v0.6.4
@@ -266,3 +268,4 @@
 [0.2.0]: https://github.com/nvs/map/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/nvs/map/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/nvs/map/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/nvs/map/releases/tag/v0.1.0
