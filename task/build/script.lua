@@ -52,7 +52,9 @@ end -- %s
 		assert (output:write (string.format ([[
 do -- %s
 	local _ENV = _ENV
-	package.preload [%q] = function (...) -- luacheck: ignore 212
+	-- luacheck: ignore 212
+	package.preload [%q] = function (...)
+	-- luacheck: enable 212
 		_ENV = _ENV
 
 %s
