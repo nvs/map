@@ -11,7 +11,6 @@ return function (state)
 
 	if map then
 		table.insert (tasks, 'build.w3x.read')
-		table.insert (tasks, 'build.inline-strings')
 	end
 
 	if build then

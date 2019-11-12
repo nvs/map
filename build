@@ -11,11 +11,10 @@ return Tasks.run {
 	help = [[
 # map build
 
- Packages the `war3map.lua`.  Depending on settings, may optionally build
- the map as well.  If the map is built, then trigger strings will be inlined
- within objects and user build files that have access to an environment
- exposed by Map will be processed.  These can be used to import files,
- create and modify objects, adjust constants, and more.
+Packages the `war3map.lua`.  Depending on settings, may optionally build the
+map as well.  If the map is built, then user build files that have access to
+an environment exposed by Map will be processed.  These can be used to
+import files, create and modify objects, adjust constants, and more.
 
 ## Usage
     build [options]

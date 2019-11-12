@@ -12,6 +12,9 @@
 - Properly unpack unit tables in W3I file.
 - Whitespace is properly handled in trigger strings.
 
+### Removed
+- Inlining of strings has been removed.
+
 ## [0.7.2] - 2019-08-09
 ### Changed
 - Update WC3 ids for 1.31.0 and 1.31.1.

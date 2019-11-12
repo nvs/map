@@ -69,11 +69,10 @@ The following commands are provided by the collection:
 [Luacheck documentation]: https://luacheck.readthedocs.io/en/stable
 
 - `build`: Packages the `war3map.lua`.  Depending on settings, may
-  optionally build the map as well.  If the map is built, then trigger
-  strings will be inlined within objects, and user build files that have
-  access to an environment exposed by **Map** will be processed.  These can
-  be used to import files, create and modify objects, adjust constants, and
-  more.
+  optionally build the map as well.  If the map is built, then user build
+  files that have access to an environment exposed by **Map** will be
+  processed.  These can be used to import files, create and modify objects,
+  adjust constants, and more.
 
 All commands should be executed from within the project's root directory
 (e.g. `map/check`).  Depending on setup, it may be necessary to pass the
