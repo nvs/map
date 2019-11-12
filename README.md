@@ -59,7 +59,7 @@ The following commands are provided by the collection:
   defult, by **Map**.  See the following files:
 
   - [.luacheckrc](luacheck/luacheckrc)
-  - [Warcraft III globals](luacheck/wc3.lua)
+  - [Warcraft III identifiers](luacheck/wc3.lua)
 
   Customization of one's Luacheck experience is supported, and encouraged.
   Simply consult the [Luacheck documentation], and then follow the example
