@@ -323,3 +323,12 @@ map.imports ['path/to/other/file.j'] = 'war3map.j'
 -- structure.
 map.imports ['path/to/directory'] =  true
 ```
+
+### Strings
+
+``` lua
+local map = ...
+
+print (map.strings [1]) --> `Force 1`
+map.strings [2] = 'Just another Warcraft III map'
+```

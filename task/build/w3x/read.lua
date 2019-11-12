@@ -79,9 +79,11 @@ return function (state)
 	state.environment.imports = {}
 
 	-- Strings.
+	state.environment.strings = {}
+
 	if w3x:has ('war3map.wts') then
 		local file = assert (w3x:open ('war3map.wts'))
-		state.strings = assert (WTS.unpack (file))
+		state.environment.strings = assert (WTS.unpack (file))
 		file:close ()
 	end
 
