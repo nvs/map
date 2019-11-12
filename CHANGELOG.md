@@ -6,6 +6,7 @@
 
 ### Changed
 - For the W3I table, `type` has been renamed to `format`.
+- Update WC3 ids for 1.32.0.
 
 ### Fixed
 - Properly unpack unit tables in W3I file.
