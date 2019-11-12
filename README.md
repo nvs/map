@@ -26,7 +26,7 @@ following dependencies are satisfied:
 - [Lua] `>= 5.1` (for [luac])
 - [LuaFileSystem] `>= 1.7.0`
 - [Luacheck] `>= 0.23.0`
-- [lua-stormlib]
+- [lua-stormlib] `>= 0.1.0`
 - [compat-5.3] `>= 0.5` (for Lua `< 5.3` or LuaJIT)
 
 To make use of **Map** it is recommended to place it directly within your
