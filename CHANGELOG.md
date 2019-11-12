@@ -79,7 +79,7 @@
 
 ### Fixed
 - Maps lacking a trigger strings file will no longer raise an error.
-- Properly identify cosntant literal strings.
+- Properly identify constant literal strings.
 
 ### Removed
 - The `output.directory` setting has been removed.
