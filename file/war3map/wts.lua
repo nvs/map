@@ -19,7 +19,7 @@ function WTS.unpack (io)
 			end
 
 			if count > 0 then
-				text [#text + 1] = String.trim_right (line)
+				text [#text + 1] = String.trim_right (line, '[\r\n]+')
 			else
 				output [index] = table.concat (text, '\n')
 				text = nil

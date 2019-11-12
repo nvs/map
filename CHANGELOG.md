@@ -10,6 +10,7 @@
 
 ### Fixed
 - Properly unpack unit tables in W3I file.
+- Whitespace is properly handled in trigger strings.
 
 ## [0.7.2] - 2019-08-09
 ### Changed
