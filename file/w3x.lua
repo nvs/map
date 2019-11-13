@@ -311,7 +311,7 @@ end
 
 -- `w3x:close ([compact])`
 --
--- _This function differs from the one provided by lua-stormlib._
+-- _This function differs from the one provided by [lua-stormlib]._
 --
 -- In addition to closing the map, it will push an updated `war3map.imp`
 -- that contains all the latest imports.  However, as this is done
