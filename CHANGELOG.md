@@ -8,6 +8,8 @@
 ### Changed
 - For the W3I table, `type` has been renamed to `format`.
 - Update WC3 ids for 1.32.0.
+- IMP handling has been enhanced. The byte present before file paths is now
+  exposed, and defaults to the value used in 1.32.0 (i.e. `0x1D`).
 
 ### Fixed
 - Properly unpack unit tables in W3I file.

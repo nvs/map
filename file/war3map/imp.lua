@@ -21,8 +21,8 @@ function Imports.unpack (io)
 	}
 
 	for _ = 1, unpack ('I4') do
-		unpack ('b')
-		output.files [unpack ('z')] = true
+		local byte = unpack ('b')
+		output.files [unpack ('z')] = byte
 	end
 
 	return output
@@ -53,9 +53,13 @@ function Imports.pack (io, input)
 	pack ('I4', #files)
 
 	for _, name in ipairs (files) do
-		local type = name:find ('^war3mapImported\\') and 8 or 13
+		local byte = input.files [name]
 
-		pack ('b', type)
+		if type (byte) ~= 'number' then
+			byte = 0x1D
+		end
+
+		pack ('b', byte)
 		pack ('z', name)
 	end
 
