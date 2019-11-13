@@ -20,11 +20,22 @@ local constants = {
 	extra = 'war3mapExtra.txt'
 }
 
+local import_bytes = {
+	[0x1C] = 0x15,
+	[0x1F] = 0x1D
+}
+
 return function (state)
 	local map = state.settings.output.file
 	assert (Path.copy (state.settings.input.map, map))
 
-	local w3x = assert (W3X.open (map, 'r+'))
+	local options = {}
+	do
+		local format = state.environment.information.format
+		options.import_byte = import_bytes [format]
+	end
+
+	local w3x = assert (W3X.open (map, 'r+', options))
 
 	-- Information.
 	do
