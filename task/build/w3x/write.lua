@@ -115,7 +115,7 @@ return function (state)
 
 	-- Strings.
 	do
-		local strings = state.strings
+		local strings = state.environment.strings
 
 		if type (strings) ~= 'table' then
 			strings = {}
