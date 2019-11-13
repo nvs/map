@@ -11,6 +11,43 @@ local W3X = {}
 local MPQ = {}
 MPQ.__index = MPQ
 
+-- Files to be ignored and not inserted into the `war3map.imp` as of 1.32.
+local ignored_imports = {
+	['conversation.json'] = true,
+	['war3map.doo'] = true,
+	['war3map.imp'] = true,
+	['war3map.lua'] = true,
+	['war3map.mmp'] = true,
+	['war3map.shd'] = true,
+	['war3map.w3a'] = true,
+	['war3map.w3b'] = true,
+	['war3map.w3c'] = true,
+	['war3map.w3d'] = true,
+	['war3map.w3e'] = true,
+	['war3map.w3h'] = true,
+	['war3map.w3i'] = true,
+	['war3map.w3q'] = true,
+	['war3map.w3r'] = true,
+	['war3map.w3s'] = true,
+	['war3map.w3t'] = true,
+	['war3map.w3u'] = true,
+	['war3map.wct'] = true,
+	['war3map.wpm'] = true,
+	['war3map.wtg'] = true,
+	['war3map.wts'] = true,
+	['war3mapExtra.txt'] = true,
+	['war3mapMap.blp'] = true,
+	['war3mapMisc.txt'] = true,
+	['war3mapSkin.txt'] = true,
+	['war3mapUnits.doo'] = true
+}
+
+local default_options = {
+	-- This remains `nil`, as the `war3map.imp` already provides default
+	-- handling when unspecified.
+	import_byte = nil
+}
+
 -- _The returned object provides functionality that differs from that
 -- provided by [lua-stormlib].  Refer to that library's documentation for
 -- details.  Any differences will be listed, and have been introduced to
@@ -29,41 +66,23 @@ MPQ.__index = MPQ
 -- explicitly listed.
 --
 -- [lua-stormlib]: https://github.com/nvs/lua-stormlib
-function W3X.open (path, mode)
+function W3X.open (path, mode, options)
 	local mpq, message, code = Storm.open (path, mode)
 
 	if not mpq then
 		return nil, message, code
 	end
 
-	local imports
+	options = options or {}
 
-	if mpq:has ('war3map.imp') then
-		local file
-		file, message, code = mpq:open ('war3map.imp')
-
-		if not file then
-			return nil, message, code
-		end
-
-		imports = Imports.unpack (file)
-
-		if not imports then
-			return nil
-		end
-
-		file:close ()
-	else
-		imports = {
-			version = 1,
-			files = {}
-		}
+	for key, value in pairs (default_options) do
+		options [key] = options [key] or value
 	end
 
 	local self = {
 		_mpq = mpq,
 		_mode = mode,
-		_imports = imports,
+		_options = options,
 		_updated = false
 	}
 
@@ -90,15 +109,7 @@ function MPQ:list (mask)
 	return self._mpq:list (mask and to_internal (mask))
 end
 
--- `w3x:open (name [, mode [, size [, import]]])`
---
--- _This function differs from the one provided by [lua-stormlib]._
---
--- A new optional `import` (`boolean`) argument is now accepted.  This only
--- applies to files opened in `"w"` mode.  Passing `import` indicates that
--- the opened file, if succesfully finished and closed, should be inserted
--- into the `war3map.imp` as an import.
-function MPQ:open (name, mode, size, import)
+function MPQ:open (name, mode, size)
 	name = to_internal (name)
 	local file, message, code = self._mpq:open (name, mode, size)
 
@@ -106,15 +117,14 @@ function MPQ:open (name, mode, size, import)
 		return nil, message, code
 	end
 
-	if mode == 'w' and import then
+	if mode == 'w' and not ignored_imports [name] then
 		self._updated = true
-		self._imports.files [name] = true
 	end
 
 	return file
 end
 
-local function add_file (self, path, name, import)
+local function add_file (self, path, name)
 	name = to_internal (name)
 
 	local status, message, code = self._mpq:add (path, name)
@@ -123,15 +133,14 @@ local function add_file (self, path, name, import)
 		return nil, message, code
 	end
 
-	if import then
+	if not ignored_imports [name or path] then
 		self._updated = true
-		self._imports.files [name] = true
 	end
 
 	return status
 end
 
-local function add_directory (self, path, import)
+local function add_directory (self, path)
 	for entry in LFS.dir (path or '.') do
 		if entry ~= '.' and entry ~= '..' then
 			local status, message, code
@@ -139,10 +148,9 @@ local function add_directory (self, path, import)
 			entry = Path.join (path or '', entry)
 
 			if Path.is_directory (entry) then
-				status, message, code = add_directory (self, entry, import)
+				status, message, code = add_directory (self, entry)
 			else
-				status, message, code =
-					add_file (self, entry, entry, import)
+				status, message, code = add_file (self, entry, entry)
 			end
 
 			if not status then
@@ -154,34 +162,27 @@ local function add_directory (self, path, import)
 	return true
 end
 
--- `w3x:add (path [, name_or_import [, import]])`
+-- `w3x:add (path [, name])`
 --
 -- _This function differs from the one provided by [lua-stormlib]._
 --
 -- This function adds the file(s) specified at `path` (`string`) to the
 -- map.  Exact behavior depends on the arguments provided.
 --
--- If `path` is a file, then it will be added to the map.  If
--- `name_or_import` is provided and is a `string`, then it will repesent the
--- name of the file being added.  If `name_or_import` is a `boolean`, then
--- it is taken to be indicative of the `import` setting, and there is no
--- name argument.  If name is absent, then the default value for name will
--- be `path`.
+-- If `path` is a file, then it will be added to the map.  If `name` is
+-- provided and is a `string`, then it will repesent the name of the file
+-- being added.  If name is absent, then the default value for name will be
+-- `path`.
 --
 -- If `path` is a directory, then the function will recurse through the
 -- files and subdirectories in `path`, adding all files it finds to the
 -- map.  The name used for each file will be the relative path in relation
 -- to `path`.
 --
--- If the optional `import` (`boolean`) is provided the file(s) being added
--- will be inserted into the `war3map.imp`.  This will cause the World
--- Editor to recognize them as imports.  By default, any added file(s) will
--- not be considered imports.
---
 -- In case of success, this function returns `true`.  Otherwise, it returns
 -- `nil`, a `string` describing the error, and a `number` indicating the
 -- error code.
-function MPQ:add (path, name_or_import, import)
+function MPQ:add (path, name)
 	local status, message, code
 
 	if Path.is_directory (path) then
@@ -192,21 +193,15 @@ function MPQ:add (path, name_or_import, import)
 			return nil, message, code
 		end
 
-		import = name_or_import
-		status, message, code = add_directory (self, nil, import)
+		status, message, code = add_directory (self)
 
 		Path.change_directory (original)
 	elseif Path.is_file (path) then
-		local name
-
-		if type (name_or_import) == 'string' then
-			name = name_or_import
-		else
+		if type (name) ~= 'string' then
 			name = path
-			import = name_or_import
 		end
 
-		status, message, code = add_file (self, path, name, import)
+		status, message, code = add_file (self, path, name)
 	else
 		status = nil
 		message = 'no such file or directory'
@@ -279,10 +274,8 @@ function MPQ:rename (old, new)
 		return nil, message, code
 	end
 
-	if self._imports.files [old] then
+	if not ignored_imports [old] then
 		self._updated = true
-		self._imports.files [old] = nil
-		self._imports.files [new] = true
 	end
 
 	return status
@@ -297,9 +290,8 @@ function MPQ:remove (name)
 		return nil, message, code
 	end
 
-	if self._imports.files [name] then
+	if not ignored_imports [name] then
 		self._updated = true
-		self._imports.files [name] = nil
 	end
 
 	return status
@@ -333,19 +325,26 @@ function MPQ:close (compact)
 	local status, message, code
 
 	if self._updated then
-		for name in pairs (self._imports.files) do
-			self._imports.files [name] = self._mpq:has (name) or nil
+		local imports = {
+			version = 1,
+			files = {}
+		}
+
+		for name in self._mpq:list () do
+			if not ignored_imports [name] then
+				imports.files [name] = self._options.import_byte or true
+			end
 		end
 
 		local file
-		local size = Imports.packsize (self._imports)
+		local size = Imports.packsize (imports)
 		file, message, code = self._mpq:open ('war3map.imp', 'w', size)
 
 		if not file then
 			return nil, message, code
 		end
 
-		if not Imports.pack (file, self._imports) then
+		if not Imports.pack (file, imports) then
 			return nil
 		end
 

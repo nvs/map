@@ -10,6 +10,8 @@
 - Update WC3 ids for 1.32.0.
 - IMP handling has been enhanced. The byte present before file paths is now
   exposed, and defaults to the value used in 1.32.0 (i.e. `0x1D`).
+- W3X import handling has been enhanced. It is aware of WE ignored files,
+  and as such functions no longer support an `import` argument.
 
 ### Fixed
 - Properly unpack unit tables in W3I file.

@@ -98,7 +98,7 @@ return function (state)
 		end
 
 		for path, name in pairs (imports) do
-			assert (w3x:add (path, name, true))
+			assert (w3x:add (path, name))
 		end
 	end
 
