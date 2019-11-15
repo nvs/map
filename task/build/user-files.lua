@@ -3,6 +3,7 @@ local Utils = require ('map.utils')
 
 return function (state)
 	local build = Utils.load_files ({ state.settings.input.build }, '.lua')
+	state.settings = Utils.read_only (state.settings)
 
 	-- Run user build scripts.
 	do

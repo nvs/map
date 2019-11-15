@@ -60,4 +60,34 @@ function Utils.load_files (paths, extension)
 	return list
 end
 
+do
+	local proxies = setmetatable ({}, { __mode = 'k' })
+
+	function Utils.read_only (input)
+		if type (input) ~= 'table' then
+			return input
+		end
+
+		local proxy = proxies [input]
+
+		if not proxy then
+			proxy = setmetatable ({}, {
+				__index = function (_, key)
+					return Utils.read_only (input [key])
+				end,
+
+				__newindex = function ()
+					error ('table is read-only', 2)
+				end,
+
+				__metatable = false
+			})
+
+			proxies [input] = proxy
+		end
+
+		return proxy
+	end
+end
+
 return Utils
