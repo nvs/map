@@ -5,7 +5,8 @@ return function (state)
 	local build = state.settings.input.build
 
 	local tasks = {
-		'check'
+		'check',
+		'build.environment'
 	}
 
 	if map then

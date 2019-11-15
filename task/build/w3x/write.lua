@@ -31,7 +31,7 @@ return function (state)
 
 	local options = {}
 	do
-		local format = state.information.format
+		local format = state.environment.information.format
 		options.import_byte = import_bytes [format]
 	end
 
@@ -39,9 +39,9 @@ return function (state)
 
 	-- Information.
 	do
-		local size = W3I.packsize (state.information)
+		local size = W3I.packsize (state.environment.information)
 		local file = assert (w3x:open ('war3map.w3i', 'w', size))
-		assert (W3I.pack (file, state.information))
+		assert (W3I.pack (file, state.environment.information))
 		file:close ()
 	end
 
@@ -54,7 +54,7 @@ return function (state)
 		end
 
 		-- Split the unified objects table into its respective categories.
-		for id, object in pairs (state.objects) do
+		for id, object in pairs (state.environment.objects) do
 			categories [object.type] [id] = object
 		end
 
@@ -77,7 +77,7 @@ return function (state)
 
 	-- Constants.
 	for name, path in pairs (constants) do
-		local constant = state.constants [name]
+		local constant = state.environment.constants [name]
 
 		if constant then
 			local size = INI.packsize (constant)
@@ -94,7 +94,7 @@ return function (state)
 
 	-- Script.
 	do
-		assert (state.information.is_lua)
+		assert (state.environment.information.is_lua)
 
 		w3x:remove ('war3map.j')
 		assert (w3x:add (map .. '.lua', 'war3map.lua'))
@@ -102,7 +102,7 @@ return function (state)
 
 	-- Imports.
 	do
-		local imports = state.imports
+		local imports = state.environment.imports
 
 		if type (imports) ~= 'table' then
 			imports = {}
@@ -115,7 +115,7 @@ return function (state)
 
 	-- Strings.
 	do
-		local strings = state.strings
+		local strings = state.environment.strings
 
 		if type (strings) ~= 'table' then
 			strings = {}

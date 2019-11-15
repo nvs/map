@@ -25,12 +25,12 @@ return function (state)
 	-- Information.
 	do
 		local file = assert (w3x:open ('war3map.w3i'))
-		state.information = assert (W3I.unpack (file))
+		state.environment.information = assert (W3I.unpack (file))
 		file:close ()
 	end
 
 	-- Objects.
-	state.objects = {}
+	state.environment.objects = {}
 
 	for extension, name in pairs (objects) do
 		local path = 'war3map.' .. extension
@@ -43,47 +43,47 @@ return function (state)
 
 			for id, object in pairs (category) do
 				object.type = name
-				state.objects [id] = object
+				state.environment.objects [id] = object
 			end
 		end
 	end
 
 	-- Constants.
-	state.constants = {}
+	state.environment.constants = {}
 
 	for path, name in pairs (constants) do
 		if w3x:has (path) then
 			local file = assert (w3x:open (path))
-			state.constants [name] = assert (INI.unpack (file))
+			state.environment.constants [name] = assert (INI.unpack (file))
 			file:close ()
 		else
-			state.constants [name] = {}
+			state.environment.constants [name] = {}
 		end
 	end
 
 	-- Load default constants tables.
 	do
-		local interface = state.constants.interface
+		local interface = state.environment.constants.interface
 		interface.FrameDef = interface.FrameDef or {}
 		interface.CustomSkin = interface.CustomSkin or {}
 		interface.Errors = interface.Errors or {}
 
-		local gameplay = state.constants.gameplay
+		local gameplay = state.environment.constants.gameplay
 		gameplay.Misc = gameplay.Misc or {}
 
-		local extra = state.constants.extra
+		local extra = state.environment.constants.extra
 		extra.MapExtraInfo = extra.MapExtraInfo or {}
 	end
 
 	-- Imports.
-	state.imports = {}
+	state.environment.imports = {}
 
 	-- Strings.
-	state.strings = {}
+	state.environment.strings = {}
 
 	if w3x:has ('war3map.wts') then
 		local file = assert (w3x:open ('war3map.wts'))
-		state.strings = assert (WTS.unpack (file))
+		state.environment.strings = assert (WTS.unpack (file))
 		file:close ()
 	end
 

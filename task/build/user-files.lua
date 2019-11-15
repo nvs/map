@@ -3,7 +3,8 @@ local Utils = require ('map.utils')
 
 return function (state)
 	local build = Utils.load_files ({ state.settings.input.build }, '.lua')
-	state.settings = Utils.read_only (state.settings)
+	local settings = Utils.deep_copy (state.settings)
+	state.environment.settings = Utils.read_only (settings)
 
 	-- Run user build scripts.
 	do
@@ -14,7 +15,7 @@ return function (state)
 				local chunk, message = loadfile (file)
 
 				if chunk then
-					chunk (state)
+					chunk (state.environment)
 				else
 					table.insert (messages, message)
 				end
