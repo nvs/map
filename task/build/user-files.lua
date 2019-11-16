@@ -2,7 +2,7 @@ local Path = require ('map.path')
 local Utils = require ('map.utils')
 
 return function (state)
-	local build = Utils.load_files ({ state.settings.input.build }, '.lua')
+	local build = Utils.load_files (state.settings.input.build, '%.lua$')
 	local settings = Utils.deep_copy (state.settings)
 	state.environment.settings = Utils.read_only (settings)
 

@@ -24,7 +24,7 @@ local function deep_copy (old, ignore_metatable)
 end
 Utils.deep_copy = deep_copy
 
-local function process_entry (path, extension, list, exists)
+local function process_entry (path, pattern, list, exists)
 	if exists [path] then -- luacheck: ignore 542
 		-- Do not process an entry multiple times.
 	elseif Path.is_directory (path) then
@@ -39,22 +39,26 @@ local function process_entry (path, extension, list, exists)
 		table.sort (entries)
 
 		for _, entry in ipairs (entries) do
-			process_entry (Path.join (path, entry), extension, list, exists)
+			process_entry (Path.join (path, entry), pattern, list, exists)
 		end
 	elseif Path.is_file (path)
-		and Path.extension (path) == extension
+		and (not pattern or path:find (pattern))
 	then
 		list [#list + 1] = path
 		exists [path] = true
 	end
 end
 
-function Utils.load_files (paths, extension)
+function Utils.load_files (paths, pattern)
 	local list = {}
 	local exists = {}
 
+	if type (paths) == 'string' then
+		paths = { paths }
+	end
+
 	for _, path in ipairs (paths) do
-		process_entry (path, extension, list, exists)
+		process_entry (path, pattern, list, exists)
 	end
 
 	return list
