@@ -11,36 +11,6 @@ local W3X = {}
 local MPQ = {}
 MPQ.__index = MPQ
 
--- Files to be ignored and not inserted into the `war3map.imp` as of 1.32.
-local ignored_imports = {
-	['conversation.json'] = true,
-	['war3map.doo'] = true,
-	['war3map.imp'] = true,
-	['war3map.lua'] = true,
-	['war3map.mmp'] = true,
-	['war3map.shd'] = true,
-	['war3map.w3a'] = true,
-	['war3map.w3b'] = true,
-	['war3map.w3c'] = true,
-	['war3map.w3d'] = true,
-	['war3map.w3e'] = true,
-	['war3map.w3h'] = true,
-	['war3map.w3i'] = true,
-	['war3map.w3q'] = true,
-	['war3map.w3r'] = true,
-	['war3map.w3s'] = true,
-	['war3map.w3t'] = true,
-	['war3map.w3u'] = true,
-	['war3map.wct'] = true,
-	['war3map.wpm'] = true,
-	['war3map.wtg'] = true,
-	['war3map.wts'] = true,
-	['war3mapExtra.txt'] = true,
-	['war3mapMap.blp'] = true,
-	['war3mapMisc.txt'] = true,
-	['war3mapSkin.txt'] = true,
-	['war3mapUnits.doo'] = true
-}
 
 local default_options = {
 	-- This remains `nil`, as the `war3map.imp` already provides default
@@ -117,7 +87,7 @@ function MPQ:open (name, mode, size)
 		return nil, message, code
 	end
 
-	if mode == 'w' and not ignored_imports [name] then
+	if mode == 'w' and not Imports.ignored [name] then
 		self._updated = true
 	end
 
@@ -133,7 +103,7 @@ local function add_file (self, path, name)
 		return nil, message, code
 	end
 
-	if not ignored_imports [name or path] then
+	if not Imports.ignored [name or path] then
 		self._updated = true
 	end
 
@@ -274,7 +244,7 @@ function MPQ:rename (old, new)
 		return nil, message, code
 	end
 
-	if not ignored_imports [old] then
+	if not Imports.ignored [old] then
 		self._updated = true
 	end
 
@@ -290,7 +260,7 @@ function MPQ:remove (name)
 		return nil, message, code
 	end
 
-	if not ignored_imports [name] then
+	if not Imports.ignored [name] then
 		self._updated = true
 	end
 
@@ -331,7 +301,7 @@ function MPQ:close (compact)
 		}
 
 		for name in self._mpq:list () do
-			if not ignored_imports [name] then
+			if not Imports.ignored [name] then
 				imports.files [name] = self._options.import_byte or true
 			end
 		end
