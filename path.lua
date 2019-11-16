@@ -309,6 +309,31 @@ function Path.create_directories (path)
 	return Path.create_directory (path)
 end
 
+-- Returns a `boolean` indicating whether the file or directory named `path`
+-- (`string`) was successfully removed.  Optionally, takes a flag indicating
+-- whether to remove directories and their contents in a `recursive`
+-- fashion.  Defaults to not performing recursion.  Returns `nil`, an error
+-- message, and a system-dependent error code in case of failure.
+function Path.remove (path, recursive)
+	if not Path.exists (path)
+		or Path.is_file (path)
+		or not recursive
+	then
+		return os.remove (path)
+	end
+
+	for entry in LFS.dir (path) do
+		if entry ~= '.' and entry ~= '..' then
+			entry = Path.join (path, entry)
+			Path.remove (entry, true)
+		end
+	end
+
+	os.remove (path)
+
+	return true
+end
+
 -- Returns a `boolean` indicating whether the a link named `name` (`string`)
 -- was successfully created referencing the `source` (`string`) object.
 -- Optionally, takes a flag indicating whether to create a `symbolic` link.
