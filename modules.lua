@@ -70,11 +70,8 @@ local function find_module (name)
 	local path = package.searchpath (name, package.path)
 	local message
 
-	if path then -- luacheck: ignore 542
-	elseif package.searchpath (name, package.cpath) then
-		message = 'uses C loader'
-	else
-		message = 'not found'
+	if not path then
+		message = 'not found or uses C loader'
 	end
 
 	return path, message
