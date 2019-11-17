@@ -27,11 +27,16 @@ local import_bytes = {
 
 return function (state)
 	local map = state.settings.map.output
+
+	Path.remove (map, true)
 	do
 		local directories = Path.parent (map)
 		Path.create_directories (directories)
 	end
-	assert (Path.copy (state.settings.map.input, map))
+
+	if state.settings.map.options.directory then
+		Path.create_directory (map)
+	end
 
 	local options = {}
 	do
@@ -39,7 +44,30 @@ return function (state)
 		options.import_byte = import_bytes [format]
 	end
 
-	local w3x = assert (W3X.open (map, 'r+', options))
+	local input = assert (W3X.open (state.settings.map.input, 'r'))
+	local output = assert (W3X.open (map, 'w+', options))
+
+	for name in input:list () do
+		if not name:find ('^%(.*%)$') then
+			local source = assert (input:open (name))
+			local size = source:seek ('end')
+			source:seek ('set')
+			local destination = assert (output:open (name, 'w', size))
+
+			while true do
+				local bytes = source:read (512)
+
+				if not bytes or not destination:write (bytes) then
+					break
+				end
+			end
+
+			assert (source:close ())
+			assert (destination:close ())
+		end
+	end
+
+	local w3x = output
 
 	do
 		local size = W3I.packsize (state.environment.information)

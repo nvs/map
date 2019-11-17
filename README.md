@@ -119,9 +119,9 @@ return {
     -- addition, various map information will be exposed to the user build
     -- environment.
     map = {
-        -- The path to the map file that will be used as a basis for the
-        -- built map.  If absent, the `build` command will only attempt to
-        -- package the `war3map.lua`.
+        -- Path to the map file or directory that will be used as a basis
+        -- for the built map.  If absent, the `build` command will only
+        -- attempt to package the `war3map.lua`.
         --
         -- If the map table is specified, this setting is required.
         input = 'path/to/input.w3x',
@@ -129,7 +129,14 @@ return {
         -- The path to use when creating the output map.
         --
         -- If the map table is specified, this setting is required.
-        output = 'path/to/output.w3x'
+        output = 'path/to/output.w3x',
+
+        options = {
+            -- Indicates that the output W3X archive should be directory
+            -- based instead of MPQ based.  By default, this option is
+            -- disabled.
+            directory = false or nil or true
+        }
     },
 
     -- This table is required.

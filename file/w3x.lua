@@ -1,16 +1,14 @@
 local Imports = require ('map.file.war3map.imp')
 local LFS = require ('lfs')
 local Path = require ('map.path')
-local Storm = require ('stormlib')
 
--- Deals with `*.w3m` and `*.w3x` files.
+local Directory = require ('map.file.w3x._directory')
+local MPQ = require ('map.file.w3x._mpq')
+
+local Class = {}
+
 local W3X = {}
-
--- Contains the methods for the W3X metatable (which is basically a wrapper
--- for a [lua-stormlib] MPQ object).
-local MPQ = {}
-MPQ.__index = MPQ
-
+W3X.__index = W3X
 
 local default_options = {
 	-- This remains `nil`, as the `war3map.imp` already provides default
@@ -23,11 +21,16 @@ local default_options = {
 -- details.  Any differences will be listed, and have been introduced to
 -- improve behavior with respect to Warcraft III maps._
 --
--- These are the extensions to the Storm MPQ object that have been done for
+-- These are the extensions to the Storm W3X object that have been done for
 -- all methods:
 --
+-- - When opening an archive, if the specified path is a directory then the
+--   reeturned object will target a directory based W3X.  Otherwise, it will
+--   reference a MPQ based object.
 -- - When referencing files within the archive, names will be internalized.
---   That is, forward slashes will be converted to backslashes.
+--   That is, potential path separators (i.e. `\` and `/`) will be
+--   convereted to the operating system dependent path separator for
+--   directory archives and to backslashes for MPQ archives.
 -- - Management of imports (i.e. files listed in the `war3map.imp`) will be
 --   handled automatically, and an updated list will be pushed to the map
 --   upon closure.
@@ -36,10 +39,11 @@ local default_options = {
 -- explicitly listed.
 --
 -- [lua-stormlib]: https://github.com/nvs/lua-stormlib
-function W3X.open (path, mode, options)
-	local mpq, message, code = Storm.open (path, mode)
+function Class.open (path, mode, options)
+	local format = Path.is_directory (path) and Directory or MPQ
+	local w3x, message, code = format.new (path, mode)
 
-	if not mpq then
+	if not w3x then
 		return nil, message, code
 	end
 
@@ -50,38 +54,29 @@ function W3X.open (path, mode, options)
 	end
 
 	local self = {
-		_mpq = mpq,
+		_w3x = w3x,
 		_mode = mode,
 		_options = options,
 		_updated = false
 	}
 
-	return setmetatable (self, MPQ)
+	return setmetatable (self, W3X)
 end
 
-local function to_internal (name)
-	return (name:gsub ('/', '\\'))
+function W3X:__tostring ()
+	return tostring (self._w3x):gsub ('Storm W3X', 'Warcraft III: W3X')
 end
 
-local function to_external (name)
-	return (name:gsub ('\\', Path.separator))
+function W3X:has (name)
+	return self._w3x:has (name)
 end
 
-function MPQ:__tostring ()
-	return tostring (self._mpq):gsub ('Storm MPQ', 'Warcraft III: W3X')
+function W3X:list (mask)
+	return self._w3x:list (mask)
 end
 
-function MPQ:has (name)
-	return self._mpq:has (to_internal (name))
-end
-
-function MPQ:list (mask)
-	return self._mpq:list (mask and to_internal (mask))
-end
-
-function MPQ:open (name, mode, size)
-	name = to_internal (name)
-	local file, message, code = self._mpq:open (name, mode, size)
+function W3X:open (name, mode, size)
+	local file, message, code = self._w3x:open (name, mode, size)
 
 	if not file then
 		return nil, message, code
@@ -95,9 +90,7 @@ function MPQ:open (name, mode, size)
 end
 
 local function add_file (self, path, name)
-	name = to_internal (name)
-
-	local status, message, code = self._mpq:add (path, name)
+	local status, message, code = self._w3x:add (path, name)
 
 	if not status then
 		return nil, message, code
@@ -110,7 +103,7 @@ local function add_file (self, path, name)
 	return status
 end
 
-local function add_directory (self, path)
+local function add_directory (self, root, path)
 	for entry in LFS.dir (path or '.') do
 		if entry ~= '.' and entry ~= '..' then
 			local status, message, code
@@ -118,9 +111,10 @@ local function add_directory (self, path)
 			entry = Path.join (path or '', entry)
 
 			if Path.is_directory (entry) then
-				status, message, code = add_directory (self, entry)
+				status, message, code = add_directory (self, root, entry)
 			else
-				status, message, code = add_file (self, entry, entry)
+				local name = entry:sub (#root + 2)
+				status, message, code = add_file (self, entry, name)
 			end
 
 			if not status then
@@ -152,26 +146,13 @@ end
 -- In case of success, this function returns `true`.  Otherwise, it returns
 -- `nil`, a `string` describing the error, and a `number` indicating the
 -- error code.
-function MPQ:add (path, name)
+function W3X:add (path, name)
 	local status, message, code
 
 	if Path.is_directory (path) then
-		local original = Path.current_directory ()
-		status, message, code = Path.change_directory (path)
-
-		if not status then
-			return nil, message, code
-		end
-
-		status, message, code = add_directory (self)
-
-		Path.change_directory (original)
+		status, message, code = add_directory (self, path, path)
 	elseif Path.is_file (path) then
-		if type (name) ~= 'string' then
-			name = path
-		end
-
-		status, message, code = add_file (self, path, name)
+		status, message, code = add_file (self, path, name or path)
 	else
 		status = nil
 		message = 'no such file or directory'
@@ -196,9 +177,8 @@ end
 -- In case of success, this function will return the path (`string`) of the
 -- extracted file.  Otherwise, it returns `nil`, a `string` describing the
 -- error, and a `number` indicating the error code.
-function MPQ:extract (name, path)
-	name = to_internal (name)
-	local status, message, code = self._mpq:has (name)
+function W3X:extract (name, path)
+	local status, message, code = self._w3x:has (name)
 
 	if status == nil then
 		return nil, message, code
@@ -207,7 +187,7 @@ function MPQ:extract (name, path)
 	end
 
 	if not path or Path.is_directory (path) then
-		path = Path.join (path or '.', to_external (name))
+		path = Path.join (path or '.', name:gsub ('\\', Path.separator))
 	end
 
 	if Path.is_file (path) then
@@ -225,7 +205,7 @@ function MPQ:extract (name, path)
 		return nil, message, code
 	end
 
-	status, message, code = self._mpq:extract (name, path)
+	status, message, code = self._w3x:extract (name, path)
 
 	if not status then
 		return nil, message, code
@@ -234,11 +214,8 @@ function MPQ:extract (name, path)
 	return path
 end
 
-function MPQ:rename (old, new)
-	old = to_internal (old)
-	new = to_internal (new)
-
-	local status, message, code = self._mpq:rename (old, new)
+function W3X:rename (old, new)
+	local status, message, code = self._w3x:rename (old, new)
 
 	if not status then
 		return nil, message, code
@@ -251,10 +228,8 @@ function MPQ:rename (old, new)
 	return status
 end
 
-function MPQ:remove (name)
-	name = to_internal (name)
-
-	local status, message, code = self._mpq:remove (name)
+function W3X:remove (name)
+	local status, message, code = self._w3x:remove (name)
 
 	if not status then
 		return nil, message, code
@@ -267,8 +242,8 @@ function MPQ:remove (name)
 	return status
 end
 
-function MPQ:compact ()
-	return self._mpq:compact ()
+function W3X:compact ()
+	return self._w3x:compact ()
 end
 
 -- `w3x:close ([compact])`
@@ -283,13 +258,13 @@ end
 -- Due to this, it takes an optional `compact` (`boolean`) argument, which
 -- indicates whether the map should be compacted before closing.  See
 -- [lua-stormlib] documentation on `mpq:compact ()`.
-function MPQ:close (compact)
-	if not self._mpq then
+function W3X:close (compact)
+	if not self._w3x then
 		return
 	end
 
 	if self._mode == 'r' then
-		return self._mpq:close ()
+		return self._w3x:close ()
 	end
 
 	local status, message, code
@@ -300,7 +275,7 @@ function MPQ:close (compact)
 			files = {}
 		}
 
-		for name in self._mpq:list () do
+		for name in self._w3x:list () do
 			if not Imports.ignored [name] then
 				imports.files [name] = self._options.import_byte or true
 			end
@@ -308,7 +283,7 @@ function MPQ:close (compact)
 
 		local file
 		local size = Imports.packsize (imports)
-		file, message, code = self._mpq:open ('war3map.imp', 'w', size)
+		file, message, code = self._w3x:open ('war3map.imp', 'w', size)
 
 		if not file then
 			return nil, message, code
@@ -324,19 +299,19 @@ function MPQ:close (compact)
 	end
 
 	if compact then
-		status, message, code = self._mpq:compact ()
+		status, message, code = self._w3x:compact ()
 
 		if not status then
 			return nil, message, code
 		end
 	end
 
-	return self._mpq:close ()
+	return self._w3x:close ()
 end
 
--- Garbage collection will call `map:close ()`.  However, the `compact`
+-- Garbage collection will call `w3x:close ()`.  However, the `compact`
 -- argument will not be passed (as no arguments are passed to the `__gc ()`
 -- metamethod).
-MPQ.__gc = MPQ.close
+W3X.__gc = W3X.close
 
-return W3X
+return Class
