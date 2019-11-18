@@ -2,7 +2,8 @@ local Path = require ('map.path')
 local Utils = require ('map.utils')
 
 return function (state)
-	local build = Utils.load_files (state.settings.input.build, '%.lua$')
+	local build = Utils.load_files (
+		state.settings.build.directory, '%.lua$')
 	local settings = Utils.deep_copy (state.settings)
 	state.environment.settings = Utils.read_only (settings)
 
@@ -15,7 +16,10 @@ return function (state)
 				local chunk, message = loadfile (file)
 
 				if chunk then
+					local original = package.path
+					package.path = state.settings.build.package_path
 					chunk (state.environment)
+					package.path = original
 				else
 					table.insert (messages, message)
 				end

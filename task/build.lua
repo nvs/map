@@ -2,7 +2,6 @@ local Tasks = require ('map.tasks')
 
 return function (state)
 	local map = state.settings.input.map
-	local build = state.settings.input.build
 
 	local tasks = {
 		'check',
@@ -13,7 +12,7 @@ return function (state)
 		table.insert (tasks, 'build.w3x.read')
 	end
 
-	if build then
+	if state.settings.build then
 		table.insert (tasks, 'build.user-files')
 	end
 
