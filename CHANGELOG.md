@@ -4,6 +4,7 @@
 ### Added
 - Support for W3I changes in 1.32.
 - Trigger strings have been exposed to the build environment.
+- Option to skip running Luacheck on the generated `war3map.lua`.
 
 ### Changed
 - For the W3I table, `type` has been renamed to `format`.

@@ -124,13 +124,17 @@ return function (state)
 
 	output:close ()
 
-	local status = Shell.execute {
-		command = Shell.escape ('luacheck', '--default-config',
-			Path.join ('map', 'luacheck', 'luacheckrc'), '--quiet', path)
-	}
+	if not state.settings.script.options.skip_check then
+		local status = Shell.execute {
+			command = Shell.escape (
+				'luacheck', '--default-config',
+				Path.join ('map', 'luacheck', 'luacheckrc'),
+				'--quiet', path)
+		}
 
-	if not status then
-		return
+		if not status then
+			return
+		end
 	end
 
 	io.stdout:write ('\nOutput: ', path, '\n')
