@@ -260,7 +260,7 @@ map.objects ['A000'] = {
     atp1 = {
         type = 'string',
         values = {
-            [1] = 'Based on Evaion!'
+            [1] = 'Based on Evasion!'
         }
     },
 
