@@ -11,10 +11,11 @@ return Tasks.run {
 	help = [[
 # map build
 
-Packages the `war3map.lua`.  Depending on settings, may optionally build the
-map as well.  If the map is built, then user build files that have access to
-an environment exposed by Map will be processed.  These can be used to
-import files, create and modify objects, adjust constants, and more.
+Packages the `war3map.lua`.  If the `build` settings table is provided, then
+user build files will be processed.  If the `map` settings table is
+provided, then a new map will be built and various map information will be
+passed to the user build environment.  Changes to this information will be
+reflected within the built map.
 
 ## Usage
     build [options]

@@ -14,7 +14,8 @@
   and as such functions no longer support an `import` argument.
 - The build task now uses the W3I format to determine the proper IMP byte to
   use for imports.
-- All settings are now available within user build files and are read-only.
+- The configuration file format has changed extensively. See the
+  [README](README.md) for details.
 
 ### Fixed
 - Properly unpack unit tables in W3I file.

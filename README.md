@@ -45,10 +45,10 @@ _Other installation locations are neither tested or supported._
 
 ## Caveats
 
-1. **TL;DR: Your mileage may vary.**  This library has not been
-   extensively tested under any environment other than Linux.  Please
-   backup any files before use.
-2. Only Lua is supported, now that Jass support has been removed.
+1. **TL;DR: Your mileage may vary.**  This library has not been extensively
+   tested under any environment other than Linux.  Please backup any files
+   before use.
+2. Only Lua is supported.
 
 ## Commands
 
@@ -68,11 +68,11 @@ The following commands are provided by the collection:
 
 [Luacheck documentation]: https://luacheck.readthedocs.io/en/stable
 
-- `build`: Packages the `war3map.lua`.  Depending on settings, may
-  optionally build the map as well.  If the map is built, then user build
-  files that have access to an environment exposed by **Map** will be
-  processed.  These can be used to import files, create and modify objects,
-  adjust constants, and more.
+- `build`: Packages the `war3map.lua`.  If the `build` settings table is
+  provided, then user build files will be processed.  If the `map` settings
+  table is provided, then a new map will be built and various map
+  information will be passed to the user build environment.  Changes to this
+  information will be reflected within the built map.
 
 All commands should be executed from within the project's root directory
 (e.g. `map/check`).  Depending on setup, it may be necessary to pass the
@@ -93,11 +93,14 @@ optional.
 ``` lua
 -- # Settings
 return {
-    input = {
-        -- The path to the map file that will be used as a basis for the
-        -- built map.  If absent, the `build` command will only attempt to
-        -- package the `war3map.lua`.
-        map = 'path/to/map.w3x',
+    -- User build files will be processed if this table is present.
+    build = {
+        -- Value to be used as the `package.path` within user build files.
+        -- If absent, defaults to the `package.path` used for Map.
+        package_path = table.concat ({
+            'lib/?.lua',
+            'lib/?/init.lua'
+        }), ';'),
 
         -- The directory containing all user files that can be used to
         -- access and change the map environment.  It will be recursively
@@ -108,44 +111,58 @@ return {
         -- sorting.  This knowledge can be leveraged to ensure deterministic
         -- behavior.
         --
-        -- If not specified, then no user files will be processed.
-        build = 'path/to/user/files',
-
-        source = {
-            -- The directory to add to end of the `package.path`.  This will
-            -- then be utilized when searching for modules to include.  If
-            -- the root module already exists on the `package.path`, this
-            -- can be omitted.
-            directory = 'path/to/include',
-
-            -- The name of the root module to `require`.  It must be on the
-            -- `package.path`.  This is **REQUIRED**.
-            require = 'name'
-        }
+        -- If the build table is specified, this setting is required.
+        directory = 'path/to/user/build/files'
     },
 
-    -- All values in this table are **REQUIRED**.
-    output = {
-        -- The directory in which to place the generated output files.  This
-        -- directory will be created automatically if it does not exist.
-        directory = 'path/to/put/files',
-
-        -- The name to use when creating the output map.  The `war3map.lua`
-        -- will be named identically, with a `.lua` extension added.
-        name = 'My Map.w3x'
-    },
-
-    options = {
-        -- Indicates whether to enable debug mode.  This will cause file
-        -- names and line numbers in error messages to reflect the original
-        -- locations.  This will require a bit of extra memory when running
-        -- the map.
+    -- An output map will be produced if this table is present.  In
+    -- addition, various map information will be exposed to the user build
+    -- environment.
+    map = {
+        -- The path to the map file that will be used as a basis for the
+        -- built map.  If absent, the `build` command will only attempt to
+        -- package the `war3map.lua`.
         --
-        -- By default, this option is disabled.  Listed are the accepted
-        -- values for debug mode.  Note that 'path', the default mode should
-        -- `true` be specified, will display the file path.  Setting the
-        -- option to 'name' will only display the module's name.
-        debug = false or nil or true or 'path' or 'name'
+        -- If the map table is specified, this setting is required.
+        input = 'path/to/input.w3x',
+
+        -- The path to use when creating the output map.
+        --
+        -- If the map table is specified, this setting is required.
+        output = 'path/to/output.w3x'
+    },
+
+    -- This table is required.
+    script = {
+        -- Value to be used as the `package.path` when generating the
+        -- script.  If absent, defaults to the `package.path` used for Map.
+        package_path = table.concat ({
+            'lib/?.lua',
+            'lib/?/init.lua'
+        }), ';'),
+
+        -- The path of the root file used to generate the script.
+        --
+        -- This setting is required.
+        input = 'path/to/input.lua',
+
+        -- The path to use when creating the output script.
+        --
+        -- This setting is required.
+        output = 'path/to/output.lua',
+
+        options = {
+            -- Indicates whether to enable debug mode.  This will cause file
+            -- names and line numbers in error messages to reflect the
+            -- original locations.
+            --
+            -- By default, this option is disabled.  Listed are the accepted
+            -- values for debug mode.  Note that 'path', the default mode
+            -- should `true` be specified, will display the file path.
+            -- Setting the option to 'name' will only display the module's
+            -- name.
+            debug = false or nil or true or 'path' or 'name'
+        }
     }
 }
 ```
@@ -155,15 +172,9 @@ configuration file.  This will build the `war3map.lua`, and nothing else.
 
 ```lua
 return {
-    input = {
-        source = {
-            require = 'name' -- Must be on the `package.path`.
-        }
-    },
-
-    output = {
-        directory = 'tmp',
-        name = 'Map.w3x' -- Output file named `Map.w3x.lua`.
+    script = {
+        input = 'path/to/input.lua',
+        output = 'path/to/output.lua'
     }
 }
 ```
@@ -179,13 +190,12 @@ following stated limitations:
    have a concept of multiple files.  To overcome this, **Map** will provide
    the needed plumbing when packaging the `war3map.lua` to make `require`
    work as expected.
-2. Only modules on the Lua path `package.path` are supported. Modules using
-   C loaders on the `package.cpath` are not supported, and **Map** will
-   complain.
+2. Only modules on the specified Lua path are supported.  By default, this
+   is the `package.path` used by **Map**.  However, this can be adjusted
+   using the proper setting.  Modules using C loaders are not supported.
 3. Note that [luac] is used to identify uses of `require`, and the analysis
    performed is rather naive.  Any clever uses of `require` will probably
-   be missed.  It is recommended to stick to literal `string` values (e.g.
-   `require ('name')`).
+   be missed (i.e. anything that is not a literal `string` value).
 4. Do not needlessly use `require`.  Any detected usages will cause those
    modules to be packaged into the `war3map.lua`, even if their code is not
    run.
@@ -198,24 +208,18 @@ following stated limitations:
 
 ## Environment
 
-User build scripts (found within the directory specified by `input.build`)
-are simply a convenience provided to ease reading and writing of map data.
-All libraries provided by **Map**, as well as any on the `package.path`, can
-be included.  Additionally, a user build script has the convenience of
-accessing exposed map data (i.e. the environment) via `...`.
+By specifying a `build` settings table, user build files will be processed.
+If a `map` settings table is provided, then various map contents will be
+exposed to the build environment as a convenience.
 
 ### Settings
 
-The following settings can be modified from within a user build script:
+The entire settings table is provided as-is in a read-only fashion.
 
 ``` lua
 local map = ...
 
--- The directory in which to place the generated output files.
-map.settings.output.directory = ''
-
--- The name used when creating the output files.
-map.settings.output.name = ''
+print (map.settings.script.input) -- 'path/to/input.lua'
 ```
 
 ### Information
@@ -319,8 +323,7 @@ map.imports ['path/to/file.j'] = true
 map.imports ['path/to/other/file.j'] = 'war3map.j'
 
 -- This will recurse through the files and subdirectories present within the
--- directory and import them into the map, preserving the directory
--- structure.
+-- directory and import them into the map, preserving directory structure.
 map.imports ['path/to/directory'] =  true
 ```
 
