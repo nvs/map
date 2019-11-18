@@ -7,6 +7,9 @@ return function (state)
 	state.settings.build = state.settings.build or {}
 	state.settings.build.options = state.settings.build.options or {}
 
+	state.settings.script = state.settings.script or {}
+	state.settings.script.options = state.settings.script.options or {}
+
 	-- Input.
 	do
 		local input = state.settings.input or {}
@@ -28,16 +31,6 @@ return function (state)
 		}
 
 		state.settings.options = options
-	end
-
-	-- Prepare the `package.path`.
-	do
-		local directory = state.settings.input.source.directory
-
-		if directory then
-			package.path = package.path .. string.format (
-				';%s/?.lua;%s/?/init.lua', directory, directory)
-		end
 	end
 
 	return true

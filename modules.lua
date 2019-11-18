@@ -66,8 +66,8 @@ function Errors:error (message, ...)
 	table.insert (self, string.format (message, ...))
 end
 
-local function find_module (name)
-	local path = package.searchpath (name, package.path)
+local function find_module (name, package_path)
+	local path = package.searchpath (name, package_path)
 	local message
 
 	if not path then
@@ -77,17 +77,17 @@ local function find_module (name)
 	return path, message
 end
 
-local function find_modules (path, modules, errors)
+local function find_modules (path, package_path, modules, errors)
 	local requires = find_requires (path)
 
 	for _, module in ipairs (requires) do
 		local name, line = table.unpack (module)
-		local found, message = find_module (name)
+		local found, message = find_module (name, package_path)
 
 		if found then
 			if not modules [name] then
 				modules [name] = found
-				find_modules (found, modules, errors)
+				find_modules (found, package_path, modules, errors)
 			elseif found ~= modules [name] then
 				message = 'duplicate found'
 			end
@@ -109,15 +109,10 @@ function Modules.load (state)
 	local modules = {}
 	local errors = setmetatable ({}, Errors)
 
-	local name = state.settings.input.source.require
-	local path, message = find_module (name)
-
-	if path then
-		modules [name] = path
-		find_modules (path, modules, errors)
-	else
-		errors:error (message, name)
-	end
+	find_modules (
+		state.settings.script.input,
+		state.settings.script.package_path or package.path,
+		modules, errors)
 
 	if #errors > 0 then
 		return nil, tostring (errors)

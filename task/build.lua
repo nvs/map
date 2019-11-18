@@ -14,7 +14,6 @@ return function (state)
 		table.insert (tasks, 'build.user-files')
 	end
 
-	-- The script was checked.  We can attempt to compile.
 	table.insert (tasks, 'build.script')
 
 	if state.settings.map then

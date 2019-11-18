@@ -9,7 +9,9 @@ return function (state)
 		error (message)
 	end
 
-	local paths = {}
+	local paths = {
+		state.settings.script.input
+	}
 
 	for _, path in pairs (modules) do
 		table.insert (paths, path)

@@ -28,10 +28,16 @@ end
 ]]))
 end
 
-local function write_module (output, path, name, debug)
+local function read_contents (path)
 	local file = assert (io.open (path, 'rb'))
 	local contents = String.trim (assert (file:read ('*a')), '[\r\n]+')
 	file:close ()
+
+	return contents
+end
+
+local function write_module (output, path, name, debug)
+	local contents = read_contents (path)
 
 	if debug then
 		debug = debug .. (debug == '@' and path or name)
@@ -66,10 +72,8 @@ end -- %s
 	end
 end
 
-local function write_footer (output, name)
-	assert (output:write (string.format ([[
-require (%q)
-]], name)))
+local function write_footer (output, path)
+	assert (output:write (read_contents (path)))
 end
 
 return function (state)
@@ -87,7 +91,7 @@ return function (state)
 
 	table.sort (names)
 
-	local debug = state.settings.options.debug
+	local debug = state.settings.script.options.debug
 
 	if debug then
 		if debug == true then
@@ -103,7 +107,11 @@ return function (state)
 		end
 	end
 
-	local path = state.settings.map.output .. '.lua'
+	local path = state.settings.script.output
+	do
+		local directories = Path.parent (path)
+		Path.create_directories (directories)
+	end
 	local output = assert (io.open (path, 'wb'))
 
 	write_header (output)
@@ -112,7 +120,7 @@ return function (state)
 		write_module (output, modules [name], name, debug)
 	end
 
-	write_footer (output, state.settings.input.source.require)
+	write_footer (output, state.settings.script.input)
 
 	output:close ()
 
