@@ -1,14 +1,12 @@
 local Tasks = require ('map.tasks')
 
 return function (state)
-	local map = state.settings.input.map
-
 	local tasks = {
 		'check',
 		'build.environment'
 	}
 
-	if map then
+	if state.settings.map then
 		table.insert (tasks, 'build.w3x.read')
 	end
 
@@ -16,13 +14,10 @@ return function (state)
 		table.insert (tasks, 'build.user-files')
 	end
 
-	-- This step is done regardless of whether user files were handled.
-	table.insert (tasks, 'build.post-user-files')
-
 	-- The script was checked.  We can attempt to compile.
 	table.insert (tasks, 'build.script')
 
-	if map then
+	if state.settings.map then
 		table.insert (tasks, 'build.w3x.write')
 	end
 

@@ -1,6 +1,9 @@
 local Utils = require ('map.utils')
 
 return function (state)
+	state.settings.map = state.settings.map or {}
+	state.settings.map.options = state.settings.map.options or {}
+
 	state.settings.build = state.settings.build or {}
 	state.settings.build.options = state.settings.build.options or {}
 

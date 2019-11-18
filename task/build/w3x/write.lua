@@ -26,8 +26,12 @@ local import_bytes = {
 }
 
 return function (state)
-	local map = state.settings.output.file
-	assert (Path.copy (state.settings.input.map, map))
+	local map = state.settings.map.output
+	do
+		local directories = Path.parent (map)
+		Path.create_directories (directories)
+	end
+	assert (Path.copy (state.settings.map.input, map))
 
 	local options = {}
 	do

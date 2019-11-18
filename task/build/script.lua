@@ -103,7 +103,7 @@ return function (state)
 		end
 	end
 
-	local path = state.settings.output.file .. '.lua'
+	local path = state.settings.map.output .. '.lua'
 	local output = assert (io.open (path, 'wb'))
 
 	write_header (output)
