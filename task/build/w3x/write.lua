@@ -41,7 +41,6 @@ return function (state)
 
 	local w3x = assert (W3X.open (map, 'r+', options))
 
-	-- Information.
 	do
 		local size = W3I.packsize (state.environment.information)
 		local file = assert (w3x:open ('war3map.w3i', 'w', size))
@@ -49,7 +48,6 @@ return function (state)
 		file:close ()
 	end
 
-	-- Objects.
 	do
 		local categories = {}
 
@@ -79,7 +77,6 @@ return function (state)
 		end
 	end
 
-	-- Constants.
 	for name, path in pairs (constants) do
 		local constant = state.environment.constants [name]
 
@@ -96,7 +93,6 @@ return function (state)
 		end
 	end
 
-	-- Script.
 	do
 		assert (state.environment.information.is_lua)
 
@@ -104,7 +100,6 @@ return function (state)
 		assert (w3x:add (map .. '.lua', 'war3map.lua'))
 	end
 
-	-- Imports.
 	do
 		local imports = state.environment.imports
 
@@ -117,7 +112,6 @@ return function (state)
 		end
 	end
 
-	-- Strings.
 	do
 		local strings = state.environment.strings
 
@@ -131,10 +125,7 @@ return function (state)
 		file:close ()
 	end
 
-	-- Close and compact.
 	w3x:close (true)
-
-	-- Report success.
 	io.stdout:write ('Output: ', map, '\n')
 
 	return true

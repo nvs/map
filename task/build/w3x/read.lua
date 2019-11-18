@@ -22,14 +22,12 @@ local constants = {
 return function (state)
 	local w3x = assert (W3X.open (state.settings.map.input))
 
-	-- Information.
 	do
 		local file = assert (w3x:open ('war3map.w3i'))
 		state.environment.information = assert (W3I.unpack (file))
 		file:close ()
 	end
 
-	-- Objects.
 	state.environment.objects = {}
 
 	for extension, name in pairs (objects) do
@@ -48,7 +46,6 @@ return function (state)
 		end
 	end
 
-	-- Constants.
 	state.environment.constants = {}
 
 	for path, name in pairs (constants) do
@@ -61,7 +58,6 @@ return function (state)
 		end
 	end
 
-	-- Load default constants tables.
 	do
 		local interface = state.environment.constants.interface
 		interface.FrameDef = interface.FrameDef or {}
@@ -75,10 +71,7 @@ return function (state)
 		extra.MapExtraInfo = extra.MapExtraInfo or {}
 	end
 
-	-- Imports.
 	state.environment.imports = {}
-
-	-- Strings.
 	state.environment.strings = {}
 
 	if w3x:has ('war3map.wts') then
