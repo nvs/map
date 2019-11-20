@@ -1,6 +1,9 @@
 # Map Changelog
 
 ## [Unreleased]
+- N/A
+
+## [0.8.0] - 2019-11-20
 ### Added
 - Support for W3I changes in 1.32.
 - Trigger strings have been exposed to the build environment.
@@ -266,7 +269,8 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.7.2...master
+[Unreleased]: https://github.com/nvs/map/compare/v0.8.0...master
+[0.8.0]: https://github.com/nvs/map/compare/v0.7.2...v0.8.0
 [0.7.2]: https://github.com/nvs/map/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/nvs/map/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/nvs/map/compare/v0.6.5...v0.7.0
