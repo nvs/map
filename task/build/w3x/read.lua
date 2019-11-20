@@ -24,7 +24,8 @@ return function (state)
 
 	do
 		local file = assert (w3x:open ('war3map.w3i'))
-		state.environment.information = assert (W3I.unpack (file))
+		local contents = file:read ('*a')
+		state.environment.information = assert (W3I.unpack (contents))
 		file:close ()
 	end
 
@@ -36,7 +37,8 @@ return function (state)
 		if w3x:has (path) then
 			local library = require ('map.file.' .. path)
 			local file = assert (w3x:open (path))
-			local category = assert (library.unpack (file))
+			local contents = file:read ('*a')
+			local category = assert (library.unpack (contents))
 			file:close ()
 
 			for id, object in pairs (category) do
@@ -51,7 +53,9 @@ return function (state)
 	for path, name in pairs (constants) do
 		if w3x:has (path) then
 			local file = assert (w3x:open (path))
-			state.environment.constants [name] = assert (INI.unpack (file))
+			local contents = file:read ('*a')
+			state.environment.constants [name] =
+				assert (INI.unpack (contents))
 			file:close ()
 		else
 			state.environment.constants [name] = {}
@@ -76,7 +80,8 @@ return function (state)
 
 	if w3x:has ('war3map.wts') then
 		local file = assert (w3x:open ('war3map.wts'))
-		state.environment.strings = assert (WTS.unpack (file))
+		local contents = file:read ('*a')
+		state.environment.strings = assert (WTS.unpack (contents))
 		file:close ()
 	end
 

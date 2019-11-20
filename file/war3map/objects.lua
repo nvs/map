@@ -1,5 +1,7 @@
-local IO = require ('map.io')
-local Null = require ('map.io.null')
+-- luacheck: std lua53
+if _VERSION < 'Lua 5.3' then
+	require ('compat53')
+end
 
 -- Template for Warcraft III object files (i.e. `war3map.w3u`,
 -- `war3map.w3t`, etc.).
@@ -44,11 +46,15 @@ local to_name = {
 	[3] = 'string'
 }
 
-function Objects.unpack (io, extra)
+function Objects.unpack (input, extra)
 	extra = not not extra
+	local position
 
 	local function unpack (options)
-		return assert (IO.unpack (io, '<' .. options))
+		local values = { string.unpack ('<' .. options, input, position) }
+		local last = #values
+		position = values [last]
+		return table.unpack (values, 1, last - 1)
 	end
 
 	local function unpack_modification (object)
@@ -109,12 +115,14 @@ function Objects.unpack (io, extra)
 	return output
 end
 
-function Objects.pack (io, input, extra)
+function Objects.pack (input, extra)
 	assert (type (input) == 'table')
 	extra = not not extra
 
+	local output = {}
+
 	local function pack (options, ...)
-		assert (IO.pack (io, '<' .. options, ...))
+		output [#output + 1] = string.pack ('<' .. options, ...)
 	end
 
 	local function pack_modifications (object, object_id)
@@ -203,19 +211,7 @@ function Objects.pack (io, input, extra)
 	pack_table (original)
 	pack_table (custom)
 
-	return true
-end
-
-function Objects.packsize (input, extra)
-	assert (type (input) == 'table')
-
-	local io = Null.open ()
-
-	if not Objects.pack (io, input, extra) then
-		return nil
-	end
-
-	return io:seek ('end')
+	return table.concat (output)
 end
 
 return Objects

@@ -5,8 +5,6 @@ end
 
 local Bits = require ('map.file.bits')
 local Flags = require ('map.file.flags')
-local IO = require ('map.io')
-local Null = require ('map.io.null')
 
 -- Deals with the `war3map.w3i`.
 local W3I = {}
@@ -27,13 +25,13 @@ local formats = {
 	[0x1F] = true -- Reforged
 }
 
-function W3I.unpack (io)
-	if not io then
-		return nil
-	end
+function W3I.unpack (input)
+	local position
 
 	local function unpack (options)
-		return assert (IO.unpack (io, '<' .. options))
+		local values = { string.unpack ('<' .. options, input, position) }
+		position = values [#values]
+		return table.unpack (values, 1, #values - 1)
 	end
 
 	local function unpack_bits (option)
@@ -47,8 +45,6 @@ function W3I.unpack (io)
 	local function unpack_force_flags (option)
 		return Flags.unpack (force_flags, unpack (option))
 	end
-
-	assert (io:seek ('set'))
 
 	local output = {}
 	local format = unpack ('i4')
@@ -281,15 +277,13 @@ function W3I.unpack (io)
 	return output
 end
 
-function W3I.pack (io, input)
+function W3I.pack (input)
 	assert (type (input) == 'table')
 
-	if not io then
-		return nil
-	end
+	local output = {}
 
 	local function pack (options, ...)
-		assert (IO.pack (io, '<' .. options, ...))
+		output [#output + 1] = string.pack ('<' .. options, ...)
 	end
 
 	local function pack_bits (option, value)
@@ -303,8 +297,6 @@ function W3I.pack (io, input)
 	local function pack_force_flags (option, value)
 		pack (option, Flags.pack (force_flags, value))
 	end
-
-	assert (io:seek ('set'))
 
 	local format = input.format
 
@@ -474,19 +466,7 @@ function W3I.pack (io, input)
 		end
 	end
 
-	return true
-end
-
-function W3I.packsize (input)
-	assert (type (input) == 'table')
-
-	local io = Null.open ()
-
-	if not W3I.pack (io, input) then
-		return nil
-	end
-
-	return io:seek ('end')
+	return table.concat (output)
 end
 
 return W3I

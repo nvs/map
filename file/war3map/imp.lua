@@ -1,5 +1,7 @@
-local IO = require ('map.io')
-local Null = require ('map.io.null')
+-- luacheck: std lua53
+if _VERSION < 'Lua 5.3' then
+	require ('compat53')
+end
 
 -- Deals with the `war3map.imp`.
 local Imports = {}
@@ -35,16 +37,14 @@ Imports.ignored = {
 	['war3mapUnits.doo'] = true
 }
 
-function Imports.unpack (io)
-	if not io then
-		return nil
-	end
+function Imports.unpack (input)
+	local position
 
 	local function unpack (options)
-		return assert (IO.unpack (io, '<' .. options))
+		local values = { string.unpack ('<' .. options, input, position) }
+		position = values [#values]
+		return table.unpack (values, 1, #values - 1)
 	end
-
-	assert (io:seek ('set'))
 
 	local output = {
 		version = unpack ('i4'),
@@ -59,18 +59,14 @@ function Imports.unpack (io)
 	return output
 end
 
-function Imports.pack (io, input)
+function Imports.pack (input)
 	assert (type (input) == 'table')
 
-	if not io then
-		return nil
-	end
+	local output = {}
 
 	local function pack (options, ...)
-		assert (IO.pack (io, '<' .. options, ...))
+		output [#output + 1] = string.pack ('<' .. options, ...)
 	end
-
-	assert (io:seek ('set'))
 
 	local files = {}
 
@@ -94,19 +90,7 @@ function Imports.pack (io, input)
 		pack ('z', name)
 	end
 
-	return true
-end
-
-function Imports.packsize (input)
-	assert (type (input) == 'table')
-
-	local io = Null.open ()
-
-	if not Imports.pack (io, input) then
-		return nil
-	end
-
-	return io:seek ('end')
+	return table.concat (output)
 end
 
 return Imports

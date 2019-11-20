@@ -267,8 +267,6 @@ function W3X:close (compact)
 		return self._w3x:close ()
 	end
 
-	local status, message, code
-
 	if self._updated then
 		local imports = {
 			version = 1,
@@ -281,25 +279,23 @@ function W3X:close (compact)
 			end
 		end
 
-		local file
-		local size = Imports.packsize (imports)
-		file, message, code = self._w3x:open ('war3map.imp', 'w', size)
+		local contents = Imports.pack (imports)
+		local size = #contents
+		local file, message, code =
+			self._w3x:open ('war3map.imp', 'w', size)
 
 		if not file then
 			return nil, message, code
 		end
 
-		if not Imports.pack (file, imports) then
-			return nil
-		end
-
+		file:write (contents)
 		file:close ()
 
 		self._updated = false
 	end
 
 	if compact then
-		status, message, code = self._w3x:compact ()
+		local status, message, code = self._w3x:compact ()
 
 		if not status then
 			return nil, message, code

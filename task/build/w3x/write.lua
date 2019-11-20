@@ -63,16 +63,22 @@ return function (state)
 			end
 
 			assert (source:close ())
-			assert (destination:close ())
+
+			local status, message, code = destination:close ()
+
+			if not status then
+				print (status, message, code)
+			end
 		end
 	end
 
 	local w3x = output
 
 	do
-		local size = W3I.packsize (state.environment.information)
+		local contents = W3I.pack (state.environment.information)
+		local size = #contents
 		local file = assert (w3x:open ('war3map.w3i', 'w', size))
-		assert (W3I.pack (file, state.environment.information))
+		file:write (contents)
 		file:close ()
 	end
 
@@ -92,12 +98,13 @@ return function (state)
 			local category = categories [name]
 			local path = 'war3map.' .. extension
 			local library = require ('map.file.' .. path)
-			local size = library.packsize (category)
+			local contents = assert (library.pack (category))
+			local size = #contents
 
 			-- Size of a file with empty original and custom tables.
 			if size > 12 then
 				local file = assert (w3x:open (path, 'w', size))
-				assert (library.pack (file, category))
+				file:write (contents)
 				file:close ()
 			else
 				w3x:remove (path)
@@ -109,11 +116,12 @@ return function (state)
 		local constant = state.environment.constants [name]
 
 		if constant then
-			local size = INI.packsize (constant)
+			local contents = INI.pack (constant)
+			local size = #contents
 
 			if size > 0 then
 				local file = assert (w3x:open (path, 'w', size))
-				assert (INI.pack (file, constant))
+				file:write (contents)
 				file:close ()
 			else
 				w3x:remove (path)
@@ -147,9 +155,10 @@ return function (state)
 			strings = {}
 		end
 
-		local size = WTS.packsize (strings)
+		local contents = WTS.pack (strings)
+		local size = #contents
 		local file = w3x:open ('war3map.wts', 'w', size)
-		assert (WTS.pack (file, strings))
+		file:write (contents)
 		file:close ()
 	end
 

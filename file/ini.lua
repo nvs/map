@@ -1,4 +1,3 @@
-local Null = require ('map.io.null')
 local String = require ('map.string')
 
 -- Details with `*.ini` files.
@@ -11,18 +10,14 @@ local String = require ('map.string')
 -- - `war3mapExtra.txt`
 local INI = {}
 
-function INI.unpack (io)
-	if not io then
-		return nil
-	end
-
+function INI.unpack (input)
 	local output = {}
 	local current
 
 	local section
 	local key, value
 
-	for line in io:lines () do
+	for line in input:gmatch ('([^\r\n]*)[\r\n]+') do
 		line = String.trim_right (line)
 
 		section = line:match ('^%[([^%]]+)%]$')
@@ -46,12 +41,10 @@ function INI.unpack (io)
 	return output
 end
 
-function INI.pack (io, input)
+function INI.pack (input)
 	assert (type (input) == 'table')
 
-	if not io then
-		return nil
-	end
+	local output = {}
 
 	for section, contents in pairs (input) do
 		local count = 0
@@ -65,29 +58,17 @@ function INI.pack (io, input)
 
 		-- Do not write empty sections.
 		if count > 0 then
-			io:write (('[%s]\r\n'):format (section))
+			output [#output + 1] = '[' .. section .. ']'
 
 			for key, value in pairs (contents) do
-				io:write (('%s=%s\r\n'):format (key, value))
+				output [#output + 1] = key .. '=' .. value
 			end
 
-			io:write ('\r\n')
+			output [#output + 1] = ''
 		end
 	end
 
-	return true
-end
-
-function INI.packsize (input)
-	assert (type (input) == 'table')
-
-	local io = Null.open ()
-
-	if not INI.pack (io, input) then
-		return nil
-	end
-
-	return io:seek ('end')
+	return table.concat (output, '\r\n')
 end
 
 return INI
