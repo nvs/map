@@ -26,6 +26,7 @@
 
 ### Removed
 - Inlining of strings has been removed.
+- Support for W3O files has been removed.
 
 ## [0.7.2] - 2019-08-09
 ### Changed
