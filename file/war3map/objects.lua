@@ -7,28 +7,28 @@ end
 -- `war3map.w3t`, etc.).
 local Objects = {}
 
-local to_format = {
-	[0] = 'i4',
-	[1] = 'f',
-	[2] = 'f',
-	[3] = 'z'
+local to_value = {
+	[0] = '< i4 xxxx',
+	[1] = '< f xxxx',
+	[2] = '< f xxxx',
+	[3] = '< z xxxx',
 }
 
-local modification_format = {
+local to_modification = {
 	-- Abilities, destructables, and doodads.
 	[true] = {
-		[0] = 'c4 i4 i4 i4 i4 c4',
-		[1] = 'c4 i4 i4 i4 f c4',
-		[2] = 'c4 i4 i4 i4 f c4',
-		[3] = 'c4 i4 i4 i4 z c4'
+		[0] = '< c4 i4 i4 i4 i4 c4',
+		[1] = '< c4 i4 i4 i4 f c4',
+		[2] = '< c4 i4 i4 i4 f c4',
+		[3] = '< c4 i4 i4 i4 z c4'
 	},
 
 	-- Units, quests, items, and buffs.
 	[false] = {
-		[0] = 'c4 i4 i4 c4',
-		[1] = 'c4 i4 f c4',
-		[2] = 'c4 i4 f c4',
-		[3] = 'c4 i4 z c4'
+		[0] = '< c4 i4 i4 c4',
+		[1] = '< c4 i4 f c4',
+		[2] = '< c4 i4 f c4',
+		[3] = '< c4 i4 z c4'
 	}
 }
 
@@ -46,45 +46,25 @@ local to_name = {
 	[3] = 'string'
 }
 
+local unpack = string.unpack
+local pack = string.pack
+
 function Objects.unpack (input, extra)
-	extra = not not extra
-	local position
+	local output = {}
 
-	local function unpack (options)
-		local values = { string.unpack ('<' .. options, input, position) }
-		local last = #values
-		position = values [last]
-		return table.unpack (values, 1, last - 1)
-	end
+	-- Version.
+	local position = unpack ('< xxxx', input)
 
-	local function unpack_modification (object)
-		local id, type = unpack ('c4 i4')
+	local function unpack_table ()
+		local count
+		count, position = unpack ('< i4', input, position)
 
-		local modification = object [id] or {}
-		modification.type = to_name [type]
-
-		local variation
-
-		if extra then
-			variation, modification.data = unpack ('i4 i4')
-		end
-
-		local format = to_format [type]
-
-		if variation and variation > 0 then
-			modification.values = modification.values or {}
-			modification.values [variation] = unpack (format)
-		else
-			modification.value = unpack (format)
-		end
-
-		object [id] = modification
-	end
-
-	local function unpack_table (output)
-		for _ = 1, unpack ('i4') do
+		for _ = 1, count do
 			local object = {}
-			local base, id = unpack ('c4 c4')
+
+			local base, id
+			base, id, count, position =
+				unpack ('< c4 c4 i4', input, position)
 
 			-- Original table.
 			if id == '\0\0\0\0' then
@@ -95,20 +75,39 @@ function Objects.unpack (input, extra)
 				object.base = base
 			end
 
-			for _ = 1, unpack ('i4') do
-				unpack_modification (object)
+			for _ = 1, count do
+				local name, type, variation, data
 
-				local cap = unpack ('c4')
-				assert (cap == '\0\0\0\0' or cap == id or cap == base)
+				if extra then
+					name, type, variation, data, position =
+						unpack ('< c4 i4 i4 i4', input, position)
+				else
+					name, type, position =
+						unpack ('< c4 i4', input, position)
+				end
+
+				local modification = object [name] or {}
+				modification.type = to_name [type]
+
+				if extra then
+					modification.data = data
+				end
+
+				local value
+				value, position = unpack (to_value [type], input, position)
+
+				if variation and variation > 0 then
+					modification.values = modification.values or {}
+					modification.values [variation] = value
+				else
+					modification.value = value
+				end
 			end
 
 			output [id] = object
 		end
 	end
 
-	local output = {}
-
-	unpack ('i4')
 	unpack_table (output)
 	unpack_table (output)
 
@@ -121,49 +120,6 @@ function Objects.pack (input, extra)
 
 	local output = {}
 
-	local function pack (options, ...)
-		output [#output + 1] = string.pack ('<' .. options, ...)
-	end
-
-	local function pack_modifications (object, object_id)
-		local count = 0
-
-		for _, modification in pairs (object) do
-			if type (modification) == 'table' then
-				if extra and modification.values then
-					for _ in pairs (modification.values) do
-						count = count + 1
-					end
-				else
-					count = count + 1
-				end
-			end
-		end
-
-		pack ('i4', count)
-
-		for id, modification in pairs (object) do
-			if type (modification) == 'table' then
-				local type = assert (from_name [modification.type])
-				local format = assert (modification_format [extra] [type])
-
-				if extra and modification.values then
-					local data = modification.data or 0
-
-					for variation, value in pairs (modification.values) do
-						pack (format, id, type,
-							variation, data, value, object_id)
-					end
-				elseif extra then
-					pack (format, id, type, 0, modification.data or 0,
-						modification.value, object_id)
-				else
-					pack (format, id, type, modification.value, object_id)
-				end
-			end
-		end
-	end
-
 	local function pack_table (objects)
 		local count = 0
 
@@ -171,7 +127,7 @@ function Objects.pack (input, extra)
 			count = count + 1
 		end
 
-		pack ('i4', count)
+		output [#output + 1] = pack ('< i4', count)
 
 		for id, object in pairs (objects) do
 			local base
@@ -186,13 +142,47 @@ function Objects.pack (input, extra)
 				id = '\0\0\0\0'
 			end
 
-			pack ('c4 c4', base, id)
-			pack_modifications (object, id)
+			output [#output + 1] = pack ('< c4 c4', base, id)
+
+			-- Placeholder for the modification count.
+			output [#output + 1] = true
+			local index = #output
+
+			for name, modification in pairs (object) do
+				if type (modification) == 'table' then
+					local type = assert (from_name [modification.type])
+					local format = assert (to_modification [extra] [type])
+
+					if extra and modification.values then
+						local data = modification.data or 0
+
+						for variation, value in
+							pairs (modification.values)
+						do
+							count = count + 1
+							output [#output + 1] = pack (
+								format, name, type,
+								variation, data, value, id)
+						end
+					elseif extra then
+						count = count + 1
+						output [#output + 1] = pack (
+							format, name, type, 0, modification.data or 0,
+							modification.value, id)
+					else
+						count = count + 1
+						output [#output + 1] = pack (
+							format, name, type, modification.value, id)
+					end
+				end
+			end
+
+			output [index] = pack ('< i4', count)
 		end
 	end
 
 	-- Version.
-	pack ('i4', 2)
+	output [#output + 1] = pack ('< i4', 2)
 
 	local original = {}
 	local custom = {}
