@@ -1,4 +1,4 @@
-local Objects = require ('map.file.war3map.objects')
+local Objects = require ('map.file.objects')
 
 -- Deals with the `war3map.w3h` (Buffs).
 local W3H = {}

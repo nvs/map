@@ -1,4 +1,4 @@
-local Objects = require ('map.file.war3map.objects')
+local Objects = require ('map.file.objects')
 
 -- Deals with the `war3map.w3b` (Destructables).
 local W3B = {}
