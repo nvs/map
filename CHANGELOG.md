@@ -9,12 +9,12 @@
   be automatically handled.  For outputs, an option flag must be set.
 
 ### Changed
+- Various performance improvements.
 - For the W3I table, `type` has been renamed to `format`.
 - Update WC3 ids for 1.32.0.
 - IMP handling has been enhanced. The byte present before file paths is now
   exposed, and defaults to the value used in 1.32.0 (i.e. `0x1D`).
-- W3X import handling has been enhanced. It is aware of WE ignored files,
-  and as such functions no longer support an `import` argument.
+- W3X import handling has been enhanced, and is aware of WE ignored files.
 - The build task now uses the W3I format to determine the proper IMP byte to
   use for imports.
 - The configuration file format has changed extensively. See the
@@ -23,6 +23,7 @@
 ### Fixed
 - Properly unpack unit tables in W3I file.
 - Whitespace is properly handled in trigger strings.
+- The first trigger string will not be skipped.
 
 ### Removed
 - Inlining of strings has been removed.
