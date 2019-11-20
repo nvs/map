@@ -1,4 +1,3 @@
-local Modules = require ('map.modules')
 local Path = require ('map.path')
 local Shell = require ('map.shell')
 local String = require ('map.string')
@@ -77,15 +76,9 @@ local function write_footer (output, path)
 end
 
 return function (state)
-	local modules, message = Modules.load (state)
-
-	if not modules then
-		error (message)
-	end
-
 	local names = {}
 
-	for name in pairs (modules) do
+	for name in pairs (state.modules) do
 		table.insert (names, name)
 	end
 
@@ -117,7 +110,7 @@ return function (state)
 	write_header (output)
 
 	for _, name in ipairs (names) do
-		write_module (output, modules [name], name, debug)
+		write_module (output, state.modules [name], name, debug)
 	end
 
 	write_footer (output, state.settings.script.input)

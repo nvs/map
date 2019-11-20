@@ -1,26 +1,12 @@
-local Modules = require ('map.modules')
-local Path = require ('map.path')
-local Shell = require ('map.shell')
+local Tasks = require ('map.tasks')
 
 return function (state)
-	local modules, message = Modules.load (state)
-
-	if not modules then
-		error (message)
-	end
-
-	local paths = {
-		state.settings.script.input
+	local tasks = {
+		'check.load-modules',
+		'check.run'
 	}
 
-	for _, path in pairs (modules) do
-		table.insert (paths, path)
-	end
+	Tasks.add (state, tasks)
 
-	local status = Shell.execute {
-		command = Shell.escape ('luacheck', '--default-config',
-			Path.join ('map', 'luacheck', 'luacheckrc'), '--quiet', paths)
-	}
-
-	return status
+	return true
 end

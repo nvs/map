@@ -101,24 +101,15 @@ end
 
 local Modules = {}
 
-function Modules.load (state)
-	if state.modules then
-		return state.modules
-	end
-
+function Modules.load (path, package_path)
 	local modules = {}
 	local errors = setmetatable ({}, Errors)
 
-	find_modules (
-		state.settings.script.input,
-		state.settings.script.package_path or package.path,
-		modules, errors)
+	find_modules (path, package_path or package.path, modules, errors)
 
 	if #errors > 0 then
 		return nil, tostring (errors)
 	end
-
-	state.modules = modules
 
 	return modules
 end
