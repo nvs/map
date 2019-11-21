@@ -1,7 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
-- N/A
+### Fixed
+- Object handling (that broke in 0.8.0) is restored.
 
 ## [0.8.0] - 2019-11-20
 ### Added

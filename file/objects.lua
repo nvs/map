@@ -15,7 +15,7 @@ local to_value = {
 }
 
 local to_modification = {
-	-- Abilities, destructables, and doodads.
+	-- Abilities, doodads, and upgrades.
 	[true] = {
 		[0] = '< c4 i4 i4 i4 i4 c4',
 		[1] = '< c4 i4 i4 i4 f c4',
@@ -102,6 +102,8 @@ function Objects.unpack (input, extra)
 				else
 					modification.value = value
 				end
+
+				object [name] = modification
 			end
 
 			output [id] = object
@@ -145,6 +147,7 @@ function Objects.pack (input, extra)
 			output [#output + 1] = pack ('< c4 c4', base, id)
 
 			-- Placeholder for the modification count.
+			count = 0
 			output [#output + 1] = true
 			local index = #output
 
