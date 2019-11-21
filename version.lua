@@ -1,1 +1,1 @@
-return 'map 0.8.0'
+return 'map 0.8.1'
