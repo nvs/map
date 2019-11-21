@@ -117,11 +117,11 @@ return {
 
     -- An output map will be produced if this table is present.  In
     -- addition, various map information will be exposed to the user build
-    -- environment.
+    -- environment.  If absent, the `build` command will only attempt to
+    -- package the `war3map.lua`.
     map = {
         -- Path to the map file or directory that will be used as a basis
-        -- for the built map.  If absent, the `build` command will only
-        -- attempt to package the `war3map.lua`.
+        -- for the built map.
         --
         -- If the map table is specified, this setting is required.
         input = 'path/to/input.w3x',
