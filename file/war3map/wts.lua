@@ -2,10 +2,12 @@ local WTS = {}
 
 function WTS.unpack (input)
 	local output = {}
-	local pattern = 'STRING (%d+).-{\r?\n?(.-)\r?\n?}'
 
-	for index, text in input:gmatch (pattern) do
-		output [tonumber (index)] = text:gsub ('\r\n', '\n')
+	for index, text in input:gmatch ('STRING (%d+).-(%b{})') do
+		text = text:gsub ('\r\n', '\n')
+		text = text:gsub ('^{[^\n]-\n', '')
+		text = text:gsub ('\n[^\n]-}$', '')
+		output [tonumber (index)] = text
 	end
 
 	return output

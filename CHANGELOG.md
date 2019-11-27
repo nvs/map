@@ -1,7 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
-- N/A
+### Fixed
+- Improve trigger string handling of nested brackets.
 
 ## [0.8.1] - 2019-11-21
 ### Fixed
