@@ -3,6 +3,8 @@
 ## [Unreleased]
 ### Added
 - Introduce ability to set the `package.cpath` for user build files.
+- Added two additional Luacheck standards: one that covers only the modified
+  WC3 Lua environment; and another that has all WC3 specific globals.
 
 ### Fixed
 - Improve trigger string handling of nested brackets.
