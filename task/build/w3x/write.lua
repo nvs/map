@@ -72,6 +72,7 @@ return function (state)
 		end
 	end
 
+	assert (input:close ())
 	local w3x = output
 
 	do
