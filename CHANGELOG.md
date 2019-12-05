@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Improve trigger string handling of nested brackets.
+- Expose `package` table to required modules in script debug mode.
 
 ## [0.8.1] - 2019-11-21
 ### Fixed

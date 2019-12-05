@@ -69,6 +69,18 @@ end
 -- Add globals introduced by Map.
 do
 	wc3.read_globals.require = empty
+	wc3.read_globals.package = {
+		fields = {
+			loaded = {
+				other_fields = true,
+				read_only = false
+			},
+			preload = {
+				other_fields = true,
+				read_only = false
+			}
+		}
+	}
 end
 
 return wc3

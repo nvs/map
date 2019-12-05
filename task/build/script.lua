@@ -4,7 +4,7 @@ local String = require ('map.string')
 
 local function write_header (output)
 	assert (output:write ([[
-local package = {
+package = {
 	loaded = {},
 	preload = {}
 }
