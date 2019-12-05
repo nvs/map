@@ -9,6 +9,7 @@ wc3.globals = wc3.globals or {}
 
 -- Remove Lua 5.3 features not supported by Warcraft III.
 do
+	wc3.read_globals.collectgarbage = nil
 	wc3.read_globals.debug = nil
 	wc3.read_globals.dofile = nil
 	wc3.read_globals.io = nil
