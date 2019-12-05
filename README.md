@@ -164,10 +164,9 @@ return {
             -- original locations.
             --
             -- By default, this option is disabled.  Listed are the accepted
-            -- values for debug mode.  Note that 'path', the default mode
-            -- should `true` be specified, will display the file path.
-            -- Setting the option to 'name' will only display the module's
-            -- name.
+            -- values for debug mode.  Note that 'name', the default mode
+            -- should `true` be specified, will display the module's name.
+            -- Setting the option to 'path' will display the file path.
             debug = false or nil or true or 'path' or 'name',
 
             -- Indicates whether to run Luacheck on the generated

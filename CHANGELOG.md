@@ -8,6 +8,7 @@
 ### Changed
 - `--quiet` flag is no longer passed to Luacheck, thus allowing the user to
   configure this option in their `.luacheckrc`.
+- Default script debug mode changed to `name`.
 
 ## [0.8.1] - 2019-11-21
 ### Fixed

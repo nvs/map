@@ -88,7 +88,7 @@ return function (state)
 
 	if debug then
 		if debug == true then
-			debug = 'path'
+			debug = 'name'
 		end
 
 		if debug == 'path' then
