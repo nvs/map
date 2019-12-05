@@ -121,8 +121,7 @@ return function (state)
 		local status = Shell.execute {
 			command = Shell.escape (
 				'luacheck', '--default-config',
-				Path.join ('map', 'luacheck', 'luacheckrc'),
-				'--quiet', path)
+				Path.join ('map', 'luacheck', 'luacheckrc'), path)
 		}
 
 		if not status then
