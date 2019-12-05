@@ -25,7 +25,7 @@ local default_options = {
 -- all methods:
 --
 -- - When opening an archive, if the specified path is a directory then the
---   reeturned object will target a directory based W3X.  Otherwise, it will
+--   returned object will target a directory based W3X.  Otherwise, it will
 --   reference a MPQ based object.
 -- - When referencing files within the archive, names will be internalized.
 --   That is, potential path separators (i.e. `\` and `/`) will be
