@@ -45,7 +45,9 @@ local function write_module (output, path, name, debug)
 	if debug then
 		assert (output:write (string.format ([[
 do -- %s
-	package.preload [%q] = assert (load (
+	package.preload [
+		%q
+	] = assert (load (
 
 %q
 
@@ -57,9 +59,9 @@ end -- %s
 		assert (output:write (string.format ([[
 do -- %s
 	local _ENV = _ENV
-	-- luacheck: ignore 212
-	package.preload [%q] = function (...)
-	-- luacheck: enable 212
+	package.preload [
+		%q
+	] = function (...) -- luacheck: ignore 212
 		_ENV = _ENV
 
 %s
