@@ -120,6 +120,8 @@ return function (state)
 	output:close ()
 
 	if not state.settings.script.options.skip_check then
+		io.stdout:write ('\n')
+
 		local status = Shell.execute {
 			command = Shell.escape (
 				'luacheck', '--default-config',
