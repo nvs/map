@@ -1,4 +1,4 @@
--- Globals in Warcraft III Lua as of `1.32.0.13680`.
+-- Globals in Warcraft III Lua as of `1.32.0.13991`.
 
 local ai = {
 	-- Only the natives from the `common.ai` are included in the Lua
@@ -1915,6 +1915,7 @@ local common = {
 		'Atan2',
 		'SquareRoot',
 		'Pow',
+		'MathRound',
 		'I2R',
 		'R2I',
 		'I2S',
@@ -3357,7 +3358,9 @@ local blizzard = {
 		'bj_QUEUE_DELAY_HINT',
 		'bj_QUEUE_DELAY_SECRET',
 		'bj_HANDICAP_EASY',
+		'bj_HANDICAP_NORMAL',
 		'bj_HANDICAPDAMAGE_EASY',
+		'bj_HANDICAPDAMAGE_NORMAL',
 		'bj_HANDICAPREVIVE_NOTHARD',
 		'bj_GAME_STARTED_THRESHOLD',
 		'bj_WAIT_FOR_COND_MIN_INTERVAL',
@@ -3639,6 +3642,8 @@ local blizzard = {
 		'bj_MINIMAPPINGSTYLE_FLASHY',
 		'bj_MINIMAPPINGSTYLE_ATTACK',
 		'bj_CAMPPINGSTYLE_PRIMARY',
+		'bj_CAMPPINGSTYLE_PRIMARY_GREEN',
+		'bj_CAMPPINGSTYLE_PRIMARY_RED',
 		'bj_CAMPPINGSTYLE_BONUS',
 		'bj_CAMPPINGSTYLE_TURNIN',
 		'bj_CAMPPINGSTYLE_BOSS',
@@ -3880,6 +3885,7 @@ local blizzard = {
 		'TriggerRegisterBuildCommandEventBJ',
 		'TriggerRegisterTrainCommandEventBJ',
 		'TriggerRegisterUpgradeCommandEventBJ',
+		'TriggerRegisterCommonCommandEventBJ',
 		'TriggerRegisterGameLoadedEventBJ',
 		'TriggerRegisterGameSavedEventBJ',
 		'RegisterDestDeathInRegionEnum',
@@ -3993,6 +3999,7 @@ local blizzard = {
 		'CreateCommandButtonEffectBJ',
 		'CreateTrainCommandButtonEffectBJ',
 		'CreateUpgradeCommandButtonEffectBJ',
+		'CreateCommonCommandButtonEffectBJ',
 		'CreateLearnCommandButtonEffectBJ',
 		'CreateBuildCommandButtonEffectBJ',
 		'GetLastCreatedCommandButtonEffectBJ',
@@ -4768,6 +4775,7 @@ local unknown = {
 	},
 
 	other = {
+		'StartSoundEx',
 		'SetSoundFacialAnimationPlaybackMode',
 		'SetCinematicSceneWithSkinId',
 		'BlzGetDestructableSkin',
