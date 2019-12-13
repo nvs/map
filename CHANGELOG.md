@@ -69,8 +69,8 @@
 - The `build` command now functions conditionally, according to settings in
   the configuration file.  Luacheck is used here as well.
 - The configuration file has changed extensively.  See the
-  [README](README.md) for details.  Of particular note is that settings are
-  now optional by default.
+  [README](README.md) for details.  Of particular note is that some settings
+  are now optional by default.
 
 ### Removed
 - Jass support has been removed completely.
@@ -184,9 +184,10 @@
 ### Fixed
 - An empty `settings.prefix` is now handled properly during environment load.
 - Windows-centric issues:
-    - Can now handle the use of either forward or back slashes when specifying
-      the command (e.g. `lua map/imports`).
-    - Argument quoting when passing internally to `cmd.exe` has been improved.
+    - Can now handle the use of either forward or back slashes when
+      specifying the command (e.g. `lua map/imports`).
+    - Argument quoting when passing internally to `cmd.exe` has been
+      improved.
     - Temporarily created paths now make use of the `TEMP` environment
       variable and should be usable.
 - Address situation where Lua is built without `unpack` compatibility.
@@ -209,57 +210,16 @@
   'prepare' command.
 - A standardized map environment now exists for all commands. This map
   environment can be customized by the user using the `environment` setting.
-- The following configuration settings have been added:
-    - `environment` _(For environment customization)_
-    - `map.name` _(For header and w3i support in 'prepare')_
-    - `output.name` _(Used in naming the output map and script)_
 
 ### Changed
-- The 'check' command now displays parse results to 'stdout' regardless of the
-  outcome. Note that other errors continue to write to 'stderr'.
+- The 'check' command now displays parse results to 'stdout' regardless of
+  the outcome. Note that other errors continue to write to 'stderr'.
 - The 'prepare' command has been reworked, and will no longer be destructive
   by default. The '--force' flag can be used to overwrite an existing file.
-- The 'imports' command now works upon a list of Lua files (like the 'objects'
-  and 'constants' commands), rather than a single directory.
-- The following settings are now used to list files (rather than using
-  separate `directory` and `files` settings for each category):
-    - `patch`
-    - `scripts`
-    - `imports`
-    - `objects`
-    - `constants.gameplay`
-    - `constants.interface`
-- The following settings have been made optional (meaning that they can be
-  absent and the map tools should function properly):
-    - `flags`
-    - `flags.default` (`false`)
-    - `map`
-    - `map.name`
-    - `scripts`
-    - `imports`
-    - `objects`
-    - `constants`
-    - `constants.gameplay`
-    - `constants.interface`
-    - `prefix`
-    - `pjass`
-    - `optimizer`
-    - `optimizer.tweaks`
-
-### Removed
-- The following configuration settings have been removed:
-    - `name` _(See `output.name` for replacement)_
-    - `patch.directory`
-    - `patch.files` _(See `patch` for replacement)_
-    - `scripts.directory`
-    - `scripts.files` _(See `scripts` for replacement)_
-    - `objects.directory`
-    - `objects.files` _(See `objects` for replacement)_
-    - `constants.gameplay.directory`
-    - `constants.gameplay.files` _(See `constants.gameplay` for replacement)_
-    - `constants.interface.directory`
-    - `constants.interface.files` _(See `constants.interface` for
-      replacement)_
+- The 'imports' command now works upon a list of Lua files (like the
+  'objects' and 'constants' commands), rather than a single directory.
+- The configuration file format has changed extensively. See the
+  [README](README.md) for details.
 
 ### Fixed
 - Error display messages for missing or improperly typed configuration
