@@ -100,7 +100,7 @@ return {
         package_path = table.concat ({
             'lib/?.lua',
             'lib/?/init.lua'
-        }), ';'),
+        }, ';'),
 
         -- The directory containing all user files that can be used to
         -- access and change the map environment.  It will be recursively
@@ -146,7 +146,7 @@ return {
         package_path = table.concat ({
             'lib/?.lua',
             'lib/?/init.lua'
-        }), ';'),
+        }, ';'),
 
         -- The path of the root file used to generate the script.
         --
