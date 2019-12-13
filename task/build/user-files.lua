@@ -8,15 +8,28 @@ return function (state)
 	state.environment.settings = Utils.read_only (settings)
 
 	local messages = {}
+	local original = {}
+	local environment = {
+		path = state.settings.build.package.path or package.path,
+		cpath = state.settings.build.package.cpath or package.cpath,
+		preload = {},
+		loaded = {}
+	}
 
 	for _, file in ipairs (build) do
 		local chunk, message = loadfile (file)
 
 		if chunk then
-			local original = package.path
-			package.path = state.settings.build.package.path
+			for key, value in pairs (environment) do
+				original [key] = value
+				package [key] = value
+			end
+
 			chunk (state.environment)
-			package.path = original
+
+			for key, value in pairs (original) do
+				package [key] = value
+			end
 		else
 			table.insert (messages, message)
 		end

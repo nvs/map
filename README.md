@@ -95,12 +95,17 @@ optional.
 return {
     -- User build files will be processed if this table is present.
     build = {
-        -- Value to be used as the `package.path` within user build files.
-        -- If absent, defaults to the `package.path` used for Map.
+        -- Values to be used as the `package.path` and `package.cpath`
+        -- within user build files.  If absent, defaults to the paths used
+        -- by Map.
         package = {
             path = table.concat ({
                 'lib/?.lua',
                 'lib/?/init.lua'
+            }, ';'),
+
+            cpath = table.concat ({
+                'lib/?.so'
             }, ';')
         },
 

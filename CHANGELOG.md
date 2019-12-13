@@ -1,6 +1,9 @@
 # Map Changelog
 
 ## [Unreleased]
+### Added
+- Introduce ability to set the `package.cpath` for user build files.
+
 ### Fixed
 - Improve trigger string handling of nested brackets.
 - Expose `package` table to required modules in script debug mode.
