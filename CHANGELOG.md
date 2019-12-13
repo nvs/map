@@ -6,6 +6,8 @@
 - Expose `package` table to required modules in script debug mode.
 
 ### Changed
+- Configuration of package paths has changed.  See the [README](README.md)
+  for details.
 - `--quiet` flag is no longer passed to Luacheck, thus allowing the user to
   configure this option in their `.luacheckrc`.
 - Default script debug mode changed to `name`.

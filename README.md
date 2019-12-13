@@ -97,10 +97,12 @@ return {
     build = {
         -- Value to be used as the `package.path` within user build files.
         -- If absent, defaults to the `package.path` used for Map.
-        package_path = table.concat ({
-            'lib/?.lua',
-            'lib/?/init.lua'
-        }, ';'),
+        package = {
+            path = table.concat ({
+                'lib/?.lua',
+                'lib/?/init.lua'
+            }, ';')
+        },
 
         -- The directory containing all user files that can be used to
         -- access and change the map environment.  It will be recursively
@@ -143,10 +145,12 @@ return {
     script = {
         -- Value to be used as the `package.path` when generating the
         -- script.  If absent, defaults to the `package.path` used for Map.
-        package_path = table.concat ({
-            'lib/?.lua',
-            'lib/?/init.lua'
-        }, ';'),
+        package = {
+            path = table.concat ({
+                'lib/?.lua',
+                'lib/?/init.lua'
+            }, ';')
+        },
 
         -- The path of the root file used to generate the script.
         --

@@ -14,7 +14,7 @@ return function (state)
 
 		if chunk then
 			local original = package.path
-			package.path = state.settings.build.package_path
+			package.path = state.settings.build.package.path
 			chunk (state.environment)
 			package.path = original
 		else
