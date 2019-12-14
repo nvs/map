@@ -54,9 +54,15 @@ _Other installation locations are neither tested or supported._
 
 The following commands are provided by the collection:
 
-- `check`: Check Lua scripts using [Luacheck].  A custom Luacheck standard
-  representing the Lua environment in Warcraft III is provided, and used by
-  defult, by **Map**.  See the following files:
+- `check`: Check Lua scripts specified by the `script` settings table using
+  [Luacheck].  If the `build` settings table is provided, then user build
+  files will be processed.  If the `map` settings table is provided, then
+  the input map is read and various map information is passed to the build
+  environment.  Note that user build files are run before the Lua scripts
+  are checked.
+
+  A custom Luacheck standard representing the Lua environment in Warcraft
+  III is provided, and used by defult, by **Map**.  See the following files:
 
   - [.luacheckrc](luacheck/luacheckrc)
   - [Warcraft III identifiers](luacheck/wc3.lua)
@@ -68,12 +74,10 @@ The following commands are provided by the collection:
 
 [Luacheck documentation]: https://luacheck.readthedocs.io/en/stable
 
-- `build`: Packages the `war3map.lua`.  If the `build` settings table is
-  provided, then user build files will be processed.  If the `map` settings
-  table is provided, then a new map will be built and various map
-  information will be passed to the user build environment.  Changes to this
-  information will be reflected within the built map.  Note that user build
-  files are run before the Lua scripts are checked.
+- `build`: Packages the `war3map.lua`.  Performs all actions specified in
+  the `check` command.  Additionally, if the `map` settings table is
+  provided, then a new map will be built.  Changes to information exposed
+  within the build environment will be reflected within the built map.
 
 All commands should be executed from within the project's root directory
 (e.g. `map/check`).  Depending on setup, it may be necessary to pass the

@@ -4,7 +4,6 @@ local Tasks = require ('map.tasks')
 
 return Tasks.run {
 	arguments = { ... },
-
 	tasks = {
 		'check'
 	},
@@ -12,8 +11,11 @@ return Tasks.run {
 	help = [[
 # map check
 
-Check Lua modules using Luacheck.  A custom Luacheck standard representing
-the Lua environment in Warcraft III is provided, and used by defult.
+Check Lua scripts specified by the `script` settings table using Luacheck.
+If the `build` settings table is provided, then user build files will be
+processed.  If the `map` settings table is provided, then the input map is
+read and various map information is passed to the build environment.  Note
+that user build files are run before the Lua scripts are checked.
 
 ## Usage
     check [options]
