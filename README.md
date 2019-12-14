@@ -190,7 +190,8 @@ return {
 ```
 
 With the above in mind, here is an example of the absolute minimum supported
-configuration file.  This will build the `war3map.lua`, and nothing else.
+configuration file.  This can be used to both check and build the
+`war3map.lua`, and nothing else.
 
 ```lua
 return {
