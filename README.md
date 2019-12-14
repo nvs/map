@@ -72,7 +72,8 @@ The following commands are provided by the collection:
   provided, then user build files will be processed.  If the `map` settings
   table is provided, then a new map will be built and various map
   information will be passed to the user build environment.  Changes to this
-  information will be reflected within the built map.
+  information will be reflected within the built map.  Note that user build
+  files are run before the Lua scripts are checked.
 
 All commands should be executed from within the project's root directory
 (e.g. `map/check`).  Depending on setup, it may be necessary to pass the

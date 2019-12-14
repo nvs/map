@@ -2,7 +2,6 @@ local Tasks = require ('map.tasks')
 
 return function (state)
 	local tasks = {
-		'check',
 		'build.environment'
 	}
 
@@ -14,6 +13,7 @@ return function (state)
 		table.insert (tasks, 'build.user-files')
 	end
 
+	table.insert (tasks, 'check')
 	table.insert (tasks, 'build.script')
 
 	if state.settings.map then

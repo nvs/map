@@ -15,7 +15,8 @@ Packages the `war3map.lua`.  If the `build` settings table is provided, then
 user build files will be processed.  If the `map` settings table is
 provided, then a new map will be built and various map information will be
 passed to the user build environment.  Changes to this information will be
-reflected within the built map.
+reflected within the built map.  Note that user build files are run before
+the Lua scripts are checked.
 
 ## Usage
     build [options]
