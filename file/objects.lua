@@ -110,8 +110,8 @@ function Objects.unpack (input, extra)
 		end
 	end
 
-	unpack_table (output)
-	unpack_table (output)
+	unpack_table ()
+	unpack_table ()
 
 	return output
 end
