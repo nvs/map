@@ -362,3 +362,12 @@ local map = ...
 print (map.strings [1]) --> `Force 1`
 map.strings [2] = 'Just another Warcraft III map'
 ```
+
+### Regions
+
+```lua
+local map = ...
+
+print (map.regions [1].name) --> `Region 000`
+map.regions [1].name = 'New Name'
+```

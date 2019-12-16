@@ -5,6 +5,8 @@
 - Introduce ability to set the `package.cpath` for user build files.
 - Added two additional Luacheck standards: one that covers only the modified
   WC3 Lua environment; and another that has all WC3 specific globals.
+- Added support for the following files:
+    - `war3map.w3r`
 
 ### Fixed
 - Improve trigger string handling of nested brackets.
@@ -12,6 +14,7 @@
 
 ### Changed
 - Configuration of package paths has changed.
+- Additional map information has been exposed to the build files.
 - `--quiet` flag is no longer passed to Luacheck, thus allowing the user to
   configure this option in their `.luacheckrc`.
 - Default script debug mode changed to `name`.

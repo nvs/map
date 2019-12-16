@@ -1,6 +1,7 @@
 local INI = require ('map.file.ini')
 local Path = require ('map.path')
 local W3I = require ('map.file.war3map.w3i')
+local W3R = require ('map.file.war3map.w3r')
 local WTS = require ('map.file.war3map.wts')
 local W3X = require ('map.file.w3x')
 
@@ -159,6 +160,20 @@ return function (state)
 		local contents = WTS.pack (strings)
 		local size = #contents
 		local file = w3x:open ('war3map.wts', 'w', size)
+		file:write (contents)
+		file:close ()
+	end
+
+	do
+		local regions = state.environment.regions
+
+		if type (regions) ~= 'table' then
+			regions = {}
+		end
+
+		local contents = W3R.pack (regions)
+		local size = #contents
+		local file = w3x:open ('war3map.w3r', 'w', size)
 		file:write (contents)
 		file:close ()
 	end

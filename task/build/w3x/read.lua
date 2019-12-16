@@ -1,5 +1,6 @@
 local INI = require ('map.file.ini')
 local W3I = require ('map.file.war3map.w3i')
+local W3R = require ('map.file.war3map.w3r')
 local WTS = require ('map.file.war3map.wts')
 local W3X = require ('map.file.w3x')
 
@@ -82,6 +83,15 @@ return function (state)
 		local file = assert (w3x:open ('war3map.wts'))
 		local contents = file:read ('*a')
 		state.environment.strings = assert (WTS.unpack (contents))
+		file:close ()
+	end
+
+	state.environment.regions = {}
+
+	if w3x:has ('war3map.w3r') then
+		local file = assert (w3x:open ('war3map.w3r'))
+		local contents = file:read ('*a')
+		state.environment.regions = assert (W3R.unpack (contents))
 		file:close ()
 	end
 
