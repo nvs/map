@@ -371,3 +371,12 @@ local map = ...
 print (map.regions [1].name) --> `Region 000`
 map.regions [1].name = 'New Name'
 ```
+
+### Cameras
+
+```lua
+local map = ...
+
+print (map.cameras [1].name) --> `Camera ABC`
+map.cameras [1].name = 'Camera XYZ'
+```

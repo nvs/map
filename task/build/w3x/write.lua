@@ -1,5 +1,6 @@
 local INI = require ('map.file.ini')
 local Path = require ('map.path')
+local W3C = require ('map.file.war3map.w3c')
 local W3I = require ('map.file.war3map.w3i')
 local W3R = require ('map.file.war3map.w3r')
 local WTS = require ('map.file.war3map.wts')
@@ -39,6 +40,7 @@ return function (state)
 		Path.create_directory (map)
 	end
 
+	local version = state.environment.information.version
 	local options = {}
 	do
 		local format = state.environment.information.format
@@ -174,6 +176,20 @@ return function (state)
 		local contents = W3R.pack (regions)
 		local size = #contents
 		local file = w3x:open ('war3map.w3r', 'w', size)
+		file:write (contents)
+		file:close ()
+	end
+
+	do
+		local cameras = state.environment.cameras
+
+		if type (cameras) ~= 'table' then
+			cameras = {}
+		end
+
+		local contents = W3C.pack (cameras, version)
+		local size = #contents
+		local file = w3x:open ('war3map.w3c', 'w', size)
 		file:write (contents)
 		file:close ()
 	end

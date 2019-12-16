@@ -1,4 +1,5 @@
 local INI = require ('map.file.ini')
+local W3C = require ('map.file.war3map.w3c')
 local W3I = require ('map.file.war3map.w3i')
 local W3R = require ('map.file.war3map.w3r')
 local WTS = require ('map.file.war3map.wts')
@@ -20,6 +21,13 @@ local constants = {
 	['war3mapExtra.txt'] = 'extra'
 }
 
+local default_version = {
+	major = 0,
+	minor = 0,
+	patch = 0,
+	build = 0
+}
+
 return function (state)
 	local w3x = assert (W3X.open (state.settings.map.input))
 
@@ -30,6 +38,8 @@ return function (state)
 		file:close ()
 	end
 
+	local version = state.environment.information.version or default_version
+	state.environment.information.version = version
 	state.environment.objects = {}
 
 	for extension, name in pairs (objects) do
@@ -92,6 +102,15 @@ return function (state)
 		local file = assert (w3x:open ('war3map.w3r'))
 		local contents = file:read ('*a')
 		state.environment.regions = assert (W3R.unpack (contents))
+		file:close ()
+	end
+
+	state.environment.cameras = {}
+
+	if w3x:has ('war3map.w3c') then
+		local file = assert (w3x:open ('war3map.w3c'))
+		local contents = file:read ('*a')
+		state.environment.cameras = assert (W3C.unpack (contents, version))
 		file:close ()
 	end
 
