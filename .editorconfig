@@ -12,12 +12,5 @@ insert_final_newline = true
 [*.md]
 indent_style = space
 
-[*.j]
-max_line_length = off
-
-[*.wts]
-end_of_line = crlf
-max_line_length = off
-
 [COMMIT_EDITMSG]
 max_line_length = 72
