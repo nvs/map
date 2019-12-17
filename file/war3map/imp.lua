@@ -82,13 +82,7 @@ function Imports.pack (input)
 	pack ('I4', #files)
 
 	for _, name in ipairs (files) do
-		local byte = input.files [name]
-
-		if type (byte) ~= 'number' then
-			byte = 0x1D
-		end
-
-		pack ('b', byte)
+		pack ('b', input.files [name])
 		pack ('z', name)
 	end
 
