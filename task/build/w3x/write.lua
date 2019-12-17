@@ -25,8 +25,8 @@ local constants = {
 }
 
 local import_bytes = {
-	[0x1C] = 0x15,
-	[0x1F] = 0x1D
+	[28] = 21,
+	[31] = 29
 }
 
 return function (state)
