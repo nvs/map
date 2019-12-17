@@ -139,7 +139,7 @@ return function (state)
 		assert (state.environment.information.is_lua)
 
 		w3x:remove ('war3map.j')
-		assert (w3x:add (map .. '.lua', 'war3map.lua'))
+		assert (w3x:add (state.settings.script.output, 'war3map.lua'))
 	end
 
 	do

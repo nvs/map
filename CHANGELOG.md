@@ -15,6 +15,7 @@
 - Improve trigger string handling of nested brackets.
 - Expose `package` table to required modules in script debug mode.
 - Errors emitted by `luac` are no longer displayed.
+- The `map.output` setting is now used when adding the script to the map.
 
 ### Changed
 - Configuration of package paths has changed.
