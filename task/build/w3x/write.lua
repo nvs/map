@@ -1,29 +1,45 @@
-local DOO_Doodads = require ('map.file.war3map.doo')
-local DOO_Units = require ('map.file.war3mapUnits.doo')
-local INI = require ('map.file.ini')
 local Path = require ('map.path')
-local W3C = require ('map.file.war3map.w3c')
-local W3I = require ('map.file.war3map.w3i')
-local W3R = require ('map.file.war3map.w3r')
-local WTS = require ('map.file.war3map.wts')
 local W3X = require ('map.file.w3x')
 
-local objects = {
-	unit = 'w3u',
-	item = 'w3t',
-	destructable = 'w3d',
-	doodad = 'w3b',
-	ability = 'w3a',
-	buff = 'w3h',
-	upgrade = 'w3q'
-}
+local files = {
+	information = 'war3map.w3i',
 
-local constants = {
+	strings = 'war3map.wts',
+	regions = 'war3map.w3r',
+	cameras = 'war3map.w3c',
+	doodads = 'war3map.doo',
+	units = 'war3mapUnits.doo',
+
+	unit = 'war3map.w3u',
+	item = 'war3map.w3t',
+	destructable = 'war3map.w3d',
+	doodad = 'war3map.w3b',
+	ability = 'war3map.w3a',
+	buff = 'war3map.w3h',
+	upgrade = 'war3map.w3q',
+
 	interface = 'war3mapSkin.txt',
 	gameplay = 'war3mapMisc.txt',
 	extra = 'war3mapExtra.txt'
 }
 
+local objects = {
+	'unit',
+	'item',
+	'destructable',
+	'doodad',
+	'ability',
+	'buff',
+	'upgrade'
+}
+
+local constants = {
+	'interface',
+	'gameplay',
+	'extra'
+}
+
+-- TODO: Remove this table upon release of 1.32.
 local import_bytes = {
 	[28] = 21,
 	[31] = 29
@@ -42,12 +58,11 @@ return function (state)
 		Path.create_directory (map)
 	end
 
-	local version = state.environment.information.version
-	local options = {}
-	do
-		local format = state.environment.information.format
-		options.import_byte = import_bytes [format]
-	end
+	local environment = state.environment
+	local version = environment.information.version
+	local options = {
+		import_byte = import_bytes [environment.information.format]
+	}
 
 	local input = assert (W3X.open (state.settings.map.input, 'r'))
 	local output = assert (W3X.open (map, 'w+', options))
@@ -78,153 +93,41 @@ return function (state)
 	end
 
 	assert (input:close ())
-	local w3x = output
 
 	do
-		local contents = W3I.pack (state.environment.information)
-		local size = #contents
-		local file = assert (w3x:open ('war3map.w3i', 'w', size))
-		file:write (contents)
-		file:close ()
-	end
-
-	do
-		local categories = {}
-
 		for name in pairs (objects) do
-			categories [name] = {}
+			environment [name] = {}
 		end
 
-		-- Split the unified objects table into its respective categories.
-		for id, object in pairs (state.environment.objects) do
-			categories [object.type] [id] = object
-		end
-
-		for name, extension in pairs (objects) do
-			local category = categories [name]
-			local path = 'war3map.' .. extension
-			local library = require ('map.file.' .. path)
-			local contents = assert (library.pack (category))
-			local size = #contents
-
-			-- Size of a file with empty original and custom tables.
-			if size > 12 then
-				local file = assert (w3x:open (path, 'w', size))
-				file:write (contents)
-				file:close ()
-			else
-				w3x:remove (path)
-			end
+		for id, object in pairs (environment.objects) do
+			environment [object.type] [id] = object
 		end
 	end
 
-	for name, path in pairs (constants) do
-		local constant = state.environment.constants [name]
-
-		if constant then
-			local contents = INI.pack (constant)
-			local size = #contents
-
-			if size > 0 then
-				local file = assert (w3x:open (path, 'w', size))
-				file:write (contents)
-				file:close ()
-			else
-				w3x:remove (path)
-			end
-		end
+	for _, name in ipairs (constants) do
+		environment [name] = environment.constants [name]
 	end
 
-	do
-		assert (state.environment.information.is_lua)
-
-		w3x:remove ('war3map.j')
-		assert (w3x:add (state.settings.script.output, 'war3map.lua'))
-	end
-
-	do
-		local imports = state.environment.imports
-
-		if type (imports) ~= 'table' then
-			imports = {}
-		end
-
-		for path, name in pairs (imports) do
-			assert (w3x:add (path, name))
-		end
-	end
-
-	do
-		local strings = state.environment.strings
-
-		if type (strings) ~= 'table' then
-			strings = {}
-		end
-
-		local contents = WTS.pack (strings)
-		local size = #contents
-		local file = w3x:open ('war3map.wts', 'w', size)
+	for name, path in pairs (files) do
+		local library = require ('map.file.' .. path)
+		local contents = assert (library.pack (environment [name], version))
+		local file = output:open (path, 'w', #contents)
 		file:write (contents)
 		file:close ()
 	end
 
 	do
-		local regions = state.environment.regions
+		assert (environment.information.is_lua)
 
-		if type (regions) ~= 'table' then
-			regions = {}
-		end
-
-		local contents = W3R.pack (regions)
-		local size = #contents
-		local file = w3x:open ('war3map.w3r', 'w', size)
-		file:write (contents)
-		file:close ()
+		output:remove ('war3map.j')
+		assert (output:add (state.settings.script.output, 'war3map.lua'))
 	end
 
-	do
-		local cameras = state.environment.cameras
-
-		if type (cameras) ~= 'table' then
-			cameras = {}
-		end
-
-		local contents = W3C.pack (cameras, version)
-		local size = #contents
-		local file = w3x:open ('war3map.w3c', 'w', size)
-		file:write (contents)
-		file:close ()
+	for path, name in pairs (environment.imports) do
+		assert (output:add (path, name))
 	end
 
-	do
-		local doodads = state.environment.doodads
-
-		if type (doodads) ~= 'table' then
-			doodads = {}
-		end
-
-		local contents = DOO_Doodads.pack (doodads, version)
-		local size = #contents
-		local file = w3x:open ('war3map.doo', 'w', size)
-		file:write (contents)
-		file:close ()
-	end
-
-	do
-		local units = state.environment.units
-
-		if type (units) ~= 'table' then
-			units = {}
-		end
-
-		local contents = DOO_Units.pack (units, version)
-		local size = #contents
-		local file = w3x:open ('war3mapUnits.doo', 'w', size)
-		file:write (contents)
-		file:close ()
-	end
-
-	w3x:close (true)
+	output:close (true)
 	io.stdout:write ('Output: ', map, '\n')
 
 	return true
