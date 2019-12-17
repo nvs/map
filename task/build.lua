@@ -8,6 +8,11 @@ return function (state)
 	table.insert (tasks, 'build.script')
 
 	if state.settings.map then
+		if state.settings.map.input == state.settings.map.output then
+			return nil, [[
+map: `settings.map.input` and `settings.map.output` must differ]]
+		end
+
 		table.insert (tasks, 'build.w3x.write')
 	end
 
