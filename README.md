@@ -389,3 +389,12 @@ local map = ...
 print (map.doodads [1].type) --> `LTlt`
 map.doodads [1].life = 50
 ```
+
+### Units/Items
+
+```lua
+local map = ...
+
+print (map.units [1].type) --> `hfoo`
+map.units [1].player = 3
+```

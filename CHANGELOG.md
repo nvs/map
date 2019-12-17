@@ -9,6 +9,7 @@
     - `war3map.doo`
     - `war3map.w3c`
     - `war3map.w3r`
+    - `war3mapUnits.doo`
 
 ### Fixed
 - Improve trigger string handling of nested brackets.

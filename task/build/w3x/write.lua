@@ -1,4 +1,5 @@
 local DOO_Doodads = require ('map.file.war3map.doo')
+local DOO_Units = require ('map.file.war3mapUnits.doo')
 local INI = require ('map.file.ini')
 local Path = require ('map.path')
 local W3C = require ('map.file.war3map.w3c')
@@ -205,6 +206,20 @@ return function (state)
 		local contents = DOO_Doodads.pack (doodads, version)
 		local size = #contents
 		local file = w3x:open ('war3map.doo', 'w', size)
+		file:write (contents)
+		file:close ()
+	end
+
+	do
+		local units = state.environment.units
+
+		if type (units) ~= 'table' then
+			units = {}
+		end
+
+		local contents = DOO_Units.pack (units, version)
+		local size = #contents
+		local file = w3x:open ('war3mapUnits.doo', 'w', size)
 		file:write (contents)
 		file:close ()
 	end

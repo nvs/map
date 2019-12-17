@@ -1,4 +1,5 @@
 local DOO_Doodads = require ('map.file.war3map.doo')
+local DOO_Units = require ('map.file.war3mapUnits.doo')
 local INI = require ('map.file.ini')
 local W3C = require ('map.file.war3map.w3c')
 local W3I = require ('map.file.war3map.w3i')
@@ -123,6 +124,16 @@ return function (state)
 		local contents = file:read ('*a')
 		state.environment.doodads = assert (
 			DOO_Doodads.unpack (contents, version))
+		file:close ()
+	end
+
+	state.environment.units = {}
+
+	if w3x:has ('war3mapUnits.doo') then
+		local file = assert (w3x:open ('war3mapUnits.doo'))
+		local contents = file:read ('*a')
+		state.environment.units = assert (
+			DOO_Units.unpack (contents, version))
 		file:close ()
 	end
 
