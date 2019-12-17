@@ -138,7 +138,9 @@ return {
         -- If the map table is specified, this setting is required.
         input = 'path/to/input.w3x',
 
-        -- The path to use when creating the output map.
+        -- The path to use when creating the output map.  Take care when
+        -- specifying the path, as any file or directory at this specified
+        -- location will be removed.
         --
         -- If the map table is specified, this setting is required.
         output = 'path/to/output.w3x',
