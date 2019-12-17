@@ -40,10 +40,10 @@ local force_flags = {
 }
 
 local formats = {
-	[0x12] = true, -- RoC
-	[0x19] = true, -- TFT
-	[0x1C] = true, -- Lua
-	[0x1F] = true -- Reforged
+	[18] = 'RoC',
+	[25] = 'TFT',
+	[28] = 'Lua',
+	[31] = 'Reforged'
 }
 
 function W3I.unpack (input)
@@ -67,18 +67,16 @@ function W3I.unpack (input)
 		return Flags.unpack (force_flags, unpack (option))
 	end
 
-	local output = {}
 	local format = unpack ('i4')
+	assert (formats [format])
 
-	if not formats [format] then
-		return nil
-	end
+	local output = {}
 
 	output.format = format
 	output.saves = unpack ('i4')
 	output.editor = unpack ('i4')
 
-	if format >= 0x1C then
+	if format >= 28 then
 		output.version = {
 			major = unpack ('i4'),
 			minor = unpack ('i4'),
@@ -118,7 +116,7 @@ function W3I.unpack (input)
 	output.map.flags = unpack_map_flags ('I4')
 	output.tileset = unpack ('c1')
 
-	if format == 0x12 then
+	if format == 18 then
 		output.campaign = {
 			background = unpack ('i4')
 		}
@@ -181,11 +179,11 @@ function W3I.unpack (input)
 		}
 	end
 
-	if format >= 0x1C then
+	if format >= 28 then
 		output.is_lua = unpack ('i4') == 1
 	end
 
-	if format == 0x1F then
+	if format == 31 then
 		output.quality = unpack ('i4')
 		output.game_data_version = unpack ('i4')
 	end
@@ -211,7 +209,7 @@ function W3I.unpack (input)
 		player.ally.low = unpack_bits ('I4')
 		player.ally.high = unpack_bits ('I4')
 
-		if format == 0x1F then
+		if format == 31 then
 			player.enemy.low = unpack_bits ('I4')
 			player.enemy.high = unpack_bits ('I4')
 		end
@@ -271,7 +269,7 @@ function W3I.unpack (input)
 		output.units [index] = unit
 	end
 
-	if format >= 0x19 then
+	if format >= 25 then
 		output.item_tables = {}
 
 		for index = 1, unpack ('i4') do
@@ -320,16 +318,13 @@ function W3I.pack (input)
 	end
 
 	local format = input.format
-
-	if not formats [format] then
-		return nil
-	end
+	assert (formats [format])
 
 	pack ('i4', input.format)
 	pack ('i4', input.saves)
 	pack ('i4', input.editor)
 
-	if format >= 0x1C then
+	if format >= 28 then
 		pack ('i4', input.version.major)
 		pack ('i4', input.version.minor)
 		pack ('i4', input.version.patch)
@@ -357,7 +352,7 @@ function W3I.pack (input)
 	pack_map_flags ('I4', input.map.flags)
 	pack ('c1', input.tileset)
 
-	if format == 0x12 then
+	if format == 18 then
 		pack ('i4', input.campaign.background)
 
 		pack ('z', input.loading.text)
@@ -400,11 +395,11 @@ function W3I.pack (input)
 		pack ('B', input.environment.water.alpha)
 	end
 
-	if format >= 0x1C then
+	if format >= 28 then
 		pack ('i4', input.is_lua and 1 or 0)
 	end
 
-	if format == 0x1F then
+	if format == 31 then
 		pack ('i4', input.quality)
 		pack ('i4', input.game_data_version)
 	end
@@ -422,7 +417,7 @@ function W3I.pack (input)
 		pack_bits ('I4', player.ally.low)
 		pack_bits ('I4', player.ally.high)
 
-		if format == 0x1F then
+		if format == 31 then
 			pack_bits ('I4', player.enemy.low)
 			pack_bits ('I4', player.enemy.high)
 		end
@@ -468,7 +463,7 @@ function W3I.pack (input)
 		end
 	end
 
-	if format >= 0x19 then
+	if format >= 25 then
 		pack ('i4', #input.item_tables)
 
 		for _, item_table in ipairs (input.item_tables) do
