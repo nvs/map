@@ -86,6 +86,11 @@ function Directory:open (name, mode)
 
 	local path = Path.join (self._path, to_internal (name))
 
+	if mode == 'w' then
+		local directories = Path.parent (path)
+		assert (Path.create_directories (directories))
+	end
+
 	return io.open (path, mode)
 end
 
