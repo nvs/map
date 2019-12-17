@@ -10,10 +10,7 @@ return function (state)
 		table.insert (paths, path)
 	end
 
-	local status = Shell.execute {
-		command = Shell.escape ('luacheck', '--default-config',
-			Path.join ('map', 'luacheck', 'luacheckrc'), paths)
-	}
-
-	return status
+	return (os.execute (Shell.escape (
+		'luacheck', '--default-config',
+		Path.join ('map', 'luacheck', 'luacheckrc'), paths)))
 end

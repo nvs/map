@@ -1,9 +1,3 @@
--- luacheck: std lua53
-if _VERSION < 'Lua 5.3' then
-	-- For enhanced `os.execute ()` return code.
-	require ('compat53')
-end
-
 local Path = require ('map.path')
 
 local Shell = {}
@@ -11,7 +5,7 @@ local Shell = {}
 local is_windows = Path.separator == '\\'
 
 -- Returns an escaped `string` that is safe to pass to `os.execute ()` or
--- `Shell.execute ()`.  A variable number of arguments are processed in the
+-- `io.popen ()`.  A variable number of arguments are processed in the
 -- following fashion:
 --
 -- - Any `string` arguments are escaped and joined together with a space as
@@ -68,38 +62,8 @@ function Shell.escape (...)
 	return table.concat (output, ' ')
 end
 
--- Takes the provided `arguments (table)` and executes the contained
--- `command (string)` in the same fashion as `os.execute ()`.  Optionally,
--- takes `stdout (string)` and `stderr (string)` to allow redirection of
--- those file descriptors to the provided locations.
---
--- Returns the same results that `os.execute ()` would give in Lua 5.2 or
--- higher (with some notable limitations in Lua 5.1).  See [compat-5.3]
--- documentation for details.
-function Shell.execute (arguments)
-	assert (type (arguments) == 'table')
-	assert (type (arguments.command) == 'string')
-
-	local command = arguments.command
-
-	if arguments.stdout then
-		assert (type (arguments.stdout) == 'string')
-
-		command = command .. ' >' .. arguments.stdout
-	end
-
-	if arguments.stderr then
-		assert (type (arguments.stderr) == 'string')
-
-		command = command .. ' 2>' .. arguments.stderr
-	end
-
-	return os.execute (command)
-end
-
 return Shell
 
 -- luacheck: ignore 631
 --
--- [compat-5.3]: https://github.com/keplerproject/lua-compat-5.3
 -- [Quoting command line arguments the 'right' way]: https://blogs.msdn.microsoft.com/twistylittlepassagesallalike/2011/04/23/everyone-quotes-command-line-arguments-the-wrong-way
