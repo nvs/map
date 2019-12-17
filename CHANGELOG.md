@@ -14,6 +14,7 @@
 ### Fixed
 - Improve trigger string handling of nested brackets.
 - Expose `package` table to required modules in script debug mode.
+- Errors emitted by `luac` are no longer displayed.
 
 ### Changed
 - Configuration of package paths has changed.
