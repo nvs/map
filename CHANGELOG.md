@@ -23,6 +23,8 @@
   configure this option in their `.luacheckrc`.
 - Default script debug mode changed to `name`.
 - User build files are now processed before checking Lua scripts.
+- Enhance W3I support by identifying and adding unknown flags.  Some flag
+  names have changed.
 
 ## [0.8.1] - 2019-11-21
 ### Fixed

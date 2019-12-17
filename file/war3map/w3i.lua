@@ -9,7 +9,28 @@ local Flags = require ('map.file.flags')
 -- Deals with the `war3map.w3i`.
 local W3I = {}
 
-local map_flags = require ('map.file.map_flags')
+local map_flags = {
+	[0x00001] = 'hide_minimap_in_preview_screens',
+	[0x00002] = 'modify_ally_priorities',
+	[0x00004] = 'melee_map',
+	[0x00008] = 'playable_map_size_was_large',
+	[0x00010] = 'masked_areas_are_partially_visible',
+	[0x00020] = 'fixed_player_settings_for_custom_forces',
+	[0x00040] = 'use_custom_forces',
+	[0x00080] = 'use_custom_techtree',
+	[0x00100] = 'use_custom_abilities',
+	[0x00200] = 'use_custom_upgrades',
+	[0x00400] = 'has_opened_map_properties',
+	[0x00800] = 'show_waves_on_cliff_shores',
+	[0x01000] = 'show_waves_on_rolling_shores',
+	[0x02000] = 'use_terrain_fog',
+	[0x04000] = 'require_expansion',
+	[0x08000] = 'use_item_classification_system',
+	[0x10000] = 'use_water_tinting_color',
+	[0x20000] = 'use_accurate_probability',
+	[0x40000] = 'use_custom_ability_skin'
+}
+
 local force_flags = {
 	[0x01] = 'allied',
 	[0x02] = 'allied_victory',
