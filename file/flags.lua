@@ -22,8 +22,15 @@ function Flags.unpack (flags, input)
 	local output = {}
 
 	for value, flag in pairs (flags) do
-		output [flag] = input % (value + value) >= value
+		local result = input % (value + value) >= value
+		output [flag] = result
+
+		if result then
+			input = input - value
+		end
 	end
+
+	assert (input == 0)
 
 	return output
 end
