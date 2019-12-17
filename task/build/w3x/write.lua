@@ -1,3 +1,4 @@
+local DOO_Doodads = require ('map.file.war3map.doo')
 local INI = require ('map.file.ini')
 local Path = require ('map.path')
 local W3C = require ('map.file.war3map.w3c')
@@ -190,6 +191,20 @@ return function (state)
 		local contents = W3C.pack (cameras, version)
 		local size = #contents
 		local file = w3x:open ('war3map.w3c', 'w', size)
+		file:write (contents)
+		file:close ()
+	end
+
+	do
+		local doodads = state.environment.doodads
+
+		if type (doodads) ~= 'table' then
+			doodads = {}
+		end
+
+		local contents = DOO_Doodads.pack (doodads, version)
+		local size = #contents
+		local file = w3x:open ('war3map.doo', 'w', size)
 		file:write (contents)
 		file:close ()
 	end

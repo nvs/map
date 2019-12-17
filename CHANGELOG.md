@@ -6,6 +6,7 @@
 - Added two additional Luacheck standards: one that covers only the modified
   WC3 Lua environment; and another that has all WC3 specific globals.
 - Added support for the following files:
+    - `war3map.doo`
     - `war3map.w3c`
     - `war3map.w3r`
 

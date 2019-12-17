@@ -380,3 +380,12 @@ local map = ...
 print (map.cameras [1].name) --> `Camera ABC`
 map.cameras [1].name = 'Camera XYZ'
 ```
+
+### Doodads
+
+```lua
+local map = ...
+
+print (map.doodads [1].type) --> `LTlt`
+map.doodads [1].life = 50
+```

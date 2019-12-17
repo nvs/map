@@ -1,3 +1,4 @@
+local DOO_Doodads = require ('map.file.war3map.doo')
 local INI = require ('map.file.ini')
 local W3C = require ('map.file.war3map.w3c')
 local W3I = require ('map.file.war3map.w3i')
@@ -40,6 +41,7 @@ return function (state)
 
 	local version = state.environment.information.version or default_version
 	state.environment.information.version = version
+
 	state.environment.objects = {}
 
 	for extension, name in pairs (objects) do
@@ -111,6 +113,16 @@ return function (state)
 		local file = assert (w3x:open ('war3map.w3c'))
 		local contents = file:read ('*a')
 		state.environment.cameras = assert (W3C.unpack (contents, version))
+		file:close ()
+	end
+
+	state.environment.doodads = {}
+
+	if w3x:has ('war3map.doo') then
+		local file = assert (w3x:open ('war3map.doo'))
+		local contents = file:read ('*a')
+		state.environment.doodads = assert (
+			DOO_Doodads.unpack (contents, version))
 		file:close ()
 	end
 
