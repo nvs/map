@@ -113,6 +113,8 @@ function Objects.unpack (input, extra)
 	unpack_table ()
 	unpack_table ()
 
+	assert (#input == position - 1)
+
 	return output
 end
 

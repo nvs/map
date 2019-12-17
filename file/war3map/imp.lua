@@ -56,6 +56,8 @@ function Imports.unpack (input)
 		output.files [unpack ('z')] = byte
 	end
 
+	assert (#input == position - 1)
+
 	return output
 end
 

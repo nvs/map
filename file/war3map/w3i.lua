@@ -293,6 +293,8 @@ function W3I.unpack (input)
 		end
 	end
 
+	assert (#input == position - 1)
+
 	return output
 end
 
