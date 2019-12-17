@@ -1,26 +1,40 @@
-local DOO_Doodads = require ('map.file.war3map.doo')
-local DOO_Units = require ('map.file.war3mapUnits.doo')
-local INI = require ('map.file.ini')
-local W3C = require ('map.file.war3map.w3c')
 local W3I = require ('map.file.war3map.w3i')
-local W3R = require ('map.file.war3map.w3r')
-local WTS = require ('map.file.war3map.wts')
 local W3X = require ('map.file.w3x')
 
+local files = {
+	strings = 'war3map.wts',
+	regions = 'war3map.w3r',
+	cameras = 'war3map.w3c',
+	doodads = 'war3map.doo',
+	units = 'war3mapUnits.doo',
+
+	unit = 'war3map.w3u',
+	item = 'war3map.w3t',
+	destructable = 'war3map.w3d',
+	doodad = 'war3map.w3b',
+	ability = 'war3map.w3a',
+	buff = 'war3map.w3h',
+	upgrade = 'war3map.w3q',
+
+	interface = 'war3mapSkin.txt',
+	gameplay = 'war3mapMisc.txt',
+	extra = 'war3mapExtra.txt'
+}
+
 local objects = {
-	w3u = 'unit',
-	w3t = 'item',
-	w3d = 'destructable',
-	w3b = 'doodad',
-	w3a = 'ability',
-	w3h = 'buff',
-	w3q = 'upgrade'
+	'unit',
+	'item',
+	'destructable',
+	'doodad',
+	'ability',
+	'buff',
+	'upgrade'
 }
 
 local constants = {
-	['war3mapSkin.txt'] = 'interface',
-	['war3mapMisc.txt'] = 'gameplay',
-	['war3mapExtra.txt'] = 'extra'
+	'interface',
+	'gameplay',
+	'extra'
 }
 
 local default_version = {
@@ -31,113 +45,66 @@ local default_version = {
 }
 
 return function (state)
-	local w3x = assert (W3X.open (state.settings.map.input))
+	local input = assert (W3X.open (state.settings.map.input))
+	local environment = state.environment
 
 	do
-		local file = assert (w3x:open ('war3map.w3i'))
+		local file = assert (input:open ('war3map.w3i'))
 		local contents = file:read ('*a')
-		state.environment.information = assert (W3I.unpack (contents))
+		environment.information = assert (W3I.unpack (contents))
 		file:close ()
 	end
 
-	local version = state.environment.information.version or default_version
-	state.environment.information.version = version
+	local version = environment.information.version or default_version
+	environment.information.version = version
 
-	state.environment.objects = {}
-
-	for extension, name in pairs (objects) do
-		local path = 'war3map.' .. extension
-
-		if w3x:has (path) then
+	for name, path in pairs (files) do
+		if input:has (path) then
 			local library = require ('map.file.' .. path)
-			local file = assert (w3x:open (path))
+			local file = assert (input:open (path))
 			local contents = file:read ('*a')
-			local category = assert (library.unpack (contents))
+			environment [name] = assert (library.unpack (contents, version))
 			file:close ()
-
-			for id, object in pairs (category) do
-				object.type = name
-				state.environment.objects [id] = object
-			end
+		else
+			environment [name] = {}
 		end
 	end
 
-	state.environment.constants = {}
+	environment.objects = {}
 
-	for path, name in pairs (constants) do
-		if w3x:has (path) then
-			local file = assert (w3x:open (path))
-			local contents = file:read ('*a')
-			state.environment.constants [name] =
-				assert (INI.unpack (contents))
-			file:close ()
-		else
-			state.environment.constants [name] = {}
+	for _, name in ipairs (objects) do
+		local category = environment [name]
+		environment [name] = nil
+
+		for id, object in pairs (category) do
+			object.type = name
+			environment.objects [id] = object
 		end
+	end
+
+	environment.constants = {}
+
+	for _, name in ipairs (constants) do
+		environment.constants [name] = environment [name]
+		environment [name] = nil
 	end
 
 	do
-		local interface = state.environment.constants.interface
+		local interface = environment.constants.interface
 		interface.FrameDef = interface.FrameDef or {}
 		interface.CustomSkin = interface.CustomSkin or {}
 		interface.Errors = interface.Errors or {}
 
-		local gameplay = state.environment.constants.gameplay
+		local gameplay = environment.constants.gameplay
 		gameplay.Misc = gameplay.Misc or {}
 
-		local extra = state.environment.constants.extra
+		local extra = environment.constants.extra
 		extra.MapExtraInfo = extra.MapExtraInfo or {}
 	end
 
-	state.environment.imports = {}
-	state.environment.strings = {}
+	environment.imports = {}
 
-	if w3x:has ('war3map.wts') then
-		local file = assert (w3x:open ('war3map.wts'))
-		local contents = file:read ('*a')
-		state.environment.strings = assert (WTS.unpack (contents))
-		file:close ()
-	end
-
-	state.environment.regions = {}
-
-	if w3x:has ('war3map.w3r') then
-		local file = assert (w3x:open ('war3map.w3r'))
-		local contents = file:read ('*a')
-		state.environment.regions = assert (W3R.unpack (contents))
-		file:close ()
-	end
-
-	state.environment.cameras = {}
-
-	if w3x:has ('war3map.w3c') then
-		local file = assert (w3x:open ('war3map.w3c'))
-		local contents = file:read ('*a')
-		state.environment.cameras = assert (W3C.unpack (contents, version))
-		file:close ()
-	end
-
-	state.environment.doodads = {}
-
-	if w3x:has ('war3map.doo') then
-		local file = assert (w3x:open ('war3map.doo'))
-		local contents = file:read ('*a')
-		state.environment.doodads = assert (
-			DOO_Doodads.unpack (contents, version))
-		file:close ()
-	end
-
-	state.environment.units = {}
-
-	if w3x:has ('war3mapUnits.doo') then
-		local file = assert (w3x:open ('war3mapUnits.doo'))
-		local contents = file:read ('*a')
-		state.environment.units = assert (
-			DOO_Units.unpack (contents, version))
-		file:close ()
-	end
-
-	w3x:close ()
+	input:close ()
 
 	return true
 end
