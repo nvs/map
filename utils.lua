@@ -25,8 +25,8 @@ end
 Utils.deep_copy = deep_copy
 
 local function process_entry (path, pattern, list, exists)
-	if exists [path] then -- luacheck: ignore 542
-		-- Do not process an entry multiple times.
+	if exists [path] then
+		return
 	elseif Path.is_directory (path) then
 		local entries = {}
 
