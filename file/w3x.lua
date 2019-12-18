@@ -220,7 +220,7 @@ function W3X:extract (name, path)
 	end
 
 	if not path or Path.is_directory (path) then
-		path = Path.join (path or '.', name:gsub ('\\', Path.separator))
+		path = Path.join (path or '.', (name:gsub ('\\', Path.separator)))
 	end
 
 	if Path.is_file (path) then
