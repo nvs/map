@@ -97,7 +97,8 @@ return function (state)
 	end
 
 	for name, path in pairs (environment.imports) do
-		if path == true then
+		if type (name) ~= 'string' then -- luacheck: ignore 542
+		elseif path == true then
 			local source = assert (input:open (name))
 			local destination = assert (
 				output:open (name, 'w', source:seek ('end')))

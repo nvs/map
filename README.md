@@ -344,7 +344,9 @@ The following files are exposed:
 
 ### Imports
 
-When referencing imports, only `string` and `number` keys are supported.
+When referencing imports, only `string` and `number` keys are supported,
+with `string` ones being for individual files, and `number` ones for entire
+directories.  Other key types are ignored.
 
 ``` lua
 local map = ...
