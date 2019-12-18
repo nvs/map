@@ -67,24 +67,6 @@ return function (state)
 	local input = assert (W3X.open (state.settings.map.input, 'r'))
 	local output = assert (W3X.open (map, 'w+', options))
 
-	for name, path in pairs (environment.imports) do
-		if path == true then
-			local source = assert (input:open (name))
-			local destination = assert (
-				output:open (name, 'w', source:seek ('end')))
-			source:seek ('set')
-
-			repeat
-				local bytes = source:read (512)
-			until not bytes or not destination:write (bytes)
-
-			assert (source:close ())
-			assert (destination:close ())
-		else
-			assert (output:add (path, name))
-		end
-	end
-
 	do
 		for _, name in ipairs (objects) do
 			environment [name] = {}
@@ -112,6 +94,24 @@ return function (state)
 	do
 		assert (state.environment.information.is_lua)
 		assert (output:add (state.settings.script.output, 'war3map.lua'))
+	end
+
+	for name, path in pairs (environment.imports) do
+		if path == true then
+			local source = assert (input:open (name))
+			local destination = assert (
+				output:open (name, 'w', source:seek ('end')))
+			source:seek ('set')
+
+			repeat
+				local bytes = source:read (512)
+			until not bytes or not destination:write (bytes)
+
+			assert (source:close ())
+			assert (destination:close ())
+		else
+			assert (output:add (path, name))
+		end
 	end
 
 	assert (input:close ())
