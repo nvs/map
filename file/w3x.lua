@@ -96,10 +96,6 @@ function Class.open (path, mode, options)
 	return setmetatable (self, W3X)
 end
 
-function W3X:__tostring ()
-	return tostring (self._w3x):gsub ('Storm W3X', 'Warcraft III: W3X')
-end
-
 function W3X:has (name)
 	return self._w3x:has (name)
 end
