@@ -1,3 +1,4 @@
+local Path = require ('map.path')
 local Storm = require ('stormlib')
 
 -- Wrapper for a MPQ object provided by [lua-stormlib], primarily focused on
@@ -25,12 +26,24 @@ local function to_internal (name)
 	return (name:gsub ('[\\/]+', '\\'))
 end
 
+local function to_external (name)
+	return (name:gsub ('[\\/]+', Path.separator))
+end
+
 function MPQ:has (name)
 	return self._mpq:has (to_internal (name))
 end
 
 function MPQ:list (mask)
-	return self._mpq:list (mask and to_internal (mask))
+	local iterator = self._mpq:list (mask and to_internal (mask))
+
+	return function ()
+		local name = iterator ()
+
+		if name then
+			return to_external (name)
+		end
+	end
 end
 
 function MPQ:open (name, mode, size)
