@@ -67,35 +67,26 @@ return function (state)
 	local input = assert (W3X.open (state.settings.map.input, 'r'))
 	local output = assert (W3X.open (map, 'w+', options))
 
-	for name in input:list () do
-		if not name:find ('^%(.*%)$') then
+	for name, path in pairs (environment.imports) do
+		if path == true then
 			local source = assert (input:open (name))
-			local size = source:seek ('end')
+			local destination = assert (
+				output:open (name, 'w', source:seek ('end')))
 			source:seek ('set')
-			local destination = assert (output:open (name, 'w', size))
 
-			while true do
+			repeat
 				local bytes = source:read (512)
-
-				if not bytes or not destination:write (bytes) then
-					break
-				end
-			end
+			until not bytes or not destination:write (bytes)
 
 			assert (source:close ())
-
-			local status, message, code = destination:close ()
-
-			if not status then
-				print (status, message, code)
-			end
+			assert (destination:close ())
+		else
+			assert (output:add (path, name))
 		end
 	end
 
-	assert (input:close ())
-
 	do
-		for name in pairs (objects) do
+		for _, name in ipairs (objects) do
 			environment [name] = {}
 		end
 
@@ -109,6 +100,8 @@ return function (state)
 	end
 
 	for name, path in pairs (files) do
+		environment.imports [path] = nil
+
 		local library = require ('map.file.' .. path)
 		local contents = assert (library.pack (environment [name], version))
 		local file = output:open (path, 'w', #contents)
@@ -117,17 +110,12 @@ return function (state)
 	end
 
 	do
-		assert (environment.information.is_lua)
-
-		output:remove ('war3map.j')
+		assert (state.environment.information.is_lua)
 		assert (output:add (state.settings.script.output, 'war3map.lua'))
 	end
 
-	for path, name in pairs (environment.imports) do
-		assert (output:add (path, name))
-	end
-
-	output:close (true)
+	assert (input:close ())
+	assert (output:close (true))
 	io.stdout:write ('Output: ', map, '\n')
 
 	return true

@@ -21,6 +21,11 @@ local files = {
 	extra = 'war3mapExtra.txt'
 }
 
+local ignored = {
+	['war3map.j'] = true,
+	['war3map.lua'] = true
+}
+
 local objects = {
 	'unit',
 	'item',
@@ -55,10 +60,20 @@ return function (state)
 		file:close ()
 	end
 
+	environment.imports = {}
+
+	for name in input:list () do
+		if not ignored [name] and not name:find ('^%(.*%)$') then
+			environment.imports [name] = true
+		end
+	end
+
 	local version = environment.information.version or default_version
 	environment.information.version = version
 
 	for name, path in pairs (files) do
+		environment.imports [path] = nil
+
 		if input:has (path) then
 			local library = require ('map.file.' .. path)
 			local file = assert (input:open (path))
@@ -101,8 +116,6 @@ return function (state)
 		local extra = environment.constants.extra
 		extra.MapExtraInfo = extra.MapExtraInfo or {}
 	end
-
-	environment.imports = {}
 
 	input:close ()
 

@@ -13,6 +13,7 @@ return function (state)
 map: `settings.map.input` and `settings.map.output` must differ]]
 		end
 
+		table.insert (tasks, 'build.process-imports')
 		table.insert (tasks, 'build.w3x.write')
 	end
 

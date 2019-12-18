@@ -344,18 +344,28 @@ The following files are exposed:
 
 ### Imports
 
+When referencing imports, only `string` and `number` keys are supported.
+
 ``` lua
 local map = ...
 
--- This will import the file and keep its existing name.
-map.imports ['path/to/file.j'] = true
+-- The file with this name will be copied from the input archive to the
+-- output archive.  By default, all existing imports in the input archive
+-- are listed in this fashion.
+map.imports ['file.txt'] = true
 
--- This will import the file and rename it.
-map.imports ['path/to/other/file.j'] = 'war3map.j'
+-- Import the file specified by the provide path to the output archive using
+-- the given name.
+map.imports ['A/B/stuff.txt'] = 'path/to/imports/other.txt'
 
--- This will recurse through the files and subdirectories present within the
--- directory and import them into the map, preserving directory structure.
-map.imports ['path/to/directory'] =  true
+-- Clear an already specified import.
+map.imports ['file.txt'] = nil
+
+-- Import a directory's contents, preserving its structure.  Note that
+-- `number` keys are iterated in ascending order, and do not need to be
+-- contiguous.
+map.imports [1] = 'path/to/directory'
+map.imports [2] = 'path/to/another/directory'
 ```
 
 ### Strings
