@@ -8,6 +8,7 @@
 - Added support for the following files:
     - `war3map.doo`
     - `war3map.w3c`
+    - `war3map.w3e`
     - `war3map.w3r`
     - `war3map.w3s`
     - `war3mapUnits.doo`

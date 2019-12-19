@@ -8,6 +8,7 @@ local files = {
 	cameras = 'war3map.w3c',
 	doodads = 'war3map.doo',
 	units = 'war3mapUnits.doo',
+	terrain = 'war3map.w3e',
 
 	unit = 'war3map.w3u',
 	item = 'war3map.w3t',

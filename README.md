@@ -436,3 +436,17 @@ local map = ...
 print (map.sounds [1].effect) --> `SpellsEAX`
 map.sounds [1].volume = 10
 ```
+
+### Terrain
+
+```lua
+local map = ...
+
+map.terrain.tileset = 'A'
+
+for _, row in ipairs (map.terrain.tiles) do
+    for _, tile in ipairs (row) do
+        print (tile.ground.texture) --> `0`
+    end
+end
+```
