@@ -15,7 +15,7 @@ function Flags.pack (flags, input)
 	return output
 end
 
-function Flags.unpack (flags, input)
+function Flags.unpack (flags, input, ignore)
 	assert (type (flags) == 'table')
 	assert (type (input) == 'number')
 
@@ -30,7 +30,7 @@ function Flags.unpack (flags, input)
 		end
 	end
 
-	assert (input == 0)
+	assert (ignore or input == 0)
 
 	return output
 end
