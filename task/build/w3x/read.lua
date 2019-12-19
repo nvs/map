@@ -4,6 +4,7 @@ local W3X = require ('map.file.w3x')
 local files = {
 	strings = 'war3map.wts',
 	regions = 'war3map.w3r',
+	sounds = 'war3map.w3s',
 	cameras = 'war3map.w3c',
 	doodads = 'war3map.doo',
 	units = 'war3mapUnits.doo',

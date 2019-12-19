@@ -414,3 +414,12 @@ local map = ...
 print (map.units [1].type) --> `hfoo`
 map.units [1].player = 3
 ```
+
+### Sounds
+
+```lua
+local map = ...
+
+print (map.sounds [1].effect) --> `SpellsEAX`
+map.sounds [1].volume = 10
+```
