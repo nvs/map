@@ -26,8 +26,20 @@ following dependencies are satisfied:
 - [Lua] `>= 5.1` (for [luac])
 - [LuaFileSystem] `>= 1.7.0`
 - [Luacheck] `>= 0.23.0`
-- [lua-stormlib] `>= 0.1.0`
-- [compat-5.3] `>= 0.5` (for Lua `< 5.3` or LuaJIT)
+- [lua-stormlib] `>= 0.1.2`
+- [bit32] `>= 5.3.0` (for Lua 5.1; and Lua 5.3 compiled without
+  `LUA_COMPAT_BITLIB`)
+- [compat-5.3] `>= 0.5` (for Lua 5.1; Lua 5.2; and LuaJIT)
+
+All dependencies are available through LuaRocks:
+
+```
+luarocks install luafilesystem
+luarocks install luacheck
+luarocks install lua-stormlib
+luarocks install bit32
+luarocks install compat53
+```
 
 To make use of **Map** it is recommended to place it directly within your
 project's root directory.  That is, as `project/map`.  This can be achieved
@@ -41,6 +53,7 @@ _Other installation locations are neither tested or supported._
 [LuaFileSystem]: https://github.com/keplerproject/luafilesystem
 [Luacheck]: https://github.com/mpeterv/luacheck
 [lua-stormlib]: https://github.com/nvs/lua-stormlib
+[bit32]: https://github.com/keplerproject/lua-compat-5.2
 [compat-5.3]: https://github.com/keplerproject/lua-compat-5.3
 
 ## Caveats
