@@ -84,6 +84,20 @@ do
 					error ('table is read-only', 2)
 				end,
 
+				__pairs = function ()
+					local key, value, real_key
+
+					return function ()
+						key, value = next (input, real_key)
+						real_key = key
+
+						key = Utils.read_only (key)
+						value = Utils.read_only (value)
+
+						return key, value
+					end
+				end,
+
 				__metatable = false
 			})
 
