@@ -61,7 +61,7 @@ _Other installation locations are neither tested or supported._
 1. **TL;DR: Your mileage may vary.**  This library has not been extensively
    tested under any environment other than Linux.  Please backup any files
    before use.
-2. Only Lua is supported.
+2. Only Lua is supported.  Sorry, no more Jass.
 3. There are not many fancy errors.  Using the Lua stack traceback to assist
    in understanding issues is recommended.
 
