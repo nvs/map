@@ -11,9 +11,8 @@ local W3X = {}
 W3X.__index = W3X
 
 local default_options = {
-	-- This remains `nil`, as the `war3map.imp` already provides default
-	-- handling when unspecified.
-	import_byte = nil
+	-- This is the value for 1.31.
+	import_byte = 21
 }
 
 -- Files to be ignored and not inserted into the `war3map.imp` as of 1.32.
@@ -304,7 +303,7 @@ function W3X:close (compact)
 
 		for name in self._w3x:list () do
 			if not ignored [name] then
-				imports.files [name] = self._options.import_byte or true
+				imports.files [name] = self._options.import_byte
 			end
 		end
 
