@@ -11,6 +11,7 @@
     - `war3map.w3e`
     - `war3map.w3r`
     - `war3map.w3s`
+    - `war3map.wpm`
     - `war3mapUnits.doo`
 
 ### Fixed

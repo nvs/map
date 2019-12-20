@@ -450,3 +450,15 @@ for _, row in ipairs (map.terrain.tiles) do
     end
 end
 ```
+
+### Pathing
+
+```lua
+local map = ...
+
+for _, row in ipairs (map.pathing.cells) do
+    for _, cell in ipairs (row) do
+        print (cell.buildable) --> `false`
+    end
+end
+```

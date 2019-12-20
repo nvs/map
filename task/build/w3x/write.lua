@@ -11,6 +11,7 @@ local files = {
 	doodads = 'war3map.doo',
 	units = 'war3mapUnits.doo',
 	terrain = 'war3map.w3e',
+	pathing = 'war3map.wpm',
 
 	unit = 'war3map.w3u',
 	item = 'war3map.w3t',
