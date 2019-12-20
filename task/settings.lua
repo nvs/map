@@ -1,10 +1,12 @@
 return function (state)
-	state.settings.map = state.settings.map or {}
-	state.settings.map.options = state.settings.map.options or {}
+	if state.settings.map then
+		state.settings.map.options = state.settings.map.options or {}
+	end
 
-	state.settings.build = state.settings.build or {}
-	state.settings.build.package = state.settings.build.package or {}
-	state.settings.build.options = state.settings.build.options or {}
+	if state.settings.build then
+		state.settings.build.package = state.settings.build.package or {}
+		state.settings.build.options = state.settings.build.options or {}
+	end
 
 	state.settings.script = state.settings.script or {}
 	state.settings.script.package = state.settings.script.package or {}
