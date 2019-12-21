@@ -1,6 +1,5 @@
 local Path = require ('map.path')
 local Shell = require ('map.shell')
-local String = require ('map.string')
 
 local function write_header (output)
 	assert (output:write ([[
@@ -29,10 +28,10 @@ end
 
 local function read_contents (path)
 	local file = assert (io.open (path, 'rb'))
-	local contents = String.trim (assert (file:read ('*a')), '[\r\n]+')
+	local contents = assert (file:read ('*a'))
 	file:close ()
 
-	return contents
+	return contents:reverse ():gsub ('^[\r\n]+', ''):reverse ()
 end
 
 local function write_module (output, path, name, debug)

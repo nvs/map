@@ -1,5 +1,4 @@
 local LFS = require ('lfs')
-local String = require ('map.string')
 
 local Path = {}
 Path.separator = package.config:sub (1, 1)
@@ -199,7 +198,8 @@ function Path.split (path)
 	end
 
 	local pattern = '()([' .. Path.separators (root) .. ']+)'
-	path = String.trim_right (path:sub (#root + 1), pattern)
+	path = path:sub (#root + 1)
+	path = path:reverse ():gsub ('^' .. pattern, ''):reverse ()
 	local index, match = path:reverse ():match (pattern)
 
 	if not index then
