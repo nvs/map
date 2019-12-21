@@ -302,7 +302,7 @@ supported via the specified keys:
 
 Of particular note is that the presence of one of these keys in the build
 environment will cause Map to process the data for that key, and then build
-the associated files inot the map.  This process has higher precendence than
+the associated files into the map.  This process has higher precendence than
 files being listed in the imports table, and any files produced in this
 manner have priority.  To prevent this processing, set the value for a key
 to `nil`.  For example:
