@@ -24,8 +24,8 @@
 ### Changed
 - Configuration of package paths has changed.
 - Files exposed to the build environment are now loaded on demand.
-- `--quiet` flag is no longer passed to Luacheck, thus allowing the user to
-  configure this option in their `.luacheckrc`.
+- A `--quiet` flag is no longer passed to Luacheck, thus allowing the user
+  to configure this option in their `.luacheckrc`.
 - Default script debug mode changed to `name`.
 - User build files are now processed before checking Lua scripts.
 - Enhance W3I support by identifying and adding unknown flags.  Some flag
