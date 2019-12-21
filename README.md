@@ -149,7 +149,7 @@ return {
             -- specified, then build files are disabled.  Setting the
             -- option to 'check' or 'build' will disable build files for
             -- those commands.
-            disable = false or nil or true or 'check' or build'
+            disable = false or nil or true or 'check' or 'build'
         }
     },
 
