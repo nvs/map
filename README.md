@@ -139,7 +139,18 @@ return {
         -- behavior.
         --
         -- If the build table is specified, this setting is required.
-        directory = 'path/to/user/build/files'
+        directory = 'path/to/user/build/files',
+
+        options = {
+            -- Indicates whether to disable build files, causing Map to
+            -- behave as if the table was absent.
+            --
+            -- By default, this option is disabled.  Should `true` be
+            -- specified, then build files are disabled.  Setting the
+            -- option to 'check' or 'build' will disable build files for
+            -- those commands.
+            disable = false or nil or true or 'check' or build'
+        }
     },
 
     -- An output map will be produced if this table is present.  In

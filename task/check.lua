@@ -1,16 +1,20 @@
 local Tasks = require ('map.tasks')
 
 return function (state)
-	local tasks = {
-		'environment.setup'
-	}
+	local tasks = {}
+
+	tasks [#tasks + 1] = 'environment.setup'
 
 	if state.settings.build then
-		table.insert (tasks, 'build.user-files')
+		local disable = state.settings.build.options.disable
+
+		if disable ~= true and disable ~= 'check' then
+			tasks [#tasks + 1] = 'build.user-files'
+		end
 	end
 
-	table.insert (tasks, 'check.load-modules')
-	table.insert (tasks, 'check.run')
+	tasks [#tasks + 1] = 'check.load-modules'
+	tasks [#tasks + 1] = 'check.run'
 
 	Tasks.add (state, tasks)
 

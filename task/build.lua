@@ -1,11 +1,21 @@
 local Tasks = require ('map.tasks')
 
 return function (state)
-	local tasks = {
-		'check'
-	}
+	local tasks = {}
 
-	table.insert (tasks, 'build.script')
+	tasks [#tasks + 1] = 'environment.setup'
+
+	if state.settings.build then
+		local disable = state.settings.build.options.disable
+
+		if disable ~= true and disable ~= 'build' then
+			tasks [#tasks + 1] = 'build.user-files'
+		end
+	end
+
+	tasks [#tasks + 1] = 'check.load-modules'
+	tasks [#tasks + 1] = 'check.run'
+	tasks [#tasks + 1] = 'build.script'
 
 	if state.settings.map then
 		if state.settings.map.input == state.settings.map.output then
@@ -13,9 +23,9 @@ return function (state)
 map: `settings.map.input` and `settings.map.output` must differ]]
 		end
 
-		table.insert (tasks, 'build.process-imports')
-		table.insert (tasks, 'environment.teardown')
-		table.insert (tasks, 'build.w3x.write')
+		tasks [#tasks + 1] = 'build.process-imports'
+		tasks [#tasks + 1] = 'environment.teardown'
+		tasks [#tasks + 1] = 'build.w3x.write'
 	end
 
 	Tasks.add (state, tasks)
