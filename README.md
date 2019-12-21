@@ -180,7 +180,7 @@ return {
     },
 
     -- If this table is present, then various script related functionality
-    -- will be perormed.  This includes checking the specified Lua scripts
+    -- will be performed.  This includes checking the specified Lua scripts
     -- with Luacheck during the `check` command.  As well as packaging the
     -- `war3map.lua`, checking it, and putting it into the output archive
     -- during the `build` command.
