@@ -18,7 +18,7 @@ local function find_requires (path)
 	-- Nothing else is guaranteed to work properly.
 	for line in process:lines () do
 		local number, opcode, value = line:match (
-			'^%s+[0-9]+%s+%[([0-9]+)]%s+([A-Z]+)%s+[-0-9%s]+(.*)')
+			'^%s+%d+%s+%[(%d+)]%s+(%u+)%s+[-%d%s]+(.*)')
 
 		if not opcode then
 			state = nil
