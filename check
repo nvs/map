@@ -1,8 +1,8 @@
 #!/usr/bin/env lua
 
-local Tasks = require ('map.tasks')
+local Task = require ('map._task')
 
-return Tasks.run {
+return Task.run {
 	arguments = { ... },
 	tasks = {
 		'check'

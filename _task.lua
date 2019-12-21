@@ -1,20 +1,20 @@
-local Tasks = {}
+local Task = {}
 
 -- Added tasks are represented as a queue.  However, tasks are internally
 -- represented by a stack.
-function Tasks.add (state, tasks)
+function Task.add (state, tasks)
 	repeat
 		local task = table.remove (tasks)
 		table.insert (state.tasks, task)
 	until #tasks == 0
 end
 
-function Tasks.run (input)
+function Task.run (input)
 	local state = {
 		tasks = {}
 	}
 
-	Tasks.add (state, input.tasks)
+	Task.add (state, input.tasks)
 
 	if not input.arguments then
 		input.arguments = {}
@@ -70,7 +70,7 @@ function Tasks.run (input)
 
 		while #state.tasks > 0 do
 			local name = table.remove (state.tasks)
-			local task = require ('map.task.' .. name)
+			local task = require ('map._task.' .. name)
 			status, message = task (state)
 
 			if not status then
@@ -97,4 +97,4 @@ function Tasks.run (input)
 	end
 end
 
-return Tasks
+return Task

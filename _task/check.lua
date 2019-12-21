@@ -1,4 +1,4 @@
-local Tasks = require ('map.tasks')
+local Task = require ('map._task')
 
 return function (state)
 	local tasks = {}
@@ -18,7 +18,7 @@ return function (state)
 		tasks [#tasks + 1] = 'check.run'
 	end
 
-	Tasks.add (state, tasks)
+	Task.add (state, tasks)
 
 	return true
 end

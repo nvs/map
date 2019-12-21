@@ -1,4 +1,4 @@
-local Tasks = require ('map.tasks')
+local Task = require ('map._task')
 
 return function (state)
 	local tasks = {}
@@ -30,7 +30,7 @@ map: `settings.map.input` and `settings.map.output` must differ]]
 		tasks [#tasks + 1] = 'build.w3x.write'
 	end
 
-	Tasks.add (state, tasks)
+	Task.add (state, tasks)
 
 	return true
 end
