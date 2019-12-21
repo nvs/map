@@ -33,7 +33,7 @@ local function read_contents (path)
 
 	-- Only remove trailing lines, or the line numbers in debug mode could
 	-- be incorrect.
-	return contents:reverse ():gsub ('^[\r\n]+', ''):reverse ()
+	return (contents:reverse ():gsub ('^[\r\n]+', ''):reverse ())
 end
 
 local function write_module (output, path, name, debug)
