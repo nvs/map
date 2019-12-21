@@ -8,16 +8,15 @@ local import_bytes = {
 }
 
 return function (state)
-	local map = state.settings.map.output
-
-	Path.remove (map, true)
+	local map = state.settings.map
+	Path.remove (map.output, true)
 	do
-		local directories = Path.parent (map)
+		local directories = Path.parent (map.output)
 		Path.create_directories (directories)
 	end
 
-	if state.settings.map.options.directory then
-		Path.create_directory (map)
+	if map.options.directory then
+		Path.create_directory (map.output)
 	end
 
 	local environment = state.environment
@@ -29,8 +28,8 @@ return function (state)
 		import_byte = import_bytes [environment.information.format]
 	}
 
-	local input = assert (W3X.open (state.settings.map.input, 'r'))
-	local output = assert (W3X.open (map, 'w+', options))
+	local input = assert (W3X.open (map.input, 'r'))
+	local output = assert (W3X.open (map.output, 'w+', options))
 
 	for name, unpacked in pairs (environment) do
 		local path = files [name]
@@ -72,7 +71,7 @@ return function (state)
 
 	assert (input:close ())
 	assert (output:close (true))
-	io.stdout:write ('Output: ', map, '\n')
+	io.stdout:write ('Output: ', map.output, '\n')
 
 	return true
 end
