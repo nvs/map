@@ -31,6 +31,8 @@ local function read_contents (path)
 	local contents = assert (file:read ('*a'))
 	file:close ()
 
+	-- Only remove trailing lines, or the line numbers in debug mode could
+	-- be incorrect.
 	return contents:reverse ():gsub ('^[\r\n]+', ''):reverse ()
 end
 
