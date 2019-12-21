@@ -11,6 +11,8 @@ local W3X = {}
 W3X.__index = W3X
 
 local default_options = {
+	directory = nil,
+
 	-- This is the value for 1.31.
 	import_byte = 21
 }
@@ -72,17 +74,18 @@ Class.ignored = ignored
 --
 -- [lua-stormlib]: https://github.com/nvs/lua-stormlib
 function Class.open (path, mode, options)
-	local format = Path.is_directory (path) and Directory or MPQ
-	local w3x, message, code = format.new (path, mode)
-
-	if not w3x then
-		return nil, message, code
-	end
-
 	options = options or {}
 
 	for key, value in pairs (default_options) do
 		options [key] = options [key] or value
+	end
+
+	Path.create_directories (Path.parent (path))
+	local format = options.directory and Directory or MPQ
+	local w3x, message, code = format.new (path, mode)
+
+	if not w3x then
+		return nil, message, code
 	end
 
 	local self = {

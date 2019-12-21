@@ -1,4 +1,3 @@
-local Path = require ('map.path')
 local W3X = require ('map.file.w3x')
 
 -- TODO: Remove this table upon release of 1.32.
@@ -9,22 +8,13 @@ local import_bytes = {
 
 return function (state)
 	local map = state.settings.map
-	Path.remove (map.output, true)
-	do
-		local directories = Path.parent (map.output)
-		Path.create_directories (directories)
-	end
-
-	if map.options.directory then
-		Path.create_directory (map.output)
-	end
-
 	local environment = state.environment
 	local imports = environment.imports
 	environment.imports = nil
 	local files = state.loaded_files
 	local version = environment.information.version
 	local options = {
+		directory = map.options.directory,
 		import_byte = import_bytes [environment.information.format]
 	}
 

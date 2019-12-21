@@ -9,6 +9,12 @@ local MPQ = {}
 MPQ.__index = MPQ
 
 function MPQ.new (path, mode)
+	-- StormLib will only truncate existing files.  Give it some help in
+	-- regards to directories.
+	if mode == 'w+' and Path.is_directory (path) then
+		Path.remove (path, true)
+	end
+
 	local mpq, message, code = Storm.open (path, mode)
 
 	if not mpq then
