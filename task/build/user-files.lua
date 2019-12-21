@@ -4,9 +4,6 @@ return function (state)
 	local build = Utils.load_files (
 		state.settings.build.directory, '%.lua$')
 
-	local settings = Utils.deep_copy (state.settings)
-	state.environment.settings = Utils.read_only (settings)
-
 	local messages = {}
 	local original = {}
 	local environment = {

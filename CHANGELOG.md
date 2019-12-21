@@ -23,7 +23,7 @@
 
 ### Changed
 - Configuration of package paths has changed.
-- Additional map information has been exposed to the build files.
+- Files exposed to the build environment are now loaded on demand.
 - `--quiet` flag is no longer passed to Luacheck, thus allowing the user to
   configure this option in their `.luacheckrc`.
 - Default script debug mode changed to `name`.

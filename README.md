@@ -253,8 +253,51 @@ following stated limitations:
 ## Environment
 
 By specifying a `build` settings table, user build files will be processed.
-If a `map` settings table is provided, then various map contents will be
-exposed to the build environment as a convenience.
+If a `map` settings table is provided, then various map files can be loaded
+on demand within the build environment.  The following map files are
+supported via the specified keys:
+
+- `information`: `war3map.w3i`
+- `imports`: `war3map.imp`
+- `objects`:
+  - `war3map.w3a`
+  - `war3map.w3b`
+  - `war3map.w3d`
+  - `war3map.w3h`
+  - `war3map.w3q`
+  - `war3map.w3t`
+  - `war3map.w3u`
+- `constants`:
+  - `war3mapExtra.txt`
+  - `war3mapMisc.txt`
+  - `war3mapSkin.txt`
+- `strings`: `war3map.wts`
+- `regions`: `war3map.w3r`
+- `cameras`: `war3map.w3c`
+- `doodads`: `war3map.doo`
+- `units`: `war3mapUnits.doo`
+- `sounds`: `war3map.w3s`
+- `terrain`: `war3map.w3e`
+- `pathing`: `war3map.wpm`
+
+Of particular note is that the presence of one of these keys in the build
+environment will cause Map to process the data for that key, and then build
+the associated files inot the map.  This process has higher precendence than
+files being listed in the imports table, and any files produced in this
+manner have priority.  To prevent this processing, set the value for a key
+to `nil`.  For example:
+
+```lua
+local map = ...
+
+-- Automatically loads `war3map.wts`, if found.
+local strings = map.strings
+
+-- Doing this clears the specified key from the build environment, thus
+-- preventing Map from processing it and writing a new file.  Instead, the
+-- status of the file will be pulled from the imports table.
+map.strings = nil
+```
 
 ### Settings
 

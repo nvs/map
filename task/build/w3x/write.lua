@@ -1,47 +1,6 @@
 local Path = require ('map.path')
 local W3X = require ('map.file.w3x')
 
-local files = {
-	information = 'war3map.w3i',
-
-	strings = 'war3map.wts',
-	regions = 'war3map.w3r',
-	sounds = 'war3map.w3s',
-	cameras = 'war3map.w3c',
-	doodads = 'war3map.doo',
-	units = 'war3mapUnits.doo',
-	terrain = 'war3map.w3e',
-	pathing = 'war3map.wpm',
-
-	unit = 'war3map.w3u',
-	item = 'war3map.w3t',
-	destructable = 'war3map.w3d',
-	doodad = 'war3map.w3b',
-	ability = 'war3map.w3a',
-	buff = 'war3map.w3h',
-	upgrade = 'war3map.w3q',
-
-	interface = 'war3mapSkin.txt',
-	gameplay = 'war3mapMisc.txt',
-	extra = 'war3mapExtra.txt'
-}
-
-local objects = {
-	'unit',
-	'item',
-	'destructable',
-	'doodad',
-	'ability',
-	'buff',
-	'upgrade'
-}
-
-local constants = {
-	'interface',
-	'gameplay',
-	'extra'
-}
-
 -- TODO: Remove this table upon release of 1.32.
 local import_bytes = {
 	[28] = 21,
@@ -62,6 +21,9 @@ return function (state)
 	end
 
 	local environment = state.environment
+	local imports = environment.imports
+	environment.imports = nil
+	local files = state.loaded_files
 	local version = environment.information.version
 	local options = {
 		import_byte = import_bytes [environment.information.format]
@@ -70,36 +32,25 @@ return function (state)
 	local input = assert (W3X.open (state.settings.map.input, 'r'))
 	local output = assert (W3X.open (map, 'w+', options))
 
-	do
-		for _, name in ipairs (objects) do
-			environment [name] = {}
-		end
+	for name, unpacked in pairs (environment) do
+		local path = files [name]
 
-		for id, object in pairs (environment.objects) do
-			environment [object.type] [id] = object
-		end
-	end
-
-	for _, name in ipairs (constants) do
-		environment [name] = environment.constants [name]
-	end
-
-	for name, path in pairs (files) do
-		environment.imports [path] = nil
+		-- Do not copy loaded files, as we pack their data instead.
+		imports [path] = nil
 
 		local library = require ('map.file.' .. path)
-		local contents = assert (library.pack (environment [name], version))
-		local file = output:open (path, 'w', #contents)
-		file:write (contents)
+		local packed = assert (library.pack (unpacked, version))
+		local file = output:open (path, 'w', #packed)
+		file:write (packed)
 		file:close ()
 	end
 
 	do
-		assert (state.environment.information.is_lua)
+		assert (environment.information.is_lua)
 		assert (output:add (state.settings.script.output, 'war3map.lua'))
 	end
 
-	for name, path in pairs (environment.imports) do
+	for name, path in pairs (imports) do
 		if type (name) ~= 'string' then -- luacheck: ignore 542
 		elseif path == true then
 			local source = assert (input:open (name))
