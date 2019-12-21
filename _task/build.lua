@@ -27,7 +27,7 @@ map: `settings.map.input` and `settings.map.output` must differ]]
 
 		tasks [#tasks + 1] = 'build.process-imports'
 		tasks [#tasks + 1] = 'environment.teardown'
-		tasks [#tasks + 1] = 'build.w3x.write'
+		tasks [#tasks + 1] = 'build.w3x'
 	end
 
 	Task.add (state, tasks)
