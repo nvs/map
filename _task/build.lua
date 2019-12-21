@@ -20,11 +20,6 @@ return function (state)
 	end
 
 	if state.settings.map then
-		if state.settings.map.input == state.settings.map.output then
-			return nil, [[
-map: `settings.map.input` and `settings.map.output` must differ]]
-		end
-
 		tasks [#tasks + 1] = 'build.process-imports'
 		tasks [#tasks + 1] = 'environment.teardown'
 		tasks [#tasks + 1] = 'build.w3x'

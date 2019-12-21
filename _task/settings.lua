@@ -1,16 +1,32 @@
+local Path = require ('map.path')
+
 return function (state)
 	if state.settings.map then
-		state.settings.map.options = state.settings.map.options or {}
+		local map = state.settings.map
+		map.options = map.options or {}
+
+		assert (Path.exists (map.input))
+
+		if map.input == map.otput then
+			return nil, [[
+map: `settings.map.input` and `settings.map.output` must differ]]
+		end
 	end
 
 	if state.settings.build then
-		state.settings.build.package = state.settings.build.package or {}
-		state.settings.build.options = state.settings.build.options or {}
+		local build = state.settings.build
+		build.package = build.package or {}
+		build.options = build.options or {}
+
+		assert (Path.is_directory (build.directory))
 	end
 
 	if state.settings.script then
-		state.settings.script.package = state.settings.script.package or {}
-		state.settings.script.options = state.settings.script.options or {}
+		local script = state.settings.script
+		script.package = script.package or {}
+		script.options = script.options or {}
+
+		assert (Path.is_file (script.input))
 	end
 
 	return true
