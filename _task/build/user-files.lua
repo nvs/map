@@ -28,13 +28,12 @@ return function (state)
 				package [key] = value
 			end
 		else
-			table.insert (messages, message)
+			message [#messages + 1] = message
 		end
 	end
 
 	if #messages > 0 then
-		table.insert (messages, 1, 'error:')
-		return nil, table.concat (messages, '\n\t')
+		return nil, 'error:\n\t' .. table.concat (messages, '\n\t')
 	end
 
 	return true

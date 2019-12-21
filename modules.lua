@@ -42,7 +42,7 @@ local function find_requires (path)
 			state = nil
 
 			if opcode == 'CALL' then
-				table.insert (requires, { name, number })
+				requires [#requires + 1] = { name, number }
 			end
 		end
 	end
@@ -63,7 +63,7 @@ function Errors:error (message, ...)
 	local prefix = select (2, ...) and '%s:%d:' or 'map:'
 	message = prefix .. ' module \'%s\' ' .. message
 
-	table.insert (self, string.format (message, ...))
+	self [#self + 1] = string.format (message, ...)
 end
 
 local function find_module (name, package_path)

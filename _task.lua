@@ -4,8 +4,8 @@ local Task = {}
 -- represented by a stack.
 function Task.add (state, tasks)
 	repeat
-		local task = table.remove (tasks)
-		table.insert (state.tasks, task)
+		state.tasks [#state.tasks + 1] = tasks [#tasks]
+		tasks [#tasks] = nil
 	until #tasks == 0
 end
 
@@ -21,7 +21,7 @@ function Task.run (input)
 	end
 
 	if #input.arguments == 0 then
-		table.insert (input.arguments, '--help')
+		input.arguments [1] = '--help'
 	end
 
 	local status
@@ -65,7 +65,7 @@ function Task.run (input)
 	end
 
 	if settings then
-		table.insert (state.tasks, 'settings')
+		state.tasks [#state.tasks + 1] = 'settings'
 		state.settings = settings
 
 		while #state.tasks > 0 do

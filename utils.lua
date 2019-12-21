@@ -32,7 +32,7 @@ local function process_entry (path, pattern, list, exists)
 
 		for entry in LFS.dir (path) do
 			if entry ~= '.' and entry ~= '..' then
-				table.insert (entries, entry)
+				entries [#entries + 1] = entry
 			end
 		end
 

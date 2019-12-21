@@ -80,7 +80,7 @@ return function (state)
 	local names = {}
 
 	for name in pairs (state.modules) do
-		table.insert (names, name)
+		names [#names + 1] = name
 	end
 
 	table.sort (names)

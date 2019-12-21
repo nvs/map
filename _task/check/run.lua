@@ -7,7 +7,7 @@ return function (state)
 	}
 
 	for _, path in pairs (state.modules) do
-		table.insert (paths, path)
+		paths [#paths + 1] = path
 	end
 
 	local skip_checks = state.settings.script.options.skip_checks
