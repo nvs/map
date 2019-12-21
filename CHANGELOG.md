@@ -13,6 +13,7 @@
     - `war3map.w3s`
     - `war3map.wpm`
     - `war3mapUnits.doo`
+- Added setting to disable user build files.
 
 ### Fixed
 - Improve trigger string handling of nested brackets.
@@ -31,6 +32,7 @@
 - The option to skip running Luacheck has been extended.
 - Enhance W3I support by identifying and adding unknown flags.  Some flag
   names have changed.
+- The `script` settings table is now optional.
 
 ## [0.8.1] - 2019-11-21
 ### Fixed
