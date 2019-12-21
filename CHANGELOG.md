@@ -28,6 +28,7 @@
   to configure this option in their `.luacheckrc`.
 - Default script debug mode changed to `name`.
 - User build files are now processed before checking Lua scripts.
+- The option to skip running Luacheck has been extended.
 - Enhance W3I support by identifying and adding unknown flags.  Some flag
   names have changed.
 

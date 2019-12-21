@@ -10,7 +10,14 @@ return function (state)
 		table.insert (paths, path)
 	end
 
-	return (os.execute (Shell.escape (
-		'luacheck', '--default-config',
-		Path.join ('map', 'luacheck', 'luacheckrc'), paths)))
+	local skip_checks = state.settings.script.options.skip_checks
+	local result = true
+
+	if skip_checks ~= true and skip_checks ~= 'check' then
+		result = os.execute (Shell.escape (
+			'luacheck', '--default-config',
+			Path.join ('map', 'luacheck', 'luacheckrc'), paths))
+	end
+
+	return result
 end

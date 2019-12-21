@@ -200,11 +200,12 @@ return {
             -- Setting the option to 'path' will display the file path.
             debug = false or nil or true or 'path' or 'name',
 
-            -- Indicates whether to run Luacheck on the generated
-            -- `war3map.lua`.  Enabling this option can speed up the build
-            -- process, at the cost of what amounts to a sanity check.  By
-            -- default, this option is disabled.
-            skip_check = false or nil or true
+            -- Indicates whether to skip running Luacheck at various points.
+            --
+            -- By default, this option is disabled.  Should `true` be
+            -- specified, then all checks are disabled.  Setting the option
+            -- to 'check' or 'build' will skip checks for those commands.
+            skips_checks = false or nil or true or 'check' or 'build'
         }
     }
 }

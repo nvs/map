@@ -119,8 +119,12 @@ return function (state)
 
 	output:close ()
 
-	if not state.settings.script.options.skip_check then
-		io.stdout:write ('\n')
+	local skip_checks = state.settings.script.options.skip_checks
+
+	if skip_checks ~= true and skip_checks ~= 'build' then
+		if skip_checks ~= 'check' then
+			io.stdout:write ('\n')
+		end
 
 		if not os.execute (Shell.escape (
 			'luacheck', '--default-config',
@@ -130,7 +134,11 @@ return function (state)
 		end
 	end
 
-	io.stdout:write ('\nOutput: ', path, '\n')
+	if skip_checks ~= true then
+		io.stdout:write ('\n')
+	end
+
+	io.stdout:write ('Output: ', path, '\n')
 
 	return true
 end
