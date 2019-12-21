@@ -8,9 +8,10 @@ return function (state)
 		state.settings.build.options = state.settings.build.options or {}
 	end
 
-	state.settings.script = state.settings.script or {}
-	state.settings.script.package = state.settings.script.package or {}
-	state.settings.script.options = state.settings.script.options or {}
+	if state.settings.script then
+		state.settings.script.package = state.settings.script.package or {}
+		state.settings.script.options = state.settings.script.options or {}
+	end
 
 	return true
 end

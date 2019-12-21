@@ -1,10 +1,5 @@
 local Utils = require ('map.utils')
 
-local ignored = {
-	'war3map.j',
-	'war3map.lua'
-}
-
 return function (state)
 	local environment = state.environment
 	local directories = {}
@@ -26,10 +21,6 @@ return function (state)
 		for _, file in ipairs (paths) do
 			environment.imports [file:sub (index)] = file
 		end
-	end
-
-	for _, file in ipairs (ignored) do
-		environment.imports [file] = nil
 	end
 
 	return true

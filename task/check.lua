@@ -13,8 +13,10 @@ return function (state)
 		end
 	end
 
-	tasks [#tasks + 1] = 'check.load-modules'
-	tasks [#tasks + 1] = 'check.run'
+	if state.settings.script then
+		tasks [#tasks + 1] = 'check.load-modules'
+		tasks [#tasks + 1] = 'check.run'
+	end
 
 	Tasks.add (state, tasks)
 

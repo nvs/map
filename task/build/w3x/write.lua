@@ -45,8 +45,9 @@ return function (state)
 		file:close ()
 	end
 
-	do
-		assert (environment.information.is_lua)
+	if state.settings.script then
+		imports ['war3map.lua'] = nil
+
 		assert (output:add (state.settings.script.output, 'war3map.lua'))
 	end
 

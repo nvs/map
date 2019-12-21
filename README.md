@@ -179,7 +179,15 @@ return {
         }
     },
 
-    -- This table is required.
+    -- If this table is present, then various script related functionality
+    -- will be perormed.  This includes checking the specified Lua scripts
+    -- with Luacheck during the `check` command.  As well as packaging the
+    -- `war3map.lua`, checking it, and putting it into the output archive
+    -- during the `build` command.
+    --
+    -- The presence of this table has higher precedence than script files
+    -- listed in the imports table, and any script generated as a result has
+    -- priority when being packaged into the archive.
     script = {
         -- Value to be used as the `package.path` when generating the
         -- script.  If absent, defaults to the `package.path` used for Map.

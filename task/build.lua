@@ -13,9 +13,11 @@ return function (state)
 		end
 	end
 
-	tasks [#tasks + 1] = 'check.load-modules'
-	tasks [#tasks + 1] = 'check.run'
-	tasks [#tasks + 1] = 'build.script'
+	if state.settings.script then
+		tasks [#tasks + 1] = 'check.load-modules'
+		tasks [#tasks + 1] = 'check.run'
+		tasks [#tasks + 1] = 'build.script'
+	end
 
 	if state.settings.map then
 		if state.settings.map.input == state.settings.map.output then
