@@ -91,7 +91,7 @@ function WPM.pack (input)
 		end
 
 		output [#output + 1] = string.pack (
-			('I1'):rep (next - index),
+			('B'):rep (next - index),
 			table.unpack (bytes, index, next - 1))
 		index = next
 	until index > size
