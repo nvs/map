@@ -3,96 +3,116 @@ if _VERSION < 'Lua 5.3' then
 	require ('compat53')
 end
 
-local DOO = {}
+local Flags = require ('map.file.flags')
 
-function DOO.unpack (input, version)
+local Doodads_DOO = {}
+
+local unpack = string.unpack
+local pack = string.pack
+
+local flags = {
+	[0x01] = 'solid',
+	[0x02] = 'visible',
+	[0x04] = 'fixed_z'
+}
+
+function Doodads_DOO.unpack (input, version)
 	assert (type (input) == 'string')
 	assert (type (version) == 'table')
 
-	local position
+	local magic,
+		format,
+		subformat,
+		count,
+		position = unpack ('< c4 i4 i4 i4', input)
 
-	local function unpack (options)
-		local values = { string.unpack ('<' .. options, input, position) }
-		position = values [#values]
-		return table.unpack (values, 1, #values - 1)
-	end
-
-	local magic = unpack ('c4')
-	local format = unpack ('i4')
-
-	if magic ~= 'W3do' or format < 7 or format > 8 then
-		return nil
-	end
+	assert (magic == 'W3do')
+	assert (format == 7 or format == 8)
 
 	local output = {
 		format = format,
-		subformat = unpack ('i4')
+		subformat = subformat
 	}
 
-	for index = 1, unpack ('i4') do
-		local doodad = {
-			type = unpack ('c4'),
-			variation = unpack ('i4'),
-			position = {
-				x = unpack ('f'),
-				y = unpack ('f'),
-				z = unpack ('f')
-			},
-			angle = math.deg (unpack ('f')),
-			scale = {
-				x = unpack ('f'),
-				y = unpack ('f'),
-				z = unpack ('f')
-			}
+	for doodad = 1, count do
+		output [doodad] = {
+			position = {},
+			scale = {}
 		}
+		doodad = output [doodad]
+
+		doodad.type,
+		doodad.variation,
+		doodad.position.x,
+		doodad.position.y,
+		doodad.position.z,
+		doodad.angle,
+		doodad.scale.x,
+		doodad.scale.y,
+		doodad.scale.z,
+		position = unpack ('< c4 i4 f f f f f f f', input, position)
+
+		-- Degrees are used in other files.  Match that behavior.
+		doodad.angle = math.deg (doodad.angle)
 
 		if version.minor >= 32 then
-			doodad.skin = unpack ('c4')
+			doodad.skin,
+			position = unpack ('c4', input, position)
 		end
 
-		local flags = unpack ('B')
-		doodad.flags = {
-			visible = flags > 1,
-			solid = flags == 2
-		}
-		doodad.life = unpack ('B')
+		doodad.flags,
+		doodad.life,
+		position = unpack ('B B', input, position)
+
+		doodad.flags = Flags.unpack (flags, doodad.flags)
 
 		if format == 8 then
-			doodad.map_item_table = unpack ('i4')
 			doodad.item_table = {}
 
-			for set = 1, unpack ('i4') do
-				doodad.item_table [set] = {}
+			doodad.map_item_table,
+			count,
+			position = unpack ('< i4 i4', input, position)
 
-				for item = 1, unpack ('i4') do
-					doodad.item_table [set] [item] = {
-						id = unpack ('c4'),
-						chance = unpack ('i4')
-					}
+			for set = 1, count do
+				local items = {}
+				doodad.item_table [set] = items
+
+				count,
+				position = unpack ('< i4', input, position)
+
+				for index = 1, count do
+					local item = {}
+					items [index] = item
+
+					item.id,
+					item.chance,
+					position = unpack ('< c4 i4', input, position)
+
 				end
 			end
 		end
 
-		doodad.id = unpack ('i4')
-
-		output [index] = doodad
+		doodad.id,
+		position = unpack ('< i4', input, position)
 	end
 
-	output.special = {
-		format = unpack ('i4')
-	}
+	output.special = {}
 
-	for index = 1, unpack ('i4') do
+	output.special.format,
+	count,
+	position = unpack ('< i4 i4', input, position)
+
+	for index = 1, count do
 		local special = {
-			type = unpack ('c4'),
-			variation = unpack ('i4'),
-			position = {
-				x = unpack ('i4'),
-				y = unpack ('i4')
-			}
+			position = {}
 		}
-
 		output.special [index] = special
+
+		special.type,
+		special.variation,
+		special.position.x,
+		special.position.y,
+		position = unpack ('< c4 i4 i4 i4', input, position)
 	end
 
 	assert (#input == position - 1)
@@ -100,67 +120,79 @@ function DOO.unpack (input, version)
 	return output
 end
 
-function DOO.pack (input, version)
+function Doodads_DOO.pack (input, version)
 	assert (type (input) == 'table')
 	assert (type (version) == 'table')
 
 	local output = {}
+	local format = input.format or 8
+	assert (format == 7 or format == 8)
 
-	local function pack (options, ...)
-		output [#output + 1] = string.pack ('<' .. options, ...)
-	end
-
-	pack ('c4', 'W3do')
-	pack ('i4', input.format)
-	pack ('i4', input.subformat)
-	pack ('i4', #input)
+	output [#output + 1] = pack (
+		'< c4 i4 i4 i4',
+		'W3do',
+		format,
+		input.subformat,
+		#input)
 
 	for _, doodad in ipairs (input) do
-		pack ('c4', doodad.type)
-		pack ('i4', doodad.variation)
-		pack ('f', doodad.position.x)
-		pack ('f', doodad.position.y)
-		pack ('f', doodad.position.z)
-		pack ('f', math.rad (doodad.angle))
-		pack ('f', doodad.scale.x)
-		pack ('f', doodad.scale.y)
-		pack ('f', doodad.scale.z)
+		output [#output + 1] = pack (
+			'< c4 i4 f f f f f f f',
+			doodad.type,
+			doodad.variation,
+			doodad.position.x,
+			doodad.position.y,
+			doodad.position.z,
+			math.rad (doodad.angle),
+			doodad.scale.x,
+			doodad.scale.y,
+			doodad.scale.z)
 
 		if version.minor >= 32 then
-			pack ('c4', doodad.skin)
+			output [#output + 1] = pack ('c4', doodad.skin)
 		end
 
-		pack ('B', doodad.flags.solid and 2	or doodad.flags.visible or 0)
-		pack ('B', doodad.life)
+		output [#output + 1] = pack (
+			'B B',
+			Flags.pack (flags, doodad.flags),
+			doodad.life)
 
 		if input.format == 8 then
-			pack ('i4', doodad.map_item_table)
-			pack ('i4', #doodad.item_table)
+			output [#output + 1] = pack (
+				'< i4 i4',
+				doodad.map_item_table,
+				#doodad.item_table)
 
 			for _, set in ipairs (doodad.item_table) do
-				pack ('i4', #set)
+				output [#output + 1] = pack ('< i4', #set)
 
 				for _, item in ipairs (set) do
-					pack ('c4', item.id)
-					pack ('i4', item.chance)
+					output [#output + 1] = pack (
+						'< c4 i4',
+						item.id,
+						item.chance)
 				end
 			end
 		end
 
-		pack ('i4', doodad.id)
+		output [#output + 1] = pack ('< i4', doodad.id)
 	end
 
-	pack ('i4', input.special.format)
-	pack ('i4', #input.special)
+	output [#output + 1] = pack (
+		'< i4 i4',
+		input.special.format,
+		#input.special)
 
 	for _, special in ipairs (input.special) do
-		pack ('c4', special.type)
-		pack ('i4', special.variation)
-		pack ('i4', special.position.x)
-		pack ('i4', special.position.y)
+		output [#output + 1] = pack (
+			'< c4 i4 i4 i4',
+			special.type,
+			special.variation,
+			special.position.x,
+			special.position.y)
 	end
 
 	return table.concat (output)
 end
 
-return DOO
+return Doodads_DOO
