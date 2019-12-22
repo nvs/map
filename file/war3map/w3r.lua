@@ -5,40 +5,43 @@ end
 
 local W3R = {}
 
-function W3R.unpack (input)
-	local position
+local unpack = string.unpack
+local pack = string.pack
 
-	local function unpack (options)
-		local values = { string.unpack ('<' .. options, input, position) }
-		position = values [#values]
-		return table.unpack (values, 1, #values - 1)
-	end
+function W3R.unpack (input)
+	assert (type (input) == 'string')
+
+	local format,
+		count,
+		position = unpack ('< i4 i4', input)
+
+	assert (format == 5)
 
 	local output = {
-		version = unpack ('i4')
+		format = format
 	}
 
-	for index = 1, unpack ('i4') do
+	for index = 1, count do
 		local region = {
-			minimum = {
-				x = unpack ('f'),
-				y = unpack ('f')
-			},
-			maximum = {
-				x = unpack ('f'),
-				y = unpack ('f')
-			},
-			name = unpack ('z'),
-			id = unpack ('i4'),
-			weather = unpack ('c4'),
-			sound = unpack ('z'),
-			color = {
-				blue = unpack ('B'),
-				green = unpack ('B'),
-				red = unpack ('B'),
-				alpha = unpack ('B')
-			}
+			minimum = {},
+			maximum = {},
+			color = {}
 		}
+
+		region.minimum.x,
+		region.minimum.y,
+		region.maximum.x,
+		region.maximum.y,
+		region.name,
+		region.id,
+		region.weather,
+		region.sound,
+		region.color.blue,
+		region.color.green,
+		region.color.red,
+		region.color.alpha,
+		position = unpack (
+			'< f f f f z i4 c4 z B B B B', input, position)
 
 		output [index] = region
 	end
@@ -52,27 +55,26 @@ function W3R.pack (input)
 	assert (type (input) == 'table')
 
 	local output = {}
+	local format = input.format or 5
+	assert (format == 5)
 
-	local function pack (options, ...)
-		output [#output + 1] = string.pack ('<' .. options, ...)
-	end
-
-	pack ('i4', input.version or 5)
-	pack ('i4', #input)
+	output [#output + 1] = pack ('i4 i4', format, #input)
 
 	for _, region in ipairs (input) do
-		pack ('f', region.minimum.x)
-		pack ('f', region.minimum.y)
-		pack ('f', region.maximum.x)
-		pack ('f', region.maximum.y)
-		pack ('z', region.name)
-		pack ('i4', region.id)
-		pack ('c4', region.weather)
-		pack ('z', region.sound)
-		pack ('B', region.color.blue)
-		pack ('B', region.color.green)
-		pack ('B', region.color.red)
-		pack ('B', region.color.alpha)
+		output [#output + 1] = pack (
+			'< f f f f z i4 c4 z B B B B',
+			region.minimum.x,
+			region.minimum.y,
+			region.maximum.x,
+			region.maximum.y,
+			region.name,
+			region.id,
+			region.weather,
+			region.sound,
+			region.color.blue,
+			region.color.green,
+			region.color.red,
+			region.color.alpha)
 	end
 
 	return table.concat (output)
