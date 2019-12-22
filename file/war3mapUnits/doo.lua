@@ -3,134 +3,166 @@ if _VERSION < 'Lua 5.3' then
 	require ('compat53')
 end
 
-local DOO = {}
+local Units_DOO = {}
 
-function DOO.unpack (input, version)
+local unpack = string.unpack
+local pack = string.pack
+
+function Units_DOO.unpack (input, version)
 	assert (type (input) == 'string')
 	assert (type (version) == 'table')
 
-	local position
+	local magic,
+		format,
+		subformat,
+		count,
+		position = unpack ('< c4 i4 i4 i4', input)
 
-	local function unpack (options)
-		local values = { string.unpack ('<' .. options, input, position) }
-		position = values [#values]
-		return table.unpack (values, 1, #values - 1)
-	end
-
-	local magic = unpack ('c4')
-	local format = unpack ('i4')
-
-	if magic ~= 'W3do' or format < 7 or format > 8 then
-		return nil
-	end
+	assert (magic == 'W3do')
+	assert (format == 7 or format == 8)
+	assert (subformat == 9 or subformat == 11)
 
 	local output = {
 		format = format,
-		subformat = unpack ('i4')
+		subformat = subformat
 	}
 
-	for _ = 1, unpack ('i4') do
-		local unit = {
-			type = unpack ('c4'),
-			variation = unpack ('i4'),
-			position = {
-				x = unpack ('f'),
-				y = unpack ('f'),
-				z = unpack ('f')
-			},
-			angle = math.deg (unpack ('f')),
-			scale = {
-				x = unpack ('f'),
-				y = unpack ('f'),
-				z = unpack ('f')
-			}
+	for unit = 1, count do
+		output [unit] = {
+			position = {},
+			scale = {}
 		}
+		unit = output [unit]
+
+		unit.type,
+		unit.variation,
+		unit.position.x,
+		unit.position.y,
+		unit.position.z,
+		unit.angle,
+		unit.scale.x,
+		unit.scale.y,
+		unit.scale.z,
+		position = unpack ('< c4 i4 f f f f f f f', input, position)
+
+		-- Degrees are used in other files.  Match that behavior.
+		unit.angle = math.deg (unit.angle)
 
 		if version.minor >= 32 then
-			unit.skin = unpack ('c4')
+			unit.skin,
+			position = unpack ('c4', input, position)
 		end
 
-		unit.flags = unpack ('B')
-		unit.player = unpack ('i4')
-		unit.unknown_A = unpack ('B')
-		unit.unknown_B = unpack ('B')
-		unit.life = unpack ('i4')
-		unit.mana = unpack ('i4')
+		-- TODO: Determine flags.  They probably mirror those from the
+		-- doodads DOO file.
+		unit.flags,
+		unit.player,
+		unit.unknown_A,
+		unit.unknown_B,
+		unit.life,
+		unit.mana,
+		position = unpack ('< B i4 B B i4 i4', input, position)
 
-		if format == 8 then
-			unit.map_item_table = unpack ('i4')
+		if subformat == 11 then
+			unit.map_item_table,
+			position = unpack ('< i4', input, position)
 		end
 
 		unit.item_table = {}
 
-		for set = 1, unpack ('i4') do
-			unit.item_table [set] = {}
+		count,
+		position = unpack ('< i4', input, position)
 
-			for item = 1, unpack ('i4') do
-				unit.item_table [set] [item] = {
-					id = unpack ('c4'),
-					chance = unpack ('i4')
-				}
+		for set = 1, count do
+			local items = {}
+			unit.item_table [set] = items
+
+			count,
+			position = unpack ('< i4', input, position)
+
+			for index = 1, count do
+				local item = {}
+				items [index] = item
+
+				item.id,
+				item.chance,
+				position = unpack ('< c4 i4', input, position)
 			end
 		end
 
-		unit.gold = unpack ('i4')
-		unit.target_acquisition = unpack ('f')
-		unit.level = unpack ('i4')
+		unit.gold,
+		unit.target_acquisition,
+		unit.level,
+		position = unpack ('< i4 f i4', input, position)
 
-		if format == 8 then
-			unit.strength = unpack ('i4')
-			unit.agility = unpack ('i4')
-			unit.intelligence = unpack ('i4')
+		if subformat == 11 then
+			unit.strength,
+			unit.agility,
+			unit.intelligence,
+			position = unpack ('< i4 i4 i4', input, position)
 		end
 
 		unit.items = {}
 
-		for slot = 1, unpack ('i4') do
-			local item = {
-				slot = unpack ('i4'),
-				id = unpack ('c4')
-			}
+		count,
+		position = unpack ('< i4', input, position)
 
+		for slot = 1, count do
+			local item = {}
 			unit.items [slot] = item
+
+			item.slot,
+			item.id,
+			position = unpack ('< i4 c4', input, position)
 		end
 
 		unit.abilities = {}
 
-		for index = 1, unpack ('i4') do
-			local ability = {
-				id = unpack ('c4'),
-				autocast = unpack ('i4'),
-				level = unpack ('i4')
-			}
+		count,
+		position = unpack ('< i4', input, position)
 
+		for index = 1, count do
+			local ability = {}
 			unit.abilities [index] = ability
+
+			ability.id,
+			ability.autocast,
+			ability.level,
+			position = unpack ('< c4 i4 i4', input, position)
 		end
 
-		unit.random = {
-			format = unpack ('i4')
-		}
+		unit.random = {}
+
+		unit.random.format,
+		position = unpack ('< i4', input, position)
 
 		if unit.random.format == 0 then
-			unit.random.level = unpack ('i3')
-			unit.random.class = unpack ('i1')
+			unit.random.level,
+			unit.random.class,
+			position = unpack ('< i3 i1', input, position)
 		elseif unit.random.format == 1 then
-			unit.random.group = unpack ('i4')
-			unit.random.position = unpack ('i4')
+			unit.random.group,
+			unit.random.position,
+			position = unpack ('< i4 i4', input, position)
 		elseif unit.random.format == 2 then
-			for index = 1, unpack ('i4') do
-				unit.random [index] = {
-					id = unpack ('c4'),
-					chance = unpack ('i4')
-				}
+			count,
+			position = unpack ('< i4', input, position)
+
+			for index = 1, count do
+				local random = {}
+
+				random.id,
+				random.chance,
+				position = unpack ('< c4 i4', input, position)
+
+				unit.random [index] = random
 			end
 		end
 
-		unit.color = unpack ('i4')
-		unit.waygate = unpack ('i4')
-		unit.id = unpack ('i4')
-
-		output [#output + 1] = unit
+		unit.color,
+		unit.waygate,
+		unit.id,
+		position = unpack ('< i4 i4 i4', input, position)
 	end
 
 	assert (#input == position - 1)
@@ -138,108 +170,127 @@ function DOO.unpack (input, version)
 	return output
 end
 
-function DOO.pack (input, version)
+function Units_DOO.pack (input, version)
 	assert (type (input) == 'table')
 	assert (type (version) == 'table')
 
 	local output = {}
+	local format = input.format or 8
+	local subformat = input.subformat or 11
+	assert (format == 7 or format == 8)
+	assert (subformat == 9 or subformat == 11)
 
-	local function pack (options, ...)
-		output [#output + 1] = string.pack ('<' .. options, ...)
-	end
-
-	local format = input.format
-
-	pack ('c4', 'W3do')
-	pack ('i4', input.format)
-	pack ('i4', input.subformat)
-	pack ('i4', #input)
+	output [#output + 1] = pack (
+		'< c4 i4 i4 i4',
+		'W3do',
+		format,
+		input.subformat,
+		#input)
 
 	for _, unit in ipairs (input) do
-		pack ('c4', unit.type)
-		pack ('i4', unit.variation)
-		pack ('f', unit.position.x)
-		pack ('f', unit.position.y)
-		pack ('f', unit.position.z)
-		pack ('f', math.rad (unit.angle))
-		pack ('f', unit.scale.x)
-		pack ('f', unit.scale.y)
-		pack ('f', unit.scale.z)
+		output [#output + 1] = pack (
+			'< c4 i4 f f f f f f f',
+			unit.type,
+			unit.variation,
+			unit.position.x,
+			unit.position.y,
+			unit.position.z,
+			math.rad (unit.angle),
+			unit.scale.x,
+			unit.scale.y,
+			unit.scale.z)
 
 		if version.minor >= 32 then
-			pack ('c4', unit.skin)
+			output [#output + 1] = pack ('c4', unit.skin)
 		end
 
-		pack ('B', unit.flags)
-		pack ('i4', unit.player)
-		pack ('B', unit.unknown_A)
-		pack ('B', unit.unknown_B)
-		pack ('i4', unit.life)
-		pack ('i4', unit.mana)
+		output [#output + 1] = pack (
+			'< B i4 B B i4 i4',
+			unit.flags,
+			unit.player,
+			unit.unknown_A,
+			unit.unknown_B,
+			unit.life,
+			unit.mana)
 
-		if format == 8 then
-			pack ('i4', unit.map_item_table)
+		if subformat == 11 then
+			output [#output + 1] = pack ('< i4', unit.map_item_table)
 		end
 
-		pack ('i4', #unit.item_table)
+		output [#output + 1] = pack ('< i4', #unit.item_table)
 
 		for _, set in ipairs (unit.item_table) do
-			pack ('i4', #set)
+			output [#output + 1] = pack ('< i4', #set)
 
 			for _, item in ipairs (set) do
-				pack ('c4', item.id)
-				pack ('i4', item.chance)
+				output [#output + 1] = pack (
+					'< c4 i4',
+					item.id,
+					item.chance)
 			end
 		end
 
-		pack ('i4', unit.gold)
-		pack ('f', unit.target_acquisition)
-		pack ('i4', unit.level)
+		output [#output + 1] = pack (
+			'< i4 f i4',
+			unit.gold,
+			unit.target_acquisition,
+			unit.level)
 
-		if format == 8 then
-			pack ('i4', unit.strength)
-			pack ('i4', unit.agility)
-			pack ('i4', unit.intelligence)
+		if subformat == 11 then
+			output [#output + 1] = pack (
+				'< i4 i4 i4',
+				unit.strength,
+				unit.agility,
+				unit.intelligence)
 		end
 
-		pack ('i4', #unit.items)
+		output [#output + 1] = pack ('< i4', #unit.items)
 
 		for _, item in ipairs (unit.items) do
-			pack ('i4', item.slot)
-			pack ('c4', item.id)
+			output [#output + 1] = pack ('< i4 c4', item.slot, item.id)
 		end
 
-		pack ('i4', #unit.abilities)
+		output [#output + 1] = pack ('< i4', #unit.abilities)
 
 		for _, ability in ipairs (unit.abilities) do
-			pack ('c4', ability.id)
-			pack ('i4', ability.autocast)
-			pack ('i4', ability.level)
+			output [#output + 1] = pack (
+				'< c4 i4 i4',
+				ability.id,
+				ability.autocast,
+				ability.level)
 		end
 
-		pack ('i4', unit.random.format)
+		output [#output + 1] = pack ('< i4', unit.random.format)
 
 		if unit.random.format == 0 then
-			pack ('i3', unit.random.level)
-			pack ('B', unit.random.class)
+			output [#output + 1] = pack (
+				'< i3 B',
+				unit.random.level,
+				unit.random.class)
 		elseif unit.random.format == 1 then
-			pack ('i4', unit.random.group)
-			pack ('i4', unit.random.position)
+			output [#output + 1] = pack (
+				'< i4 i4',
+				unit.random.group,
+				unit.random.position)
 		elseif unit.random.format == 2 then
-			pack ('i4', #unit.random)
+			output [#output + 1] = pack ('< i4', #unit.random)
 
 			for _, random in ipairs (unit.random) do
-				pack ('c4', random.id)
-				pack ('i4', random.chance)
+				output [#output + 1] = pack (
+					'< c4 i4',
+					random.id,
+					random.chance)
 			end
 		end
 
-		pack ('i4', unit.color)
-		pack ('i4', unit.waygate)
-		pack ('i4', unit.id)
+		output [#output + 1] = pack (
+			'< i4 i4 i4',
+			unit.color,
+			unit.waygate,
+			unit.id)
 	end
 
 	return table.concat (output)
 end
 
-return DOO
+return Units_DOO

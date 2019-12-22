@@ -28,6 +28,7 @@ function Doodads_DOO.unpack (input, version)
 
 	assert (magic == 'W3do')
 	assert (format == 7 or format == 8)
+	assert (subformat == 9 or subformat == 11)
 
 	local output = {
 		format = format,
@@ -126,7 +127,9 @@ function Doodads_DOO.pack (input, version)
 
 	local output = {}
 	local format = input.format or 8
+	local subformat = input.subformat or 11
 	assert (format == 7 or format == 8)
+	assert (subformat == 9 or subformat == 11)
 
 	output [#output + 1] = pack (
 		'< c4 i4 i4 i4',
