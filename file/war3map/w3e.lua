@@ -80,7 +80,7 @@ function W3E.unpack (input)
 				ground = {
 					height = A,
 					texture = C % 0x10,
-					variation = D % 0x10
+					variation = D % 0x20
 				},
 				cliff = {
 					level = E % 0x10,
