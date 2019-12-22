@@ -5,45 +5,47 @@ end
 
 local W3C = {}
 
+local unpack = string.unpack
+local pack = string.pack
+
 function W3C.unpack (input, version)
 	assert (type (input) == 'string')
 	assert (type (version) == 'table')
 
-	local position
-
-	local function unpack (options)
-		local values = { string.unpack ('<' .. options, input, position) }
-		position = values [#values]
-		return table.unpack (values, 1, #values - 1)
-	end
+	local format, count, position = unpack ('< i4 i4', input)
+	assert (format == 0)
 
 	local output = {
-		version = unpack ('i4')
+		format = format
 	}
 
-	for index = 1, unpack ('i4') do
+	for index = 1, count do
 		local camera = {
-			target = {
-				x = unpack ('f'),
-				y = unpack ('f')
-			},
-			z_offset = unpack ('f'),
-			rotation = unpack ('f'),
-			angle_of_attack = unpack ('f'),
-			distance = unpack ('f'),
-			roll = unpack ('f'),
-			field_of_view = unpack ('f'),
-			far_z = unpack ('f'),
-			near_z = unpack ('f')
+			target = {}
 		}
 
+		camera.target.x,
+		camera.target.y,
+		camera.z_offset,
+		camera.rotation,
+		camera.angle_of_attack,
+		camera.distance,
+		camera.roll,
+		camera.field_of_view,
+		camera.far_z,
+		camera.near_z,
+		position = unpack (
+			'< f f f f f f f f f f', input, position)
+
 		if version.minor >= 31 then
-			camera.local_pitch = unpack ('f')
-			camera.local_yaw = unpack ('f')
-			camera.local_roll = unpack ('f')
+			camera.local_pitch,
+			camera.local_yaw,
+			camera.local_roll,
+			position = unpack ('< f f f', input, position)
 		end
 
-		camera.name = unpack ('z')
+		camera.name,
+		position = unpack ('z', input, position)
 
 		output [index] = camera
 	end
@@ -55,39 +57,37 @@ end
 
 function W3C.pack (input, version)
 	assert (type (input) == 'table')
-
-	if version then
-		assert (type (version) == 'table')
-	end
+	assert (type (version) == 'table')
 
 	local output = {}
+	local format = input.format or 0
+	assert (format == 0)
 
-	local function pack (options, ...)
-		output [#output + 1] = string.pack ('<' .. options, ...)
-	end
-
-	pack ('i4', input.version or 0)
-	pack ('i4', #input)
+	output [#output + 1] = pack ('< i4 i4', format, #input)
 
 	for _, camera in ipairs (input) do
-		pack ('f', camera.target.x)
-		pack ('f', camera.target.y)
-		pack ('f', camera.z_offset)
-		pack ('f', camera.rotation)
-		pack ('f', camera.angle_of_attack)
-		pack ('f', camera.distance)
-		pack ('f', camera.roll)
-		pack ('f', camera.field_of_view)
-		pack ('f', camera.far_z)
-		pack ('f', camera.near_z)
+		output [#output + 1] = pack (
+			'< f f f f f f f f f f',
+			camera.target.x,
+			camera.target.y,
+			camera.z_offset,
+			camera.rotation,
+			camera.angle_of_attack,
+			camera.distance,
+			camera.roll,
+			camera.field_of_view,
+			camera.far_z,
+			camera.near_z)
 
-		if version and version.major >= 1 and version.minor >= 31 then
-			pack ('f', camera.local_pitch)
-			pack ('f', camera.local_yaw)
-			pack ('f', camera.local_roll)
+		if version.minor >= 31 then
+			output [#output + 1] = pack (
+				'< f f f',
+				camera.local_pitch,
+				camera.local_yaw,
+				camera.local_roll)
 		end
 
-		pack ('z', camera.name)
+		output [#output + 1] = pack ('z', camera.name)
 	end
 
 	return table.concat (output)
