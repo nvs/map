@@ -14,9 +14,16 @@ local flags = {
 	[0x08] = 'music'
 }
 
+local unpack = string.unpack
+local pack = string.pack
+
 function W3S.unpack (input)
-	local unpack = string.unpack
-	local format, count, position = unpack ('< i4 i4', input)
+	assert (type (input) == 'string')
+
+	local format,
+		count,
+		position = unpack ('< i4 i4', input)
+
 	assert (format == 1 or format == 2)
 
 	local output = {
@@ -82,7 +89,6 @@ function W3S.pack (input)
 	assert (type (input) == 'table')
 
 	local output = {}
-	local pack = string.pack
 	local format = input.format or 2
 	assert (format == 1 or format == 2)
 
