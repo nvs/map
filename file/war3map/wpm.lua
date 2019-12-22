@@ -9,7 +9,7 @@ function WPM.unpack (input)
 	assert (type (input) == 'string')
 
 	local magic, format, columns, rows, position =
-		string.unpack ('<c4I4I4I4', input)
+		string.unpack ('< c4 I4 I4 I4', input)
 
 	assert (magic == 'MP3W')
 	assert (format == 0)
@@ -20,14 +20,17 @@ function WPM.unpack (input)
 
 	local cells = {}
 	output.cells = cells
+	local byte = string.byte
 
 	for row = rows, 1, -1 do
+		local next = position + columns
+		local bytes = { byte (input, position, next - 1) }
+		position = next
 		local line = {}
 		cells [row] = line
 
 		for column = 1, columns do
-			local value = input:byte (position)
-			position = position + 1
+			local value = bytes [column]
 
 			line [column] = {
 				walkable = value % (0x02 + 0x02) < 0x02,
@@ -43,33 +46,30 @@ function WPM.unpack (input)
 	return output
 end
 
--- Set this to the default value in Lua 5.1 and LuaJIT, as it is smaller
--- there.  Given that this compile time option could be adjusted, it is
--- possible, but probably rare, for this to be too large and fail.
---
--- The alternative method, which gets the character for each cell at the
--- time bits are added together, incurs a `50%` performance penalty, but
--- uses roughly `15%` less memory.
-local C_STACK_SIZE = 8000
-
 function WPM.pack (input)
 	assert (type (input) == 'table')
 	assert (input.format == 0)
 
 	local output = {}
 
-	output [#output + 1] = string.pack ('<c4I4I4I4',
-		'MP3W', input.format, #input.cells [1], #input.cells)
+	local cells = input.cells
+	local rows = #cells
+	local columns = #cells [1]
 
-	local index = 0
-	local bytes = {}
+	output [#output + 1] = string.pack ('< c4 I4 I4 I4',
+		'MP3W', input.format, columns, rows)
 
-	for row = #input.cells, 1, -1 do
-		row = input.cells [row]
+	local char = string.char
+	local unpack = table.unpack
 
-		for _, cell in ipairs (row) do
-			index = index + 1
-			bytes [index] = 0
+	for row = rows, 1, -1 do
+		row = cells [row]
+		local bytes = {}
+
+		for column = 1, columns do
+			local cell = row [column]
+
+			bytes [column] = 0
 				+ (cell.walkable and 0 or 0x02)
 				+ (cell.flyable and 0 or 0x04)
 				+ (cell.buildable and 0 or 0x08)
@@ -77,24 +77,9 @@ function WPM.pack (input)
 				+ (cell.water and 0 or 0x40)
 				+ (cell.amphibious and 0 or 0x80)
 		end
+
+		output [#output + 1] = char (unpack (bytes))
 	end
-
-	index = 1
-	local size = #bytes
-	repeat
-		-- Subtract the two arguments that preceed the unpacked bytes on the
-		-- C stack: the function call and the format string.
-		local next = index + C_STACK_SIZE - 3
-
-		if next >= size then
-			next = size + 1
-		end
-
-		output [#output + 1] = string.pack (
-			('B'):rep (next - index),
-			table.unpack (bytes, index, next - 1))
-		index = next
-	until index > size
 
 	return table.concat (output)
 end
