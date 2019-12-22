@@ -15,31 +15,30 @@ function W3E.unpack (input)
 	local position
 
 	local function unpack (options)
-		local values = { string.unpack ('<' .. options, input, position) }
-		position = values [#values]
-		return table.unpack (values, 1, #values - 1)
+		local values = { string.unpack (options, input, position) }
+		local size = #values
+		position = values [size]
+		return table.unpack (values, 1, size - 1)
 	end
 
-	local magic = unpack ('c4')
+	local magic, format = unpack ('< c4 I4')
 	assert (magic == 'W3E!')
+	assert (format == 11)
 
-	local output = {}
-	output.format = unpack ('I4')
-	assert (output.format == 11)
+	local output = {
+		format = format
+	}
 
-	output.tileset = unpack ('c1')
-	output.custom_tileset = unpack ('I4') == 1
+	output.tileset, output.custom_tileset = unpack ('< c1 I4')
 	output.textures = {
 		ground = { unpack (('c4'):rep (unpack ('I4'))) },
 		cliff = { unpack (('c4'):rep (unpack ('I4'))) }
 	}
 
-	local columns = unpack ('I4')
-	local rows = unpack ('I4')
-
+	local columns, rows, x, y = unpack ('< I4 I4 f f')
 	output.offset = {
-		x = unpack ('f'),
-		y = unpack ('f')
+		x = x,
+		y = y
 	}
 
 	local tiles = {}
@@ -48,10 +47,11 @@ function W3E.unpack (input)
 	unpack = string.unpack
 	local floor = math.floor
 	local band = bit32.band
-	local format =  '<' .. ('I2I2I1I1I1'):rep (columns)
+	format =  '<' .. ('I2 I2 I1 I1 I1'):rep (columns)
 
 	for row = rows, 1, -1 do
-		tiles [row] = {}
+		local line = {}
+		tiles [row] = line
 
 		local temp = { unpack (format, input, position) }
 		position = temp [#temp]
@@ -69,7 +69,7 @@ function W3E.unpack (input)
 			local D = temp [index + 3]
 			local E = temp [index + 4]
 
-			local tile = {
+			line [column] = {
 				flags = {
 					edge = B % (0x4000 + 0x4000) >= 0x4000,
 					ramp = C % (0x10 + 0x10) >= 0x10,
@@ -91,8 +91,6 @@ function W3E.unpack (input)
 					height = B % 0x4000
 				},
 			}
-
-			tiles [row] [column] = tile
 		end
 	end
 
@@ -103,54 +101,50 @@ end
 
 function W3E.pack (input)
 	assert (type (input) == 'table')
-
-	local output = {}
-
-	local function pack (options, ...)
-		output [#output + 1] = string.pack ('<' .. options, ...)
-	end
-
 	assert (input.format == 11)
 
-	pack ('c4', 'W3E!')
-	pack ('I4', input.format)
-	pack ('c1', input.tileset)
-	pack ('I4', input.custom_tileset and 1 or 0)
+	local output = {}
+	local pack = string.pack
+	local unpack = table.unpack
 
-	do
-		local count = #input.textures.ground
-		pack ('I4', count)
-		pack (('c4'):rep (count), table.unpack (input.textures.ground))
-	end
+	output [#output + 1] = pack ('< c4 I4 c1 I4', 'W3E!',
+		input.format, input.tileset, input.custom_tileset)
 
-	do
-		local count = #input.textures.cliff
-		pack ('I4', count)
-		pack (('c4'):rep (count), table.unpack (input.textures.cliff))
-	end
+	local count = #input.textures.ground
+	output [#output + 1] = pack ('< I4' .. ('c4'):rep (count),
+		count, unpack (input.textures.ground))
 
-	pack ('I4', #input.tiles [1])
-	pack ('I4', #input.tiles)
-	pack ('f', input.offset.x)
-	pack ('f', input.offset.y)
+	count = #input.textures.cliff
+	output [#output + 1] = pack ('< I4' .. ('c4'):rep (count),
+		count, unpack (input.textures.cliff))
 
-	pack = string.pack
+	local tiles = input.tiles
+	local rows = #tiles
+	local columns = #tiles [1]
 
-	for row = #input.tiles, 1, -1 do
-		for _, tile in ipairs (input.tiles [row]) do
-			output [#output + 1] = pack ('<I2I2I1I1I1',
-				tile.ground.height,
-				tile.water.height
-					+ (tile.flags.edge and 0x4000 or 0),
-				tile.ground.texture
-					+ (tile.flags.ramp and 0x10 or 0)
-					+ (tile.flags.blight and 0x20 or 0)
-					+ (tile.flags.water and 0x40 or 0)
-					+ (tile.flags.boundary and 0x80 or 0),
-				tile.cliff.variation * 32
-					+ tile.ground.variation,
-				tile.cliff.texture * 16
-					+ tile.cliff.level)
+	output [#output + 1] = pack ('< I4 I4 f f',
+		columns, rows, input.offset.x, input.offset.y)
+
+	for row = rows, 1, -1 do
+		row = tiles [row]
+
+		for column = 1, columns do
+			local tile = row [column]
+			local ground = tile.ground
+			local water = tile.water
+			local flags = tile.flags
+			local cliff = tile.cliff
+
+			output [#output + 1] = pack ('< I2 I2 I1 I1 I1',
+				ground.height,
+				water.height + (flags.edge and 0x4000 or 0),
+				ground.texture
+					+ (flags.ramp and 0x10 or 0)
+					+ (flags.blight and 0x20 or 0)
+					+ (flags.water and 0x40 or 0)
+					+ (flags.boundary and 0x80 or 0),
+				cliff.variation * 32 + ground.variation,
+				cliff.texture * 16 + cliff.level)
 		end
 	end
 
