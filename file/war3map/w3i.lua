@@ -308,7 +308,7 @@ function W3I.pack (input)
 	end
 
 	local function pack_bits (option, value)
-		pack (option, Bits.pack (option, value))
+		pack (option, Bits.pack (value))
 	end
 
 	local function pack_map_flags (option, value)

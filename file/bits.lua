@@ -5,29 +5,43 @@ end
 
 local Bits = {}
 
-function Bits.pack (option, input)
+local bits = {}
+
+local function prepare (size)
+	if #bits >= size - 1 then
+		return
+	end
+
+	for bit = #bits, size - 1 do
+		bits [bit] = math.floor (2 ^ bit)
+	end
+end
+
+function Bits.pack (input)
 	assert (type (input) == 'table')
 
+	local size = #input
+	prepare (size)
 	local output = 0
-	local size = string.packsize (option) * 8
 
 	for index = 1, size do
 		if input [index] then
-			output = output + 2 ^ (index - 1)
+			output = output + bits [index - 1]
 		end
 	end
 
-	return math.floor (output)
+	return output
 end
 
 function Bits.unpack (option, input)
 	assert (type (input) == 'number')
 
-	local output = {}
 	local size = string.packsize (option) * 8
+	prepare (size)
+	local output = {}
 
 	for index = 1, size do
-		local value = 2 ^ (index - 1)
+		local value = bits [index - 1]
 
 		output [index] = input % (value + value) >= value
 	end
