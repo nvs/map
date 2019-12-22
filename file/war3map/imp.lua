@@ -3,26 +3,33 @@ if _VERSION < 'Lua 5.3' then
 	require ('compat53')
 end
 
--- Deals with the `war3map.imp`.
-local Imports = {}
+local IMP = {}
 
-function Imports.unpack (input)
-	local position
+local unpack = string.unpack
+local pack = string.pack
 
-	local function unpack (options)
-		local values = { string.unpack ('<' .. options, input, position) }
-		position = values [#values]
-		return table.unpack (values, 1, #values - 1)
-	end
+function IMP.unpack (input)
+	assert (type (input) == 'string')
+
+	local format,
+		count,
+		position = unpack ('< i4 i4', input)
+
+	assert (format == 1)
 
 	local output = {
-		version = unpack ('i4'),
+		format = format,
 		files = {}
 	}
 
-	for _ = 1, unpack ('I4') do
-		local byte = unpack ('b')
-		output.files [unpack ('z')] = byte
+	local byte, name
+
+	for _ = 1, count do
+		byte,
+		name,
+		position = unpack ('B z', input, position)
+
+		output.files [name] = byte
 	end
 
 	assert (#input == position - 1)
@@ -30,14 +37,12 @@ function Imports.unpack (input)
 	return output
 end
 
-function Imports.pack (input)
+function IMP.pack (input)
 	assert (type (input) == 'table')
 
 	local output = {}
-
-	local function pack (options, ...)
-		output [#output + 1] = string.pack ('<' .. options, ...)
-	end
+	local format = input.format or 1
+	assert (format == 1)
 
 	local files = {}
 
@@ -47,15 +52,13 @@ function Imports.pack (input)
 
 	table.sort (files)
 
-	pack ('i4', input.version)
-	pack ('I4', #files)
+	output [#output + 1] = pack ('i4 i4', format, #files)
 
 	for _, name in ipairs (files) do
-		pack ('b', input.files [name])
-		pack ('z', name)
+		output [#output + 1] = pack ('B z', input.files [name], name)
 	end
 
 	return table.concat (output)
 end
 
-return Imports
+return IMP
