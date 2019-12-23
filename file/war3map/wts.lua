@@ -1,6 +1,8 @@
 local WTS = {}
 
 function WTS.unpack (input)
+	assert (type (input) == 'string')
+
 	local output = {}
 
 	for index, text in input:gmatch ('STRING (%d+).-(%b{})') do
