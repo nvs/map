@@ -1,6 +1,5 @@
 local Objects = require ('map.file.objects')
 
--- Deals with the `war3map.w3d` (Doodads).
 local W3D = {}
 
 function W3D.unpack (input)

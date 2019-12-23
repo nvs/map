@@ -1,6 +1,5 @@
 local Objects = require ('map.file.objects')
 
--- Deals with the `war3map.w3q` (Upgrades).
 local W3Q = {}
 
 function W3Q.unpack (input)

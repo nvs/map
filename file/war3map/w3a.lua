@@ -1,6 +1,5 @@
 local Objects = require ('map.file.objects')
 
--- Deals with the `war3map.w3a` (Abilities).
 local W3A = {}
 
 function W3A.unpack (input)

@@ -3,8 +3,6 @@ if _VERSION < 'Lua 5.3' then
 	require ('compat53')
 end
 
--- Template for Warcraft III object files (i.e. `war3map.w3u`,
--- `war3map.w3t`, etc.).
 local Objects = {}
 
 local to_value = {
@@ -55,19 +53,25 @@ local pack = string.pack
 function Objects.unpack (input, extra)
 	local output = {}
 
-	local version, position = unpack ('< i4', input)
-	assert (version == 2)
+	local format,
+		position = unpack ('< i4', input)
+
+	assert (format == 2)
 
 	local function unpack_table ()
 		local objects
-		objects, position = unpack ('< i4', input, position)
+
+		objects,
+		position = unpack ('< i4', input, position)
 
 		for _ = 1, objects do
 			local object = {}
-
 			local base, id, modifications
-			base, id, modifications, position =
-				unpack ('< c4 c4 i4', input, position)
+
+			base,
+			id,
+			modifications,
+			position = unpack ('< c4 c4 i4', input, position)
 
 			-- Original table.
 			if id == '\0\0\0\0' then
@@ -82,11 +86,15 @@ function Objects.unpack (input, extra)
 				local name, type, variation, data
 
 				if extra then
-					name, type, variation, data, position =
-						unpack ('< c4 i4 i4 i4', input, position)
+					name,
+					type,
+					variation,
+					data,
+					position = unpack ('< c4 i4 i4 i4', input, position)
 				else
-					name, type, position =
-						unpack ('< c4 I4', input, position)
+					name,
+					type,
+					position = unpack ('< c4 I4', input, position)
 				end
 
 				local modification = object [name] or {}
@@ -97,7 +105,9 @@ function Objects.unpack (input, extra)
 				end
 
 				local value
-				value, position = unpack (to_value [type], input, position)
+
+				value,
+				position = unpack (to_value [type], input, position)
 
 				if variation and variation > 0 then
 					modification.values = modification.values or {}
@@ -163,18 +173,32 @@ function Objects.pack (input, extra)
 						do
 							count = count + 1
 							output [#output + 1] = pack (
-								format, name, type,
-								variation, data, value, cap)
+								format,
+								name,
+								type,
+								variation,
+								data,
+								value,
+								cap)
 						end
 					elseif extra then
 						count = count + 1
 						output [#output + 1] = pack (
-							format, name, type, 0, modification.data or 0,
-							modification.value, cap)
+							format,
+							name,
+							type,
+							0,
+							modification.data or 0,
+							modification.value,
+							cap)
 					else
 						count = count + 1
 						output [#output + 1] = pack (
-							format, name, type, modification.value, cap)
+							format,
+							name,
+							type,
+							modification.value,
+							cap)
 					end
 				end
 			end
