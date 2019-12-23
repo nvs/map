@@ -1,3 +1,5 @@
+local String = require ('map._string')
+
 -- Details with `*.ini` files.
 --
 -- Provides very basic and limited functionality.  The purpose is to read
@@ -16,7 +18,8 @@ function INI.unpack (input)
 	local key, value
 
 	for line in input:gmatch ('([^\r\n]*)[\r\n]+') do
-		line = line:reverse ():gsub ('^%s+', ''):reverse ()
+		line = String.trim_right (line)
+
 		section = line:match ('^%[([^%]]+)%]$')
 
 		if section then

@@ -1,5 +1,6 @@
 local Path = require ('map.path')
 local Shell = require ('map.shell')
+local String = require ('map._string')
 
 local function write_header (output)
 	assert (output:write ([[
@@ -28,12 +29,12 @@ end
 
 local function read_contents (path)
 	local file = assert (io.open (path, 'rb'))
-	local contents = assert (file:read ('*a'))
+	local contents = String.trim (assert (file:read ('*a')), '[\r\n]+')
 	file:close ()
 
 	-- Only remove trailing lines, or the line numbers in debug mode could
 	-- be incorrect.
-	return (contents:reverse ():gsub ('^[\r\n]+', ''):reverse ())
+	return contents
 end
 
 local function write_module (output, path, name, debug)
