@@ -1,16 +1,10 @@
 local String = require ('map._string')
 
--- Details with `*.ini` files.
---
--- Provides very basic and limited functionality.  The purpose is to read
--- the following INI files used within Warcraft III maps:
---
--- - `war3mapSkin.txt`
--- - `war3mapMisc.txt`
--- - `war3mapExtra.txt`
 local INI = {}
 
 function INI.unpack (input)
+	assert (type (input) == 'string')
+
 	local output = {}
 	local current
 
