@@ -1,6 +1,9 @@
 # Map Changelog
 
 ## [Unreleased]
+- N/A
+
+## [0.9.0] - 2019-12-23
 ### Added
 - Introduce ability to set the `package.cpath` for user build files.
 - Added setting to disable user build files.
@@ -265,7 +268,8 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.8.1...master
+[Unreleased]: https://github.com/nvs/map/compare/v0.9.0...master
+[0.9.0]: https://github.com/nvs/map/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/nvs/map/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/nvs/map/compare/v0.7.2...v0.8.0
 [0.7.2]: https://github.com/nvs/map/compare/v0.7.1...v0.7.2
