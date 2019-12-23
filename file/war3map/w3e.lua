@@ -9,50 +9,60 @@ local bit32 = require (jit and 'bit' or 'bit32') -- luacheck: globals jit
 -- - https://github.com/stijnherfst/HiveWE/wiki/war3map.w3e-Terrain
 local W3E = {}
 
+local unpack = string.unpack
+local pack = string.pack
+local floor = math.floor
+local band = bit32.band
+
 function W3E.unpack (input)
 	assert (type (input) == 'string')
 
-	local position
+	local magic,
+		format,
+		position = unpack ('< c4 I4', input)
 
-	local function unpack (options)
-		local values = { string.unpack (options, input, position) }
-		local size = #values
-		position = values [size]
-		return table.unpack (values, 1, size - 1)
-	end
-
-	local magic, format = unpack ('< c4 I4')
 	assert (magic == 'W3E!')
 	assert (format == 11)
 
 	local output = {
-		format = format
+		format = format,
+		textures = {},
+		offset = {}
 	}
 
-	output.tileset, output.custom_tileset = unpack ('< c1 I4')
-	output.textures = {
-		ground = { unpack (('c4'):rep (unpack ('I4'))) },
-		cliff = { unpack (('c4'):rep (unpack ('I4'))) }
-	}
+	local count
 
-	local columns, rows, x, y = unpack ('< I4 I4 f f')
-	output.offset = {
-		x = x,
-		y = y
+	output.tileset,
+	output.custom_tileset,
+	count,
+	position = unpack ('< c1 I4 I4', input, position)
+
+	output.textures.ground = {
+		unpack (('c4'):rep (count), input, position)
 	}
+	position = table.remove (output.textures.ground)
+
+	count,
+	position = unpack ('< I4', input, position)
+
+	output.textures.cliff = { unpack (('c4'):rep (count), input, position) }
+	position = table.remove (output.textures.cliff)
+
+	local columns, rows
+
+	columns,
+	rows,
+	output.offset.x,
+	output.offset.y,
+	position = unpack ('< I4 I4 f f', input, position)
 
 	local tiles = {}
 	output.tiles = tiles
 
-	unpack = string.unpack
-	local floor = math.floor
-	local band = bit32.band
 	format =  '<' .. ('I2 I2 I1 I1 I1'):rep (columns)
 
 	for row = rows, 1, -1 do
 		local line = {}
-		tiles [row] = line
-
 		local temp = { unpack (format, input, position) }
 		position = temp [#temp]
 
@@ -92,6 +102,8 @@ function W3E.unpack (input)
 				},
 			}
 		end
+
+		tiles [row] = line
 	end
 
 	assert (#input == position - 1)
@@ -104,26 +116,35 @@ function W3E.pack (input)
 	assert (input.format == 11)
 
 	local output = {}
-	local pack = string.pack
-	local unpack = table.unpack
 
-	output [#output + 1] = pack ('< c4 I4 c1 I4', 'W3E!',
-		input.format, input.tileset, input.custom_tileset)
+	output [#output + 1] = pack (
+		'< c4 I4 c1 I4', 'W3E!',
+		input.format,
+		input.tileset,
+		input.custom_tileset)
 
 	local count = #input.textures.ground
-	output [#output + 1] = pack ('< I4' .. ('c4'):rep (count),
-		count, unpack (input.textures.ground))
+	output [#output + 1] = pack (
+		'< I4' .. ('c4'):rep (count),
+		count,
+		table.unpack (input.textures.ground))
 
 	count = #input.textures.cliff
-	output [#output + 1] = pack ('< I4' .. ('c4'):rep (count),
-		count, unpack (input.textures.cliff))
+	output [#output + 1] = pack (
+		'< I4' .. ('c4'):rep (count),
+		count,
+		table.unpack (input.textures.cliff))
 
 	local tiles = input.tiles
 	local rows = #tiles
 	local columns = #tiles [1]
 
-	output [#output + 1] = pack ('< I4 I4 f f',
-		columns, rows, input.offset.x, input.offset.y)
+	output [#output + 1] = pack (
+		'< I4 I4 f f',
+		columns,
+		rows,
+		input.offset.x,
+		input.offset.y)
 
 	for row = rows, 1, -1 do
 		row = tiles [row]
@@ -135,7 +156,8 @@ function W3E.pack (input)
 			local flags = tile.flags
 			local cliff = tile.cliff
 
-			output [#output + 1] = pack ('< I2 I2 I1 I1 I1',
+			output [#output + 1] = pack (
+				'< I2 I2 I1 I1 I1',
 				ground.height,
 				water.height + (flags.edge and 0x4000 or 0),
 				ground.texture
