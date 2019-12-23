@@ -8,8 +8,11 @@ local WPM = {}
 function WPM.unpack (input)
 	assert (type (input) == 'string')
 
-	local magic, format, columns, rows, position =
-		string.unpack ('< c4 I4 I4 I4', input)
+	local magic,
+		format,
+		columns,
+		rows,
+		position = string.unpack ('< c4 I4 I4 I4', input)
 
 	assert (magic == 'MP3W')
 	assert (format == 0)
@@ -27,7 +30,6 @@ function WPM.unpack (input)
 		local bytes = { byte (input, position, next - 1) }
 		position = next
 		local line = {}
-		cells [row] = line
 
 		for column = 1, columns do
 			local value = bytes [column]
@@ -41,6 +43,8 @@ function WPM.unpack (input)
 				amphibious = value % (0x80 + 0x80) < 0x80,
 			}
 		end
+
+		cells [row] = line
 	end
 
 	return output
@@ -48,16 +52,21 @@ end
 
 function WPM.pack (input)
 	assert (type (input) == 'table')
-	assert (input.format == 0)
 
 	local output = {}
+	local format = input.format or 0
+	assert (format == 0)
 
 	local cells = input.cells
 	local rows = #cells
 	local columns = #cells [1]
 
-	output [#output + 1] = string.pack ('< c4 I4 I4 I4',
-		'MP3W', input.format, columns, rows)
+	output [#output + 1] = string.pack (
+		'< c4 I4 I4 I4',
+		'MP3W',
+		format,
+		columns,
+		rows)
 
 	local char = string.char
 	local unpack = table.unpack
