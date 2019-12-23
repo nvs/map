@@ -14,7 +14,9 @@
 
 ## Overview
 
-**Map** is a collection of Warcraft III map management tools for [Lua].
+**Map** is a collection of Warcraft III map management tools for [Lua].  It
+can be used via the provided commands or by requiring various parts of the
+library.
 
 [Lua]: https://www.lua.org
 
@@ -69,37 +71,39 @@ _Other installation locations are neither tested or supported._
 
 The following commands are provided by the collection:
 
-- `check`: Check Lua scripts specified by the `script` settings table using
-  [Luacheck].  If the `build` settings table is provided, then user build
-  files will be processed.  If the `map` settings table is provided, then
-  the input map is read and various map information is passed to the build
-  environment.  Note that user build files are run before the Lua scripts
-  are checked.
+- `check`: Performs the following tasks, depending on settings found in the
+  configuration file:
 
-  A custom Luacheck standard representing the Lua environment in Warcraft
-  III is provided, and used by defult, by **Map**.  See the following files:
+  - If `script` is provided, checks Lua scripts using [Luacheck].
+  - If `build` is provided, procceses user build files.  Note that build
+    files are run before any checks are made.
+  - If `map` is provided, reads the input archive and exposes found
+    information to the build environment.
 
-  - [.luacheckrc](luacheck/luacheckrc)
-  - [Warcraft III identifiers](luacheck/wc3.lua)
+- `build`: Performs all actions specified in the `check` command, in
+  addition to the following:
 
-  Customization of one's Luacheck experience is supported, and encouraged.
-  Simply consult the [Luacheck documentation], and then follow the example
-  in the above `.luacheckrc` for how to include the custom Warcraft III
-  standard.
-
-[Luacheck documentation]: https://luacheck.readthedocs.io/en/stable
-
-- `build`: Packages the `war3map.lua`.  Performs all actions specified in
-  the `check` command.  Additionally, if the `map` settings table is
-  provided, then a new map will be built.  Changes to information exposed
-  within the build environment will be reflected within the built map.
+  - If `script` is provided, packages the `war3map.lua` and performs a check
+    on this file.
+  - If `map` is provided, builds the output archive.  Changes to information
+    exposed within the build environment will be reflected within.
 
 All commands should be executed from within the project's root directory
 (e.g. `map/check`).  Depending on setup, it may be necessary to pass the
-command to the Lua binary (e.g. `lua map/check`).
+command to the Lua binary (e.g. `lua map/check`).  Each command expects a
+[configuration](#configuration) file as an input parameter (e.g. `map/check
+configuration.lua`).
 
-Each command expects a [configuration](#configuration) file as an input
-parameter (e.g. `map/check configuration.lua`).
+### Luacheck
+
+A custom Luacheck standard representing the Lua environment in Warcraft
+III is provided, and used by default, by **Map**.  Customization of one's
+Luacheck experience is supported, and encouraged.  Simply consult the
+[Luacheck documentation], and then follow the example in [Map's
+`.luacheckrc`] for how to include the custom Warcraft III standards.
+
+[Map's `.luacheckrc`]: luacheck/luacheckrc
+[Luacheck documentation]: https://luacheck.readthedocs.io/en/stable
 
 ## Configuration
 
@@ -113,8 +117,62 @@ optional.
 ``` lua
 -- # Settings
 return {
-    -- User build files will be processed if this table is present.
+    -- If this table is present, then various script related functionality
+    -- will be performed.
+    script = {
+        -- The path of the root file used to generate the script.
+        --
+        -- This setting is required.
+        input = 'path/to/input.lua',
+
+        -- The path to use when creating the output script.
+        --
+        -- This setting is required.
+        output = 'path/to/output.lua',
+
+        -- Value to be used as the `package.path` when generating the
+        -- script.  If absent, defaults to the `package.path` used for Map.
+        package = {
+            path = table.concat ({
+                'lib/?.lua',
+                'lib/?/init.lua'
+            }, ';')
+        },
+
+        options = {
+            -- Indicates whether to enable debug mode.  This will cause file
+            -- names and line numbers in error messages to reflect the
+            -- original locations.
+            --
+            -- By default, this option is disabled.  Listed are the accepted
+            -- values for debug mode.  Note that 'name', the default mode
+            -- should `true` be specified, will display the module's name.
+            -- Setting the option to 'path' will display the file path.
+            debug = false or nil or true or 'name' or 'path',
+
+            -- Indicates whether to skip running Luacheck.
+            --
+            -- By default, this option is disabled.  Should `true` be
+            -- specified, then all checks are disabled.  Setting the option
+            -- to 'check' or 'build' will skip checks for those commands.
+            skips_checks = false or nil or true or 'check' or 'build'
+        }
+    },
+
+    -- If this table is present, then user build files will be processed.
     build = {
+        -- The directory containing all user files that can be used to
+        -- access and change the map environment.  It will be recursively
+        -- traversed, and all Lua files within will be processed.
+        --
+        -- Note that when traversing directories, entries within are sorted
+        -- using `table.sort ()`.  This should represent alphanumeric
+        -- sorting.  This knowledge can be leveraged to ensure deterministic
+        -- behavior.
+        --
+        -- If the build table is specified, this setting is required.
+        directory = 'path/to/user/build/files',
+
         -- Values to be used as the `package.path` and `package.cpath`
         -- within user build files.  If absent, defaults to the paths used
         -- by Map.
@@ -129,18 +187,6 @@ return {
             }, ';')
         },
 
-        -- The directory containing all user files that can be used to
-        -- access and change the map environment.  It will be recursively
-        -- traversed, and all Lua files within will be processed.
-        --
-        -- Note that when traversing directories, entries within are sorted
-        -- using `table.sort ()`.  This should represent alphanumeric
-        -- sorting.  This knowledge can be leveraged to ensure deterministic
-        -- behavior.
-        --
-        -- If the build table is specified, this setting is required.
-        directory = 'path/to/user/build/files',
-
         options = {
             -- Indicates whether to disable build files, causing Map to
             -- behave as if the table was absent.
@@ -153,10 +199,9 @@ return {
         }
     },
 
-    -- An output map will be produced if this table is present.  In
-    -- addition, various map information will be exposed to the user build
-    -- environment.  If absent, the `build` command will only attempt to
-    -- package the `war3map.lua`.
+    -- If this table is present, then the input archive will be sourced for
+    -- information to provide to the build environment.  Additionally, an
+    -- output archive may be produced, depending on the command.
     map = {
         -- Path to the map file or directory that will be used as a basis
         -- for the built map.
@@ -165,8 +210,8 @@ return {
         input = 'path/to/input.w3x',
 
         -- The path to use when creating the output map.  Take care when
-        -- specifying the path, as any file or directory at this specified
-        -- location will be removed.
+        -- specifying the path, as any existing file or directory at this
+        -- specified location will be removed.
         --
         -- If the map table is specified, this setting is required.
         output = 'path/to/output.w3x',
@@ -177,68 +222,6 @@ return {
             -- disabled.
             directory = false or nil or true
         }
-    },
-
-    -- If this table is present, then various script related functionality
-    -- will be performed.  This includes checking the specified Lua scripts
-    -- with Luacheck during the `check` command.  As well as packaging the
-    -- `war3map.lua`, checking it, and putting it into the output archive
-    -- during the `build` command.
-    --
-    -- The presence of this table has higher precedence than script files
-    -- listed in the imports table, and any script generated as a result has
-    -- priority when being packaged into the archive.
-    script = {
-        -- Value to be used as the `package.path` when generating the
-        -- script.  If absent, defaults to the `package.path` used for Map.
-        package = {
-            path = table.concat ({
-                'lib/?.lua',
-                'lib/?/init.lua'
-            }, ';')
-        },
-
-        -- The path of the root file used to generate the script.
-        --
-        -- This setting is required.
-        input = 'path/to/input.lua',
-
-        -- The path to use when creating the output script.
-        --
-        -- This setting is required.
-        output = 'path/to/output.lua',
-
-        options = {
-            -- Indicates whether to enable debug mode.  This will cause file
-            -- names and line numbers in error messages to reflect the
-            -- original locations.
-            --
-            -- By default, this option is disabled.  Listed are the accepted
-            -- values for debug mode.  Note that 'name', the default mode
-            -- should `true` be specified, will display the module's name.
-            -- Setting the option to 'path' will display the file path.
-            debug = false or nil or true or 'path' or 'name',
-
-            -- Indicates whether to skip running Luacheck at various points.
-            --
-            -- By default, this option is disabled.  Should `true` be
-            -- specified, then all checks are disabled.  Setting the option
-            -- to 'check' or 'build' will skip checks for those commands.
-            skips_checks = false or nil or true or 'check' or 'build'
-        }
-    }
-}
-```
-
-With the above in mind, here is an example of the absolute minimum supported
-configuration file.  This can be used to both check and build the
-`war3map.lua`, and nothing else.
-
-```lua
-return {
-    script = {
-        input = 'path/to/input.lua',
-        output = 'path/to/output.lua'
     }
 }
 ```
@@ -300,14 +283,17 @@ supported via the specified keys:
 - `terrain`: `war3map.w3e`
 - `pathing`: `war3map.wpm`
 
-Of particular note is that the presence of one of these keys in the build
-environment will cause Map to process the data for that key, and then build
-the associated files into the map.  This process has higher precendence than
-files being listed in the imports table, and any files produced in this
-manner have priority.  To prevent this processing, set the value for a key
-to `nil`.  For example:
+Of particular note is that it is not the act of loading a file that causes
+it to be repacked into the output archive.  It is merely the presence of a
+Lua table at the specified key that causes Map to attempt to package the
+data.  This process has higher priority than files listed in the imports
+table (which is discussed below).  To prevent this processing, simply set
+the value for a supported key to `nil`.  For example:
 
 ```lua
+-- Name the build environment exposed by **Map** however you prefer.  This
+-- table will be shared between all user build files.  One could store their
+-- own data within, if they desire.  Just do not use one of the above keys.
 local map = ...
 
 -- Automatically loads `war3map.wts`, if found.
@@ -317,6 +303,18 @@ local strings = map.strings
 -- preventing Map from processing it and writing a new file.  Instead, the
 -- status of the file will be pulled from the imports table.
 map.strings = nil
+
+-- It is the key within the build environment that is special, not the
+-- returned data.
+print (#strings)
+
+-- This will write an empty `war3map.wts` into the output archive.  Note
+-- that an empty table is not a valid input for all files supported by Map,
+-- and errors may be encountered.
+map.string = {}
+
+-- This will error, as there is expected data missing.
+map.information = {}
 ```
 
 ### Settings
@@ -340,6 +338,38 @@ local map = ...
 
 map.information.map.name = 'A Map'
 ````
+
+### Imports
+
+All existing files in the input archive, including those not specified
+within the `war3map.imp`, are listed by default.  This knowledge can be
+leveraged to prevent any file in the input archive from being included in
+the output archive.
+
+When referencing imports, only `string` and `number` keys are supported,
+with `string` ones being for individual files, and `number` ones for entire
+directories.  Other key types are ignored.
+
+``` lua
+local map = ...
+
+-- The file with this name will be copied from the input archive to the
+-- output archive.
+map.imports ['file.txt'] = true
+
+-- Import the file specified by the provide path to the output archive using
+-- the given name.
+map.imports ['A/B/stuff.txt'] = 'path/to/imports/other.txt'
+
+-- Clear an already specified import.
+map.imports ['file.txt'] = nil
+
+-- Import a directory's contents, preserving its structure.  Note that
+-- `number` keys are iterated in ascending order, and do not need to be
+-- contiguous.
+map.imports [1] = 'path/to/directory'
+map.imports [2] = 'path/to/another/directory'
+```
 
 ### Objects
 
@@ -367,7 +397,8 @@ map.objects ['A000'] = {
     atp1 = {
         type = 'string',
         values = {
-            [1] = 'Based on Evasion!'
+            [1] = 'Based on Evasion!',
+            [2] = 'Definitely based on Evasion!'
         }
     },
 
@@ -376,7 +407,8 @@ map.objects ['A000'] = {
         data = 1,
         type = 'unreal',
         values = {
-            [1] = 0
+            [1] = 0,
+            [2] = 0
         }
     }
 }
@@ -408,7 +440,7 @@ available.  For example:
 ``` lua
 local map = ...
 
-print (map.constants.interface.FrameDef.LUMBER) --> `nil`
+print (map.constants.interface.FrameDef.LUMBER) --> nil
 map.constants.interface.FrameDef.LUMBER = 'Not Lumber'
 ```
 
@@ -418,40 +450,12 @@ The following files are exposed:
 - `war3mapMisc.txt`: `gameplay`
 - `war3mapExtra.txt`: `extra`
 
-### Imports
-
-When referencing imports, only `string` and `number` keys are supported,
-with `string` ones being for individual files, and `number` ones for entire
-directories.  Other key types are ignored.
-
-``` lua
-local map = ...
-
--- The file with this name will be copied from the input archive to the
--- output archive.  By default, all existing imports in the input archive
--- are listed in this fashion.
-map.imports ['file.txt'] = true
-
--- Import the file specified by the provide path to the output archive using
--- the given name.
-map.imports ['A/B/stuff.txt'] = 'path/to/imports/other.txt'
-
--- Clear an already specified import.
-map.imports ['file.txt'] = nil
-
--- Import a directory's contents, preserving its structure.  Note that
--- `number` keys are iterated in ascending order, and do not need to be
--- contiguous.
-map.imports [1] = 'path/to/directory'
-map.imports [2] = 'path/to/another/directory'
-```
-
 ### Strings
 
 ``` lua
 local map = ...
 
-print (map.strings [1]) --> `Force 1`
+print (map.strings [1]) --> 'Force 1'
 map.strings [2] = 'Just another Warcraft III map'
 ```
 
@@ -460,7 +464,7 @@ map.strings [2] = 'Just another Warcraft III map'
 ```lua
 local map = ...
 
-print (map.regions [1].name) --> `Region 000`
+print (map.regions [1].name) --> 'Region 000'
 map.regions [1].name = 'New Name'
 ```
 
@@ -469,7 +473,7 @@ map.regions [1].name = 'New Name'
 ```lua
 local map = ...
 
-print (map.cameras [1].name) --> `Camera ABC`
+print (map.cameras [1].name) --> 'Camera ABC'
 map.cameras [1].name = 'Camera XYZ'
 ```
 
@@ -478,7 +482,7 @@ map.cameras [1].name = 'Camera XYZ'
 ```lua
 local map = ...
 
-print (map.doodads [1].type) --> `LTlt`
+print (map.doodads [1].type) --> 'LTlt'
 map.doodads [1].life = 50
 ```
 
@@ -487,7 +491,7 @@ map.doodads [1].life = 50
 ```lua
 local map = ...
 
-print (map.units [1].type) --> `hfoo`
+print (map.units [1].type) --> 'hfoo'
 map.units [1].player = 3
 ```
 
@@ -496,7 +500,7 @@ map.units [1].player = 3
 ```lua
 local map = ...
 
-print (map.sounds [1].effect) --> `SpellsEAX`
+print (map.sounds [1].effect) --> 'SpellsEAX'
 map.sounds [1].volume = 10
 ```
 
@@ -509,7 +513,7 @@ map.terrain.tileset = 'A'
 
 for _, row in ipairs (map.terrain.tiles) do
     for _, tile in ipairs (row) do
-        print (tile.ground.texture) --> `0`
+        print (tile.ground.texture) --> 0
     end
 end
 ```
@@ -521,7 +525,7 @@ local map = ...
 
 for _, row in ipairs (map.pathing.cells) do
     for _, cell in ipairs (row) do
-        print (cell.buildable) --> `false`
+        print (cell.buildable) --> false
     end
 end
 ```
