@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Introduce ability to set the `package.cpath` for user build files.
+- Added setting to disable user build files.
 - Added two additional Luacheck standards: one that covers only the modified
   WC3 Lua environment; and another that has all WC3 specific globals.
 - Added support for the following files:
@@ -13,7 +14,6 @@
     - `war3map.w3s`
     - `war3map.wpm`
     - `war3mapUnits.doo`
-- Added setting to disable user build files.
 
 ### Fixed
 - Improve trigger string handling of nested brackets.
@@ -30,8 +30,9 @@
 - Default script debug mode changed to `name`.
 - User build files are now processed before checking Lua scripts.
 - The option to skip running Luacheck has been extended.
-- Enhance W3I support by identifying and adding unknown flags.  Some flag
-  names have changed.
+- W3I support has been enchanced:
+  - Unknown flags have been identified and added.
+  - Some field names have changed.
 - The `script` settings table is now optional.
 
 ## [0.8.1] - 2019-11-21
