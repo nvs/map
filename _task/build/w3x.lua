@@ -14,7 +14,7 @@ return function (state)
 	local files = state.loaded_files
 	local version = environment.information.version
 	local options = {
-		directory = map.options.directory,
+		type = map.options.directory and 'directory' or 'mpq',
 		import_byte = import_bytes [environment.information.format]
 	}
 

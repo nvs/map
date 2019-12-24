@@ -1,7 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
-- N/A
+### Fixed
+- Fix W3X detection of directory archives.
 
 ## [0.9.0] - 2019-12-23
 ### Added

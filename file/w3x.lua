@@ -10,8 +10,10 @@ local Class = {}
 local W3X = {}
 W3X.__index = W3X
 
+-- Options are only for the creation of a new archive (i.e. `w+` mode).
 local default_options = {
-	directory = nil,
+	-- Can be either `directory` or `mpq`.
+	type = nil,
 
 	-- This is the value for 1.31.
 	import_byte = 21
@@ -50,17 +52,21 @@ local ignored = {
 }
 Class.ignored = ignored
 
--- _The returned object provides functionality that differs from that
--- provided by [lua-stormlib].  Refer to that library's documentation for
--- details.  Any differences will be listed, and have been introduced to
--- improve behavior with respect to Warcraft III maps._
+local modes = {
+	['r'] = true,
+	['w+'] = true,
+	['r+'] = true
+}
+
+-- _The returned object provides an API similar to that provided by
+-- [lua-stormlib].  However, there are differences._
 --
--- These are the extensions to the Storm W3X object that have been done for
--- all methods:
+-- These are the extensions that have been done for all methods:
 --
 -- - When opening an archive, if the specified path is a directory then the
---   returned object will target a directory based W3X.  Otherwise, it will
---   reference a MPQ based object.
+--   returned object will target a directory based archive.  Otherwise, it
+--   will reference a MPQ based one.  Note that an option can be passed that
+--   will override this detection.
 -- - When referencing files within the archive, names will be internalized.
 --   That is, potential path separators (i.e. `\` and `/`) will be
 --   convereted to the operating system dependent path separator for
@@ -74,14 +80,29 @@ Class.ignored = ignored
 --
 -- [lua-stormlib]: https://github.com/nvs/lua-stormlib
 function Class.open (path, mode, options)
+	mode = mode or 'r'
+
+	if not modes [mode] then
+		error ('invalid mode', 2)
+	end
+
 	options = options or {}
 
 	for key, value in pairs (default_options) do
 		options [key] = options [key] or value
 	end
 
-	Path.create_directories (Path.parent (path))
-	local format = options.directory and Directory or MPQ
+	local is_directory
+
+	if options.type == 'directory' then
+		is_directory = true
+	elseif options.type == 'mpq' then
+		is_directory = false
+	else
+		is_directory = Path.is_directory (path)
+	end
+
+	local format = is_directory and Directory or MPQ
 	local w3x, message, code = format.new (path, mode)
 
 	if not w3x then
