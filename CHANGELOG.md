@@ -1,6 +1,9 @@
 # Map Changelog
 
 ## [Unreleased]
+- N/A
+
+## [0.9.1] - 2019-12-24
 ### Fixed
 - Fix W3X detection of directory archives.
 
@@ -269,7 +272,8 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.9.0...master
+[Unreleased]: https://github.com/nvs/map/compare/v0.9.1...master
+[0.9.1]: https://github.com/nvs/map/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/nvs/map/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/nvs/map/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/nvs/map/compare/v0.7.2...v0.8.0
