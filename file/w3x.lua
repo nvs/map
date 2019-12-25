@@ -83,7 +83,7 @@ function Class.open (path, mode, options)
 	mode = mode or 'r'
 
 	if not modes [mode] then
-		error ('invalid mode', 2)
+		return nil, 'invalid mode'
 	end
 
 	options = options or {}
