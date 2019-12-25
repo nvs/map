@@ -83,7 +83,7 @@ function Directory:open (name, mode)
 	assert (file_modes [mode])
 
 	if self._read_only and mode == 'w' then
-		error ('permission denied', 2)
+		return nil, 'permission denied'
 	end
 
 	local path = Path.join (self._path, to_internal (name))
@@ -98,7 +98,7 @@ end
 
 function Directory:add (path, name)
 	if self._read_only then
-		error ('permission denied', 2)
+		return nil, 'permission denied'
 	end
 
 	assert (Path.is_file (path))
@@ -120,7 +120,7 @@ end
 
 function Directory:remove (name)
 	if self._read_only then
-		error ('permission denied', 2)
+		return nil, 'permission denied'
 	end
 
 	local path = Path.join (self._path, to_internal (name))
@@ -130,7 +130,7 @@ end
 
 function Directory:rename (old, new)
 	if self._read_only then
-		error ('permission denied', 2)
+		return nil, 'permission denied'
 	end
 
 	local source = Path.join (self._path, to_internal (old))
@@ -141,7 +141,7 @@ end
 
 function Directory:compact () -- luacheck: ignore 212
 	if self._read_only then
-		error ('permission denied', 2)
+		return nil, 'permission denied'
 	end
 
 	return true
