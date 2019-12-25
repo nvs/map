@@ -1,7 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
-- N/A
+### Fixed
+- Improve INI file handling.
 
 ## [0.9.1] - 2019-12-24
 ### Fixed

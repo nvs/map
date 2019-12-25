@@ -1,5 +1,3 @@
-local String = require ('map._string')
-
 local INI = {}
 
 function INI.unpack (input)
@@ -8,13 +6,13 @@ function INI.unpack (input)
 	local output = {}
 	local current
 
-	local section
-	local key, value
+	if input:sub (1, 3) == '\239\187\191' then
+		input = input:sub (4)
+	end
 
-	for line in input:gmatch ('([^\r\n]*)[\r\n]+') do
-		line = String.trim_right (line)
-
-		section = line:match ('^%[([^%]]+)%]$')
+	for line in input:gmatch ('[^\r\n]+') do
+		line = line:find ('^%s*//') and '' or line
+		local section = line:match ('^%[([^%]]+)%]$')
 
 		if section then
 			current = output [section] or {}
@@ -24,9 +22,25 @@ function INI.unpack (input)
 			-- Do nothing.  All key/value pairs must be in a section.
 
 		else
-			key, value = line:match ('^([%w_]+)%s-=%s-(.+)$')
+			local index = line:find ('=', 1, true)
 
-			if key and value then
+			if index then
+				local key = line:sub (1, index - 1)
+				local value = line:sub (index + 1)
+
+				-- Double quotes only apply if the first character of the
+				-- value (i.e. that immediately after the equals sign) is
+				-- one.  If so, the value is considered to be that which
+				-- extends to the first closing double quote or the end of
+				-- the line, whichever comes first.
+				if value:sub (1, 1) == '"' then
+					value = value:match ('^"([^"]*)"?')
+
+				-- Otherwise, we remove any trailing comments.
+				else
+					value = value:match ('^(.-)//') or value
+				end
+
 				current [key] = value
 			end
 		end
@@ -41,25 +55,17 @@ function INI.pack (input)
 	local output = {}
 
 	for section, contents in pairs (input) do
-		local count = 0
+		output [#output + 1] = '[' .. section .. ']'
 
-		-- Increment count only for sections.
-		if type (contents) == 'table' then
-			for _ in pairs (contents) do
-				count = count + 1
-			end
+		for key, value in pairs (contents) do
+			-- Remove trailing comments.  If the user wishes to include `//`
+			-- in their value, then they should use double quotes.
+			value = value:match ('^(.-)//') or value
+
+			output [#output + 1] = key .. '=' .. value .. ''
 		end
 
-		-- Do not write empty sections.
-		if count > 0 then
-			output [#output + 1] = '[' .. section .. ']'
-
-			for key, value in pairs (contents) do
-				output [#output + 1] = key .. '=' .. value
-			end
-
-			output [#output + 1] = ''
-		end
+		output [#output + 1] = ''
 	end
 
 	return table.concat (output, '\r\n')
