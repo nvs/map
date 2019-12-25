@@ -134,7 +134,7 @@ function W3X:open (name, mode, size)
 		return nil, message, code
 	end
 
-	if mode == 'w' and not ignored [name] then
+	if mode:find ('^w') and not ignored [name] then
 		self._updated = true
 	end
 

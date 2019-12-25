@@ -73,7 +73,9 @@ end
 
 local file_modes = {
 	['r'] = true,
-	['w'] = true
+	['rb'] = true,
+	['w'] = true,
+	['wb'] = true
 }
 
 function Directory:open (name, mode)
@@ -86,7 +88,7 @@ function Directory:open (name, mode)
 
 	local path = Path.join (self._path, to_internal (name))
 
-	if mode == 'w' then
+	if mode == 'w' or mode == 'wb' then
 		local directories = Path.parent (path)
 		assert (Path.create_directories (directories))
 	end
