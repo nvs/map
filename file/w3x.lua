@@ -334,7 +334,7 @@ function W3X:close (compact)
 		local contents = Imports.pack (imports)
 		local size = #contents
 		local file, message, code =
-			self._w3x:open ('war3map.imp', 'w', size)
+			self._w3x:open ('war3map.imp', 'wb', size)
 
 		if not file then
 			return nil, message, code

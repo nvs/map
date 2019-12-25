@@ -32,7 +32,7 @@ local function load_file (self, path)
 
 	if input:has (path) then
 		local library = require ('map.file.' .. path)
-		local file = assert (input:open (path))
+		local file = assert (input:open (path, 'rb'))
 		local packed = file:read ('*a')
 		local version = path ~= 'war3map.w3i' and self.information.version
 		unpacked = assert (library.unpack (packed, version))

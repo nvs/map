@@ -368,7 +368,7 @@ function Path.temporary_file ()
 	local path = Path.temporary_path ()
 
 	if not Path.exists (path) then
-		local file = io.open (path, 'w')
+		local file = io.open (path, 'wb')
 
 		if file then
 			file:close ()

@@ -29,7 +29,7 @@ return function (state)
 
 		local library = require ('map.file.' .. path)
 		local packed = assert (library.pack (unpacked, version))
-		local file = output:open (path, 'w', #packed)
+		local file = output:open (path, 'wb', #packed)
 		file:write (packed)
 		file:close ()
 	end
@@ -43,9 +43,9 @@ return function (state)
 	for name, path in pairs (imports) do
 		if type (name) ~= 'string' then -- luacheck: ignore 542
 		elseif path == true then
-			local source = assert (input:open (name))
+			local source = assert (input:open (name, 'rb'))
 			local destination = assert (
-				output:open (name, 'w', source:seek ('end')))
+				output:open (name, 'wb', source:seek ('end')))
 			source:seek ('set')
 
 			repeat
