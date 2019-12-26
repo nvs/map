@@ -37,27 +37,8 @@ local function to_internal (name)
 	return (name:gsub ('[\\/]+', Path.separator))
 end
 
-function Directory:has (name)
-	local path = Path.join (self._path, to_internal (name))
-
-	return Path.exists (path)
-end
-
-local function mask_to_pattern (capture)
-	if capture == '?' then
-		return '.'
-	elseif capture == '*' then
-		return '.*'
-	else
-		return '%' .. capture
-	end
-end
-
-function Directory:list (mask)
-	mask = mask and to_internal (mask) or '*'
-
-	local pattern = mask:gsub ('[^%w]', mask_to_pattern)
-	local paths = Utils.load_files (self._path, '^' .. pattern .. '$')
+function Directory:files (pattern, plain)
+	local paths = Utils.load_files (self._path, pattern, plain)
 
 	for index, path in ipairs (paths) do
 		paths [index] = path:sub (#self._path + 2)
@@ -94,28 +75,6 @@ function Directory:open (name, mode)
 	end
 
 	return io.open (path, mode)
-end
-
-function Directory:add (path, name)
-	if self._read_only then
-		return nil, 'permission denied'
-	end
-
-	assert (Path.is_file (path))
-
-	local source = path
-	local destination = Path.join (self._path, to_internal (name))
-	local directories = Path.parent (destination)
-	assert (Path.create_directories (directories))
-
-	return Path.copy (source, destination)
-end
-
-function Directory:extract (name, path)
-	local source = Path.join (self._path, to_internal (name))
-	local destination = path
-
-	return Path.copy (source, destination)
 end
 
 function Directory:remove (name)

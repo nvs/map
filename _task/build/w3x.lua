@@ -35,17 +35,21 @@ return function (state)
 	end
 
 	if state.settings.script then
-		imports ['war3map.lua'] = nil
-
-		assert (output:add (state.settings.script.output, 'war3map.lua'))
+		imports ['war3map.lua'] = state.settings.script.output
 	end
 
 	for name, path in pairs (imports) do
-		if type (name) ~= 'string' then -- luacheck: ignore 542
-		elseif path == true then
-			local source = assert (input:open (name, 'rb'))
-			local destination = assert (
-				output:open (name, 'wb', source:seek ('end')))
+		if type (name) == 'string' and not name:find ('^%(.*%)$') then
+			local source
+
+			if path == true then
+				source = assert (input:open (name, 'rb'))
+			else
+				source = assert (io.open (path, 'rb'))
+			end
+
+			local size = source:seek ('end')
+			local destination = assert (output:open (name, 'wb', size))
 			source:seek ('set')
 
 			repeat
@@ -54,8 +58,6 @@ return function (state)
 
 			assert (source:close ())
 			assert (destination:close ())
-		else
-			assert (output:add (path, name))
 		end
 	end
 

@@ -28,11 +28,11 @@ local files = {
 
 local function load_file (self, path)
 	local input = assert (W3X.open (self.settings.map.input))
+	local file = input:open (path, 'rb')
 	local unpacked
 
-	if input:has (path) then
+	if file then
 		local library = require ('map.file.' .. path)
-		local file = assert (input:open (path, 'rb'))
 		local packed = file:read ('*a')
 		local version = path ~= 'war3map.w3i' and self.information.version
 		unpacked = assert (library.unpack (packed, version))
@@ -63,7 +63,7 @@ local function setup_imports (self)
 	local imports = {}
 	local input = assert (W3X.open (self.settings.map.input))
 
-	for name in input:list () do
+	for name in input:files () do
 		if not name:find ('^%(.*%)$') then
 			imports [name] = true
 		end

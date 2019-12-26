@@ -32,36 +32,12 @@ local function to_internal (name)
 	return (name:gsub ('[\\/]+', '\\'))
 end
 
-local function to_external (name)
-	return (name:gsub ('[\\/]+', Path.separator))
-end
-
-function MPQ:has (name)
-	return self._mpq:has (to_internal (name))
-end
-
-function MPQ:list (mask)
-	local iterator = self._mpq:list (mask and to_internal (mask))
-
-	return function ()
-		local name = iterator ()
-
-		if name then
-			return to_external (name)
-		end
-	end
+function MPQ:files (...)
+	return self._mpq:files (...)
 end
 
 function MPQ:open (name, mode, size)
 	return self._mpq:open (to_internal (name), mode, size)
-end
-
-function MPQ:add (path, name)
-	return self._mpq:add (path, to_internal (name))
-end
-
-function MPQ:extract (name, path)
-	return self._mpq:extract (to_internal (name), path)
 end
 
 function MPQ:rename (old, new)

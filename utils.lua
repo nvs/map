@@ -24,7 +24,7 @@ local function deep_copy (old, ignore_metatable)
 end
 Utils.deep_copy = deep_copy
 
-local function process_entry (path, pattern, list, exists)
+local function process_entry (path, pattern, plain, list, exists)
 	if exists [path] then
 		return
 	elseif Path.is_directory (path) then
@@ -39,17 +39,17 @@ local function process_entry (path, pattern, list, exists)
 		table.sort (entries)
 
 		for _, entry in ipairs (entries) do
-			process_entry (Path.join (path, entry), pattern, list, exists)
+			process_entry (Path.join (path, entry), pattern, plain, list, exists)
 		end
 	elseif Path.is_file (path)
-		and (not pattern or path:find (pattern))
+		and (not pattern or path:find (pattern, 1, plain))
 	then
 		list [#list + 1] = path
 		exists [path] = true
 	end
 end
 
-function Utils.load_files (paths, pattern)
+function Utils.load_files (paths, pattern, plain)
 	local list = {}
 	local exists = {}
 
@@ -58,7 +58,7 @@ function Utils.load_files (paths, pattern)
 	end
 
 	for _, path in ipairs (paths) do
-		process_entry (path, pattern, list, exists)
+		process_entry (path, pattern, plain, list, exists)
 	end
 
 	return list

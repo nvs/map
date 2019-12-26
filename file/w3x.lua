@@ -119,12 +119,8 @@ function Class.open (path, mode, options)
 	return setmetatable (self, W3X)
 end
 
-function W3X:has (name)
-	return self._w3x:has (name)
-end
-
-function W3X:list (mask)
-	return self._w3x:list (mask)
+function W3X:files (...)
+	return self._w3x:files (...)
 end
 
 function W3X:open (name, mode, size)
@@ -139,131 +135,6 @@ function W3X:open (name, mode, size)
 	end
 
 	return file
-end
-
-local function add_file (self, path, name)
-	local status, message, code = self._w3x:add (path, name)
-
-	if not status then
-		return nil, message, code
-	end
-
-	if not ignored [name or path] then
-		self._updated = true
-	end
-
-	return status
-end
-
-local function add_directory (self, root, path)
-	for entry in LFS.dir (path or '.') do
-		if entry ~= '.' and entry ~= '..' then
-			local status, message, code
-
-			entry = Path.join (path or '', entry)
-
-			if Path.is_directory (entry) then
-				status, message, code = add_directory (self, root, entry)
-			else
-				local name = entry:sub (#root + 2)
-				status, message, code = add_file (self, entry, name)
-			end
-
-			if not status then
-				return nil, message, code
-			end
-		end
-	end
-
-	return true
-end
-
--- `w3x:add (path [, name])`
---
--- _This function differs from the one provided by [lua-stormlib]._
---
--- This function adds the file(s) specified at `path` (`string`) to the
--- map.  Exact behavior depends on the arguments provided.
---
--- If `path` is a file, then it will be added to the map.  If `name` is
--- provided and is a `string`, then it will repesent the name of the file
--- being added.  If name is absent, then the default value for name will be
--- `path`.
---
--- If `path` is a directory, then the function will recurse through the
--- files and subdirectories in `path`, adding all files it finds to the
--- map.  The name used for each file will be the relative path in relation
--- to `path`.
---
--- In case of success, this function returns `true`.  Otherwise, it returns
--- `nil`, a `string` describing the error, and a `number` indicating the
--- error code.
-function W3X:add (path, name)
-	local status, message, code
-
-	if Path.is_directory (path) then
-		status, message, code = add_directory (self, path, path)
-	elseif Path.is_file (path) then
-		status, message, code = add_file (self, path, name or path)
-	else
-		status = nil
-		message = 'no such file or directory'
-	end
-
-	if not status then
-		return nil, message, code
-	end
-
-	return status
-end
-
--- `w3x:extract (name, [path])`
---
--- _This function differs from the one provided by [lua-stormlib]._
---
--- The argument `path` is now optional.  If absent, it will default to
--- `name` and extract the file to the current directory.  If `path` is a
--- directory, then the file specified by `name` will be extracted within it.
--- If the destination exists and is found to be a file, it will be replaced.
---
--- In case of success, this function will return the path (`string`) of the
--- extracted file.  Otherwise, it returns `nil`, a `string` describing the
--- error, and a `number` indicating the error code.
-function W3X:extract (name, path)
-	local status, message, code = self._w3x:has (name)
-
-	if status == nil then
-		return nil, message, code
-	elseif not status then
-		return nil, 'no such file or directory'
-	end
-
-	if not path or Path.is_directory (path) then
-		path = Path.join (path or '.', (name:gsub ('\\', Path.separator)))
-	end
-
-	if Path.is_file (path) then
-		os.remove (path)
-	end
-
-	if Path.exists (path) then
-		return nil, 'invalid argument'
-	end
-
-	local directory = Path.parent (path)
-	status, message, code = Path.create_directories (directory)
-
-	if not status then
-		return nil, message, code
-	end
-
-	status, message, code = self._w3x:extract (name, path)
-
-	if not status then
-		return nil, message, code
-	end
-
-	return path
 end
 
 function W3X:rename (old, new)
@@ -325,7 +196,7 @@ function W3X:close (compact)
 			files = {}
 		}
 
-		for name in self._w3x:list () do
+		for name in self._w3x:files () do
 			if not ignored [name] then
 				imports.files [name] = self._options.import_byte
 			end

@@ -1,6 +1,9 @@
 # Map Changelog
 
 ## [Unreleased]
+### Changed
+- Require lua-stormlib `>= 0.2.0`.
+
 ### Fixed
 - Improve INI file handling.
 

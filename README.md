@@ -28,7 +28,7 @@ following dependencies are satisfied:
 - [Lua] `>= 5.1` (for [luac])
 - [LuaFileSystem] `>= 1.7.0`
 - [Luacheck] `>= 0.23.0`
-- [lua-stormlib] `>= 0.1.2`
+- [lua-stormlib] `>= 0.2.0`
 - [bit32] `>= 5.3.0` (for Lua 5.1; and Lua 5.3 compiled without
   `LUA_COMPAT_BITLIB`)
 - [compat-5.3] `>= 0.5` (for Lua 5.1; Lua 5.2; and LuaJIT)
