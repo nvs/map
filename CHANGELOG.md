@@ -1,6 +1,9 @@
 # Map Changelog
 
 ## [Unreleased]
+### Added
+- Added library support for `*.slk` files.
+
 ### Changed
 - Require lua-stormlib `>= 0.2.0`.
 
