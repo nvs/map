@@ -1,5 +1,4 @@
 local Imports = require ('map.file.war3map.imp')
-local LFS = require ('lfs')
 local Path = require ('map.path')
 
 local Directory = require ('map.file.w3x._directory')
