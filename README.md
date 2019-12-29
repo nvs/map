@@ -25,8 +25,8 @@ library.
 **Map** can be run using [Lua] `>= 5.1` or [LuaJit] `>= 2.0`, so long as the
 following dependencies are satisfied:
 
-- [Lua] `>= 5.1` (for [luac])
 - [LuaFileSystem] `>= 1.7.0`
+- [LPeg] `>= 1.0.2`
 - [Luacheck] `>= 0.23.0`
 - [lua-stormlib] `>= 0.2.0`
 - [bit32] `>= 5.3.0` (for Lua 5.1; and Lua 5.3 compiled without
@@ -37,6 +37,7 @@ All dependencies are available through LuaRocks:
 
 ```
 luarocks install luafilesystem
+luarocks install lpeg
 luarocks install luacheck
 luarocks install lua-stormlib
 luarocks install bit32
@@ -50,9 +51,9 @@ submodule.
 
 _Other installation locations are neither tested or supported._
 
-[luac]: https://www.lua.org/manual/5.3/luac.html
 [LuaJIT]: https://luajit.org
 [LuaFileSystem]: https://github.com/keplerproject/luafilesystem
+[LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg
 [Luacheck]: https://github.com/mpeterv/luacheck
 [lua-stormlib]: https://github.com/nvs/lua-stormlib
 [bit32]: https://github.com/keplerproject/lua-compat-5.2
@@ -240,9 +241,9 @@ following stated limitations:
 2. Only modules on the specified Lua path are supported.  By default, this
    is the `package.path` used by **Map**.  However, this can be adjusted
    using the proper setting.  Modules using C loaders are not supported.
-3. Note that [luac] is used to identify uses of `require`, and the analysis
-   performed is rather naive.  Any clever uses of `require` will probably
-   be missed (i.e. anything that is not a literal `string` value).
+3. The analysis performed to identify uses of `require` is rather naive.
+   Any clever uses of `require` will probably be missed (i.e. anything that
+   is not a literal `string` value).
 4. Do not needlessly use `require`.  Any detected usages will cause those
    modules to be packaged into the `war3map.lua`, even if their code is not
    run.

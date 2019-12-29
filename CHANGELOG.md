@@ -3,12 +3,18 @@
 ## [Unreleased]
 ### Added
 - Added library support for `*.slk` files.
+- Add dependency on LPeg `>= 1.0.2`.
 
 ### Changed
 - Require lua-stormlib `>= 0.2.0`.
 
 ### Fixed
 - Improve INI file handling.
+- Fix older Lua versions being unable to find modules utilizing features
+  unsupported in those versions (e.g. Lua 5.3 bitwise operators).
+
+### Removed
+- Remove luac dependency.
 
 ## [0.9.1] - 2019-12-24
 ### Fixed

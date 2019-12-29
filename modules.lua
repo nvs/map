@@ -3,53 +3,79 @@ if _VERSION < 'Lua 5.3' then
 	require ('compat53')
 end
 
-local Shell = require ('map.shell')
+local grammar
 
-local function find_requires (path)
-	local command = Shell.escape ('luac', '-p', '-l', path) .. ' 2>&1'
-	local process = assert (io.popen (command))
+do
+	local LPeg = require ('lpeg')
+	local Re = require ('re')
 
-	local requires = {}
-	local state
-	local name
+	local P = LPeg.P
+	local S = LPeg.S
+	local B = LPeg.B
 
+	local space = ' \f\n\r\t\v'
+	local line
+
+	local definitions = {
+		eol = P ('\r\n') + P ('\n\r') + S ('\r\n'),
+		space = S (space),
+		before = B (S ('[({,=' .. space)),
+
+		init = function ()
+			line = 1
+		end,
+
+		increment = function ()
+			line = line + 1
+		end,
+
+		peek = function ()
+			return line
+		end,
+
+		ignore = function ()
+		end
+	}
+
+	-- This does not represent the complete syntax of Lua.  It does,
+	-- however, accurately represent Lua strings and comments.  This allows
+	-- finding uses of `require`, without unnecessary false positives.
+	--
 	-- This is a rather naive check, and will fail if the user does anything
 	-- clever with `require`.  In short, use literal `string` if possible.
 	-- Nothing else is guaranteed to work properly.
-	for line in process:lines () do
-		local number, opcode, value = line:match (
-			'^%s+%d+%s+%[(%d+)]%s+(%u+)%s+[-%d%s]+(.*)')
+	grammar = Re.compile ([[
+		lua <- {} -> init shebang? {| ({| require |} / skip) * |} eof
+		skip <- (comment / string / eol / space / .) -> ignore
 
-		if not opcode then
-			state = nil
-		elseif not state then
-			if opcode == 'GETTABUP' and value:match ('"require"$')
-				or opcode == 'GETGLOBAL' and value:match ('^; require')
-			then
-				state = 'require'
-			end
-		elseif state == 'require' then
-			state = nil
+		eof <- !.
+		eol <- %eol {} -> increment
+		space <- %space
+		shebang <- '#!' (!eol .)*
 
-			if opcode == 'LOADK' then
-				name = value:match ('^; "(.*)"%s*$')
+		open <- '[' {:equals: '='* :} '[' eol?
+		close <- ']' =equals ']' / eof
+		bracket <- open { (eol / !close .)* } close
 
-				if name then
-					state = 'load'
-				end
-			end
-		elseif state == 'load' then
-			state = nil
+		comment <- '--' (bracket / (!eol .)*)
 
-			if opcode == 'CALL' then
-				requires [#requires + 1] = { name, number }
-			end
-		end
-	end
+		esc <- '\' ['"]
+		string <- bracket
+			/ "'" { (esc / !eol !"'" .)* } "'"
+			/ '"' { (esc / !eol !'"' .)* } '"'
 
-	process:close ()
+		before <- %before
+		args <- '(' space* string space* ')' / string
+		require <- before 'require' space* args {} -> peek
+	]], definitions)
+end
 
-	return requires
+local function find_requires (path)
+	local file = io.open (path, 'rb')
+	local contents = file:read ('*a')
+	file:close ()
+
+	return grammar:match (contents)
 end
 
 local Errors = {}
