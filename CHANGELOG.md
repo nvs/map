@@ -1,8 +1,11 @@
 # Map Changelog
 
 ## [Unreleased]
+- N/A
+
+## [0.10.0]
 ### Added
-- Added library support for `*.slk` files.
+- Add library support for `*.slk` files.
 - Add dependency on LPeg `>= 1.0.2`.
 
 ### Changed
@@ -285,7 +288,8 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.9.1...master
+[Unreleased]: https://github.com/nvs/map/compare/v0.10.0...master
+[0.10.0]: https://github.com/nvs/map/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/nvs/map/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/nvs/map/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/nvs/map/compare/v0.8.0...v0.8.1
