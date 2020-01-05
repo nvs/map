@@ -367,7 +367,7 @@ map.imports ['file.txt'] = nil
 
 -- Import a directory's contents, preserving its structure.  Note that
 -- `number` keys are iterated in ascending order, and do not need to be
--- contiguous.
+-- contiguous.  These are processed after `string` keys.
 map.imports [1] = 'path/to/directory'
 map.imports [2] = 'path/to/another/directory'
 ```
