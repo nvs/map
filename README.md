@@ -312,7 +312,7 @@ print (#strings)
 -- This will write an empty `war3map.wts` into the output archive.  Note
 -- that an empty table is not a valid input for all files supported by Map,
 -- and errors may be encountered.
-map.string = {}
+map.strings = {}
 
 -- This will error, as there is expected data missing.
 map.information = {}
