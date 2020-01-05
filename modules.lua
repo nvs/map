@@ -45,7 +45,7 @@ do
 	-- clever with `require`.  In short, use literal `string` if possible.
 	-- Nothing else is guaranteed to work properly.
 	grammar = Re.compile ([[
-		lua <- {} -> init shebang? {| ({| require |} / skip) * |} eof
+		lua <- {} -> init shebang? {| ({| require |} / skip)* |} eof
 		skip <- (comment / string / eol / space / .) -> ignore
 
 		eof <- !.
