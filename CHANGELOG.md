@@ -1,7 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
-- N/A
+### Fixed
+- Usages of `require` at the start of a file were being ignored.
 
 ## [0.10.0]
 ### Added
