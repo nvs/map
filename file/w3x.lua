@@ -123,6 +123,7 @@ function W3X:files (...)
 end
 
 function W3X:open (name, mode, size)
+	mode = mode or 'r'
 	local file, message, code = self._w3x:open (name, mode, size)
 
 	if not file then
