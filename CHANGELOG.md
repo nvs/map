@@ -4,7 +4,7 @@
 ### Fixed
 - Usages of `require` at the start of a file were being ignored.
 
-## [0.10.0]
+## [0.10.0] - 2019-12-28
 ### Added
 - Add library support for `*.slk` files.
 - Add dependency on LPeg `>= 1.0.2`.
