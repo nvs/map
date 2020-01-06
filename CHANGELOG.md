@@ -1,6 +1,9 @@
 # Map Changelog
 
 ## [Unreleased]
+- N/A
+
+## [0.10.1] - 2020-01-05
 ### Fixed
 - Usages of `require` at the start of a file were being ignored.
 
@@ -289,7 +292,8 @@
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/nvs/map/compare/v0.10.0...master
+[Unreleased]: https://github.com/nvs/map/compare/v0.10.1...master
+[0.10.1]: https://github.com/nvs/map/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/nvs/map/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/nvs/map/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/nvs/map/compare/v0.8.1...v0.9.0
