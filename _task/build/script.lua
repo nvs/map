@@ -29,11 +29,11 @@ end
 
 local function read_contents (path)
 	local file = assert (io.open (path, 'rb'))
-	local contents = String.trim (assert (file:read ('*a')), '[\r\n]+')
-	file:close ()
-
 	-- Only remove trailing lines, or the line numbers in debug mode could
 	-- be incorrect.
+	local contents = String.trim_right (file:read ('*a'), '[\r\n]+')
+	file:close ()
+
 	return contents
 end
 
