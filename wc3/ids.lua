@@ -1,4 +1,4 @@
--- Globals in Warcraft III Lua as of `1.32.0.14411`.
+-- Globals in Warcraft III Lua as of `1.32.0.14481`.
 
 local ai = {
 	-- Only the natives from the `common.ai` are included in the Lua
@@ -669,6 +669,11 @@ local common = {
 		'ORIGIN_FRAME_TOP_MSG',
 		'ORIGIN_FRAME_PORTRAIT',
 		'ORIGIN_FRAME_WORLD_FRAME',
+		'ORIGIN_FRAME_SIMPLE_UI_PARENT',
+		'ORIGIN_FRAME_PORTRAIT_HP_TEXT',
+		'ORIGIN_FRAME_PORTRAIT_MANA_TEXT',
+		'ORIGIN_FRAME_UNIT_PANEL_BUFF_BAR',
+		'ORIGIN_FRAME_UNIT_PANEL_BUFF_BAR_LABEL',
 		'FRAMEPOINT_TOPLEFT',
 		'FRAMEPOINT_TOP',
 		'FRAMEPOINT_TOPRIGHT',
@@ -3148,6 +3153,7 @@ local common = {
 		'BlzGetUnitAbilityCooldown',
 		'BlzGetUnitAbilityCooldownRemaining',
 		'BlzEndUnitAbilityCooldown',
+		'BlzStartUnitAbilityCooldown',
 		'BlzGetUnitAbilityManaCost',
 		'BlzSetUnitAbilityManaCost',
 		'BlzGetLocalUnitZ',
@@ -3160,6 +3166,7 @@ local common = {
 		'BlzSetEventAttackType',
 		'BlzSetEventDamageType',
 		'BlzSetEventWeaponType',
+		'BlzGetEventIsAttack',
 		'RequestExtraIntegerData',
 		'RequestExtraBooleanData',
 		'RequestExtraStringData',
@@ -3252,6 +3259,7 @@ local common = {
 		'BlzGetUnitAbilityByIndex',
 		'BlzDisplayChatMessage',
 		'BlzPauseUnitEx',
+		'BlzSetUnitFacingEx',
 		'CreateCommandButtonEffect',
 		'CreateUpgradeCommandButtonEffect',
 		'CreateLearnCommandButtonEffect',
