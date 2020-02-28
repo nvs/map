@@ -28,7 +28,7 @@ return function (state)
 				package [key] = value
 			end
 		else
-			message [#messages + 1] = message
+			messages [#messages + 1] = message
 		end
 	end
 
