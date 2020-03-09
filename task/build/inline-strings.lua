@@ -21,7 +21,8 @@ return function (state)
 
 	-- If we are inlining all strings, then we have no use for them after
 	-- this point.
-	state.strings = {}
+	state.strings = nil
+	state.environment.strings = {}
 
 	return true
 end

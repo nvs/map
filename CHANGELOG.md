@@ -1,7 +1,8 @@
 # Map Changelog
 
 ## [Unreleased]
-- N/A
+### Added
+- Definition of trigger strings in build files has been enabled.
 
 ## [0.6.5] - 2019-04-28
 ### Fixed
