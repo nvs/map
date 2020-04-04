@@ -21,7 +21,7 @@ The following dependencies must be met to utilize this library:
 
 - [Lua] `>= 5.1` or [LuaJIT] `>= 2.0`
 - [LuaFileSystem] `>= 1.7.0`
-- [lua-stormlib]
+- [lua-stormlib] `= 0.1.6`
 - [compat-5.3] `>= 0.5` (for Lua `< 5.3` or LuaJIT)
 - [Wurst]
 
