@@ -22,8 +22,8 @@ library.
 
 ## Installation
 
-**Map** can be run using [Lua] `>= 5.1` or [LuaJit] `>= 2.0`, so long as the
-following dependencies are satisfied:
+**Map** can be run using [Lua] `>= 5.1 and < 5.4` or [LuaJit] `>= 2.0`, so
+long as the following dependencies are satisfied:
 
 - [LuaFileSystem] `>= 1.7.0`
 - [LPeg] `>= 1.0.2`
