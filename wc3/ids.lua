@@ -1,4 +1,4 @@
--- Globals in Warcraft III Lua as of `1.32.8.15801`.
+-- Globals in Warcraft III Lua as of `1.32.9.16207`.
 
 local ai = {
 	-- Only the natives from the `common.ai` are included in the Lua
@@ -3239,8 +3239,6 @@ local common = {
 		'BlzFrameGetWidth',
 		'BlzFrameSetFont',
 		'BlzFrameSetTextAlignment',
-		'BlzFrameGetChildrenCount',
-		'BlzFrameGetChild',
 		'BlzTriggerRegisterFrameEvent',
 		'BlzGetTriggerFrame',
 		'BlzGetTriggerFrameEvent',
@@ -4845,6 +4843,8 @@ local unknown = {
 		'BlzSetHeroStatEx',
 		'BlzSetUnitMovementType',
 		'BlzSetCameraGuardBand',
+		'BlzFrameGetChildrenCount',
+		'BlzFrameGetChild',
 		'ClearStackedSound',
 		'ClearStackedSoundRect',
 		'DebugBreak',
