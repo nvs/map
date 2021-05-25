@@ -1,4 +1,4 @@
--- Globals in Warcraft III Lua as of `1.32.9.16589`.
+-- Globals in Warcraft III Lua as of `1.32.10.17165`.
 
 local ai = {
 	-- Only the natives from the `common.ai` are included in the Lua
