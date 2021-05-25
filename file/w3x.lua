@@ -186,8 +186,11 @@ function W3X:close (compact)
 		return
 	end
 
+	local w3x = self._w3x
+	self._w3x = nil
+
 	if self._mode == 'r' then
-		return self._w3x:close ()
+		return w3x:close ()
 	end
 
 	if self._updated then
@@ -196,7 +199,7 @@ function W3X:close (compact)
 			files = {}
 		}
 
-		for name in self._w3x:files () do
+		for name in w3x:files () do
 			if not ignored [name] then
 				imports.files [name] = self._options.import_byte
 			end
@@ -204,8 +207,7 @@ function W3X:close (compact)
 
 		local contents = Imports.pack (imports)
 		local size = #contents
-		local file, message, code =
-			self._w3x:open ('war3map.imp', 'wb', size)
+		local file, message, code = w3x:open ('war3map.imp', 'wb', size)
 
 		if not file then
 			return nil, message, code
@@ -218,14 +220,14 @@ function W3X:close (compact)
 	end
 
 	if compact then
-		local status, message, code = self._w3x:compact ()
+		local status, message, code = w3x:compact ()
 
 		if not status then
 			return nil, message, code
 		end
 	end
 
-	return self._w3x:close ()
+	return w3x:close ()
 end
 
 -- Garbage collection will call `w3x:close ()`.  However, the `compact`
