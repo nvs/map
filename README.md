@@ -156,7 +156,7 @@ return {
             -- By default, this option is disabled.  Should `true` be
             -- specified, then all checks are disabled.  Setting the option
             -- to 'check' or 'build' will skip checks for those commands.
-            skips_checks = false or nil or true or 'check' or 'build'
+            skip_checks = false or nil or true or 'check' or 'build'
         }
     },
 
