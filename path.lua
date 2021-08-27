@@ -112,11 +112,11 @@ function Path.join (...)
 
 		if Path.is_absolute (component) then
 			components = {}
-		elseif component == '' then
-			component = nil
 		end
 
-		components [#components + 1] = component
+		if component ~= '' then
+			components [#components + 1] = component
+		end
 	end
 
 	return table.concat (components, Path.separator)
