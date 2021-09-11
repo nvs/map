@@ -37,7 +37,7 @@ do
 		end
 	}
 
-	-- This does not represent the complete syntax of Lua.  It does,
+	-- This does not represent the complete syntax of Lua.  It should,
 	-- however, accurately represent Lua strings and comments.  This allows
 	-- finding uses of `require`, without unnecessary false positives.
 	--
