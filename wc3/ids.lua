@@ -1,4 +1,4 @@
--- Globals in Warcraft III Lua as of `1.32.10.18820`.
+-- Globals in Warcraft III Lua as of `1.33.0.18857`.
 
 local ai = {
 	-- Only the natives from the `common.ai` are included in the Lua
@@ -381,6 +381,13 @@ local common = {
 		'SOUND_VOLUMEGROUP_MUSIC',
 		'SOUND_VOLUMEGROUP_AMBIENTSOUNDS',
 		'SOUND_VOLUMEGROUP_FIRE',
+		'SOUND_VOLUMEGROUP_CINEMATIC_GENERAL',
+		'SOUND_VOLUMEGROUP_CINEMATIC_AMBIENT',
+		'SOUND_VOLUMEGROUP_CINEMATIC_MUSIC',
+		'SOUND_VOLUMEGROUP_CINEMATIC_DIALOGUE',
+		'SOUND_VOLUMEGROUP_CINEMATIC_SOUND_EFFECTS_1',
+		'SOUND_VOLUMEGROUP_CINEMATIC_SOUND_EFFECTS_2',
+		'SOUND_VOLUMEGROUP_CINEMATIC_SOUND_EFFECTS_3',
 		'GAME_STATE_DIVINE_INTERVENTION',
 		'GAME_STATE_DISCONNECTED',
 		'GAME_STATE_TIME_OF_DAY',
@@ -2948,6 +2955,7 @@ local common = {
 		'SetSoundVelocity',
 		'AttachSoundToUnit',
 		'StartSound',
+		'StartSoundEx',
 		'StopSound',
 		'KillSoundWhenDone',
 		'SetMapMusic',
@@ -3267,6 +3275,7 @@ local common = {
 		'BlzResetSpecialEffectMatrix',
 		'BlzGetUnitAbility',
 		'BlzGetUnitAbilityByIndex',
+		'BlzGetAbilityId',
 		'BlzDisplayChatMessage',
 		'BlzPauseUnitEx',
 		'BlzSetUnitFacingEx',
@@ -3347,7 +3356,19 @@ local common = {
 		'BlzCreateDestructableZWithSkin',
 		'BlzCreateDeadDestructableWithSkin',
 		'BlzCreateDeadDestructableZWithSkin',
-		'BlzGetPlayerTownHallCount'
+		'BlzGetPlayerTownHallCount',
+		'BlzQueueImmediateOrderById',
+		'BlzQueuePointOrderById',
+		'BlzQueueTargetOrderById',
+		'BlzQueueInstantPointOrderById',
+		'BlzQueueInstantTargetOrderById',
+		'BlzQueueBuildOrderById',
+		'BlzQueueNeutralImmediateOrderById',
+		'BlzQueueNeutralPointOrderById',
+		'BlzQueueNeutralTargetOrderById',
+		'BlzGetUnitOrderCount',
+		'BlzUnitClearOrders',
+		'BlzUnitForceStopOrder'
 	}
 }
 
