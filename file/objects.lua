@@ -5,6 +5,11 @@ end
 
 local Objects = {}
 
+local is_supported = {
+	[2] = true,
+	[3] = true
+}
+
 local to_value = {
 	-- Value; cap.
 	[0] = '< i4 xxxx',
@@ -47,6 +52,14 @@ local to_name = {
 	[3] = 'string'
 }
 
+local object_format = {
+	-- Base; id; modification.
+	[2] = '< c4 c4 i4',
+
+	-- Base; id; unknown; unknown; modification.
+	[3] = '< c4 c4 xxxx xxxx i4'
+}
+
 local unpack = string.unpack
 local pack = string.pack
 
@@ -55,8 +68,8 @@ function Objects.unpack (input, extra)
 
 	local format,
 		position = unpack ('< i4', input)
-
-	assert (format == 2)
+	assert (is_supported [format])
+	output.format = format
 
 	local function unpack_table ()
 		local objects
@@ -71,7 +84,7 @@ function Objects.unpack (input, extra)
 			base,
 			id,
 			modifications,
-			position = unpack ('< c4 c4 i4', input, position)
+			position = unpack (object_format [format], input, position)
 
 			-- Original table.
 			if id == '\0\0\0\0' then
@@ -133,6 +146,7 @@ end
 
 function Objects.pack (input, extra)
 	assert (type (input) == 'table')
+	assert (is_supported [input.format])
 	extra = not not extra
 
 	local original = { 0 }
@@ -155,6 +169,10 @@ function Objects.pack (input, extra)
 
 			output [1] = output [1] + 1
 			output [#output + 1] = pack ('< c4 c4', base, id)
+
+			if input.format == 3 then
+				output [#output + 1] = pack ('< i4 i4', 1, 0)
+			end
 
 			local count = 0
 			output [#output + 1] = true
@@ -210,7 +228,7 @@ function Objects.pack (input, extra)
 	original [1] = pack ('< i4', original [1])
 	custom [1] = pack ('< i4', custom [1])
 
-	return pack ('< i4', 2)
+	return pack ('< i4', input.format)
 		.. table.concat (original)
 		.. table.concat (custom)
 end
