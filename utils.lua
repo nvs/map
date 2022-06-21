@@ -3,24 +3,26 @@ local Path = require ('map.path')
 
 local Utils = {}
 
-local function deep_copy (old, ignore_metatable)
-	local new
-
-	if type (old) == 'table' then
-		new = {}
-
-		for key, value in pairs (old) do
-			new [deep_copy (key)] = deep_copy (value)
-		end
-
-		if not ignore_metatable then
-			setmetatable (new, deep_copy (getmetatable (old)))
-		end
-	else
-		new = old
+local function deep_copy (input, cache)
+	if type (input) ~= 'table' then
+		return input
 	end
 
-	return new
+	cache = cache or {}
+	local cached = cache [input]
+
+	if cached then
+		return cached
+	end
+
+	local output = {}
+	cache [input] = output
+
+	for key, value in next, input do
+		output [deep_copy (key, cache)] = deep_copy (value, cache)
+	end
+
+	return setmetatable (output, deep_copy (getmetatable (input), cache))
 end
 Utils.deep_copy = deep_copy
 
