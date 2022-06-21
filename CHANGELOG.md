@@ -13,6 +13,8 @@
 - Trigger Strings (`wts`):
   - Conversions on values are no longer performed.
   - Unpacked format has changed.
+- Objects (`w3a`, `w3b`, `w3d`, `w3h`, `w3q`, `w3u`, `w3t`):
+  - Unpacked format has changed.
 
 ## [0.10.1] - 2020-01-05
 ### Fixed
