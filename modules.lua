@@ -3,12 +3,15 @@ if _VERSION < 'Lua 5.3' then
 	require ('compat53')
 end
 
+local LPeg = require ('lpeg')
+local Re = require ('re')
+local String = require ('map._string')
+local Utils = require ('map.utils')
+
+local Modules = {}
+
 local grammar
-
 do
-	local LPeg = require ('lpeg')
-	local Re = require ('re')
-
 	local P = LPeg.P
 	local S = LPeg.S
 	local B = LPeg.B
@@ -31,9 +34,6 @@ do
 
 		peek = function ()
 			return line
-		end,
-
-		ignore = function ()
 		end
 	}
 
@@ -47,10 +47,10 @@ do
 	grammar = Re.compile ([[
 		lua <- {} -> init shebang?
 			{| require? (before require / skip)* eof |}
-		skip <- (comment / string / eol / space / .) -> ignore
+		skip <- (comment / string / eol / space / .) -> 0
 
 		eof <- !.
-		eol <- %eol {} -> increment
+		eol <- %eol -> increment
 		space <- %space
 		shebang <- '#!' (!eol .)*
 
@@ -71,73 +71,91 @@ do
 	]], definitions)
 end
 
-local function find_requires (path)
-	local file = io.open (path, 'rb')
-	local contents = file:read ('*a')
+local function load_requires (path, options)
+	local file = io.open (path)
+	local contents = String.trim_right (file:read ('*a'))
 	file:close ()
 
-	return grammar:match (contents)
+	return grammar:match (contents), options.keep_contents and contents
 end
 
-local Errors = {}
-Errors.__index = Errors
+local function load_modules (input, package_path, modules, errors, options)
+	local results
+	results, input.contents = load_requires (input.path, options)
 
-function Errors:__tostring ()
-	return 'error:\n\t' .. table.concat (self, '\n\t')
+	for _, result in ipairs (results) do
+		local name = result [1]
+		local line = result [2]
+		local path = package.searchpath (name, package_path)
+
+		if not path then
+			errors [#errors + 1] = {
+				name = name,
+				path = input.path,
+				line = line
+			}
+		elseif not modules [name] then
+			local module = {
+				name = name,
+				path = path
+			}
+
+			modules [name] = module
+			modules [#modules + 1] = module
+			load_modules (module, package_path, modules, errors, options)
+		end
+	end
 end
 
-function Errors:error (message, ...)
-	local prefix = select (2, ...) and '%s:%d:' or 'map:'
-	message = prefix .. ' module \'%s\' ' .. message
-
-	self [#self + 1] = string.format (message, ...)
+local function sort_by_name (A, B)
+	return A.name < B.name
 end
 
-local function find_module (name, package_path)
+local function format_errors (errors)
+	for index, error in ipairs (errors) do
+		errors [index] = string.format (
+			'%s:%d: %s', error.path, error.line, error.name)
+	end
+
+	errors [0] = 'modules not found or using C loader:'
+	return table.concat (errors, '\n\t', 0)
+end
+
+local default_options = {
+	keep_contents = true
+}
+
+function Modules.load (name, package_path, options)
+	options = Utils.merge_options (options, default_options)
+	package_path = package_path or package.path
 	local path = package.searchpath (name, package_path)
-	local message
 
 	if not path then
-		message = 'not found or uses C loader'
+		return nil, 'module \'' .. name .. '\' not found or uses C loader'
 	end
 
-	return path, message
-end
+	local root = {
+		name = name,
+		path = path
+	}
+	local modules = {
+		[0] = root
+	}
+	local errors = {}
 
-local function find_modules (path, package_path, modules, errors)
-	local requires = find_requires (path)
-
-	for _, module in ipairs (requires) do
-		local name, line = table.unpack (module)
-		local found, message = find_module (name, package_path)
-
-		if found then
-			if not modules [name] then
-				modules [name] = found
-				find_modules (found, package_path, modules, errors)
-			elseif found ~= modules [name] then
-				message = 'duplicate found'
-			end
-		end
-
-		if message then
-			errors:error (message, path, line, name)
-		end
-	end
-end
-
-local Modules = {}
-
-function Modules.load (path, package_path)
-	local modules = {}
-	local errors = setmetatable ({}, Errors)
-
-	find_modules (path, package_path or package.path, modules, errors)
+	load_modules (root, package_path, modules, errors, options)
 
 	if #errors > 0 then
-		return nil, tostring (errors)
+		return nil, format_errors (errors)
 	end
 
+	for key in pairs (modules) do
+		if type (key) == 'string' then
+			modules [key] = nil
+		end
+	end
+
+	table.sort (modules, sort_by_name)
 	return modules
 end
 

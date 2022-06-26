@@ -10,6 +10,8 @@
   - Comments are now supported.
 
 ### Changed
+- Modules:
+  - Output format has changed.
 - Trigger Strings (`wts`):
   - Conversions on values are no longer performed.
   - Unpacked format has changed.
