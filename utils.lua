@@ -3,6 +3,30 @@ local Path = require ('map.path')
 
 local Utils = {}
 
+function Utils.merge_options (input, default)
+	local output = Utils.copy (default)
+
+	if input then
+		for key in pairs (output) do
+			if input [key] ~= nil then
+				output [key] = input [key]
+			end
+		end
+	end
+
+	return output
+end
+
+function Utils.copy (input)
+	local output = {}
+
+	for key, value in pairs (input) do
+		output [key] = value
+	end
+
+	return output
+end
+
 local function deep_copy (input, cache)
 	if type (input) ~= 'table' then
 		return input
