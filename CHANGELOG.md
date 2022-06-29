@@ -5,6 +5,15 @@
 - Trigger Strings (`wts`):
   - Nested bracket support restored.
 
+### Added
+- Trigger Strings (`wts`):
+  - Comments are now supported.
+
+### Changed
+- Trigger Strings (`wts`):
+  - Conversions on values are no longer performed.
+  - Unpacked format has changed.
+
 ## [0.10.1] - 2020-01-05
 ### Fixed
 - Usages of `require` at the start of a file were being ignored.
