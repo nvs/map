@@ -47,6 +47,13 @@ local ignored = {
 	['war3mapMap.blp'] = true,
 	['war3mapMisc.txt'] = true,
 	['war3mapSkin.txt'] = true,
+	['war3mapSkin.w3a'] = true,
+	['war3mapSkin.w3b'] = true,
+	['war3mapSkin.w3d'] = true,
+	['war3mapSkin.w3h'] = true,
+	['war3mapSkin.w3q'] = true,
+	['war3mapSkin.w3t'] = true,
+	['war3mapSkin.w3u'] = true,
 	['war3mapUnits.doo'] = true
 }
 Class.ignored = ignored
