@@ -1,7 +1,9 @@
 # Map Changelog
 
 ## [Unreleased]
-- N/A
+### Fixed
+- Trigger Strings (`wts`):
+  - Nested bracket support restored.
 
 ## [0.10.1] - 2020-01-05
 ### Fixed
