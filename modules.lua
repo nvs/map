@@ -125,6 +125,8 @@ local default_options = {
 	keep_contents = true
 }
 
+-- Note that the output of this function using the default options can be
+-- passed directly to `Lua.pack` to produce a usable `war3map.lua`.
 function Modules.load (name, package_path, options)
 	options = Utils.merge_options (options, default_options)
 	package_path = package_path or package.path

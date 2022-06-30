@@ -8,6 +8,8 @@
 ### Added
 - Trigger Strings (`wts`):
   - Comments are now supported.
+- Script (`war3map.lua`):
+  - Introduce support for packing the map script.
 
 ### Changed
 - Modules:
