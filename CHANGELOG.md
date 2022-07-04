@@ -4,6 +4,8 @@
 ### Fixed
 - Trigger Strings (`wts`):
   - Nested bracket support restored.
+- INI (`txt`):
+  - Properly handle quoted lists.
 
 ### Added
 - Trigger Strings (`wts`):
@@ -19,6 +21,9 @@
   - Unpacked format has changed.
 - Objects (`w3a`, `w3b`, `w3d`, `w3h`, `w3q`, `w3u`, `w3t`):
   - Unpacked format has changed.
+- INI (`txt`):
+  - Quotes are no longer removed from values.
+  - Trailing comments are no longer removed from values.
 
 ## [0.10.1] - 2020-01-05
 ### Fixed

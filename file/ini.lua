@@ -1,68 +1,60 @@
+local LPeg = require ('lpeg')
+local Re = require ('re')
+
 local INI = {}
 
-function INI.unpack (input)
-	assert (type (input) == 'string')
+local grammar
+do
+	local P = LPeg.P
 
-	local output = {}
-	local current
+	local definitions = {
+		eol = P ('\r\n') + P ('\n'),
+        bom = P ('\xEF\xBB\xBF'),
+		set = rawset
+	}
 
-	if input:sub (1, 3) == '\239\187\191' then
-		input = input:sub (4)
-	end
+	grammar = Re.compile ([[
+		INI <- bom? ({||} contents*) ~> set eof {}
+		contents <- eol / comment / section / skip
 
-	for line in input:gmatch ('[^\r\n]+') do
-		line = line:find ('^%s*//') and '' or line
-		local section = line:match ('^%[([^%]]+)%]$')
+		section <- {: header ({||} body*) ~> set :}
+		header <- '[' name ']'
+		name <- { (!']' !eol .)+ }
+		body <- eol / comment / pair
 
-		if section then
-			current = output [section] or {}
-			output [section] = current
+		pair <- {: key '=' value :}
+		key <- { (!'=' !eol .)+ }
+		value <- quoted / unquoted
 
-		elseif not current then -- luacheck: ignore 542
-			-- Do nothing.  All key/value pairs must be in a section.
+		quoted <- { singles / doubles } skip*
+		unquoted <- { (!eol .)* }
 
-		else
-			local index = line:find ('=', 1, true)
+		singles <- single (',' single)*
+		single <- "'" (!"'" !eol .)* "'"
 
-			if index then
-				local key = line:sub (1, index - 1)
-				local value = line:sub (index + 1)
+		doubles <- double (',' double)*
+		double <- '"' (!'"' !eol .)* '"'
 
-				-- Double quotes only apply if the first character of the
-				-- value (i.e. that immediately after the equals sign) is
-				-- one.  If so, the value is considered to be that which
-				-- extends to the first closing double quote or the end of
-				-- the line, whichever comes first.
-				if value:sub (1, 1) == '"' then
-					value = value:match ('^"([^"]*)"?')
+		comment <- '//' (!eol . )*
+		skip <- !eol .
+		bom <- %bom
+		eol <- %eol
+		eof <- !.
+	]], definitions)
+end
 
-				-- Otherwise, we remove any trailing comments.
-				else
-					value = value:match ('^(.-)//') or value
-				end
-
-				current [key] = value
-			end
-		end
-	end
-
-	return output
+function INI.unpack (input, position)
+	return grammar:match (input, position)
 end
 
 function INI.pack (input)
-	assert (type (input) == 'table')
-
 	local output = {}
 
 	for section, contents in pairs (input) do
 		output [#output + 1] = '[' .. section .. ']'
 
 		for key, value in pairs (contents) do
-			-- Remove trailing comments.  If the user wishes to include `//`
-			-- in their value, then they should use double quotes.
-			value = value:match ('^(.-)//') or value
-
-			output [#output + 1] = key .. '=' .. value .. ''
+			output [#output + 1] = key .. '=' .. value
 		end
 
 		output [#output + 1] = ''
