@@ -37,6 +37,8 @@
   - Output format has changed.
 - W3C (`w3c`):
   - File format for 1.31 is now automatically detected.
+- IMP (`imp`):
+  - Output format has changed.
 
 ## [0.10.1] - 2020-01-05
 ### Fixed

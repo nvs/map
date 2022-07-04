@@ -3,47 +3,52 @@ if _VERSION < 'Lua 5.3' then
 	require ('compat53')
 end
 
+local Flags = require ('map.file.flags')
+
 local IMP = {}
 
 local unpack = string.unpack
 local pack = string.pack
 
-function IMP.unpack (input)
-	assert (type (input) == 'string')
+local is_format = {
+	[1] = true
+}
 
-	local format,
-		count,
-		position = unpack ('< i4 i4', input)
+local flags = {
+	[0x01] = 'unknown_0x01',
+	[0x02] = 'unknown_0x02',
+	[0x04] = 'unknown_0x04',
+	[0x08] = 'unknown_0x08',
+	[0x10] = 'unknown_0x10',
+}
 
-	assert (format == 1)
-
+function IMP.unpack (input, position)
+	local count
 	local output = {
-		format = format,
 		files = {}
 	}
 
-	local byte, name
+	output.format, count, position = unpack ('< i4 i4', input, position)
+	assert (is_format [output.format])
 
 	for _ = 1, count do
-		byte,
-		name,
-		position = unpack ('B z', input, position)
+		local byte, name
 
-		output.files [name] = byte
+		byte, name,
+		position = unpack ('< B z', input, position)
+
+		output.files [name] = Flags.unpack (flags, byte)
 	end
 
-	assert (#input == position - 1)
-
-	return output
+	return output, position
 end
 
 function IMP.pack (input)
-	assert (type (input) == 'table')
+	assert (is_format [input.format])
 
-	local output = {}
-	local format = input.format or 1
-	assert (format == 1)
-
+	local output = {
+		pack ('< i4 i4', input.format, #input.files)
+	}
 	local files = {}
 
 	for name in pairs (input.files) do
@@ -52,10 +57,9 @@ function IMP.pack (input)
 
 	table.sort (files)
 
-	output [#output + 1] = pack ('i4 i4', format, #files)
-
 	for _, name in ipairs (files) do
-		output [#output + 1] = pack ('B z', input.files [name], name)
+		output [#output + 1] = pack ('< B z',
+			Flags.pack (flags, input.files [name]), name)
 	end
 
 	return table.concat (output)
