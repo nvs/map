@@ -27,6 +27,9 @@
 - Units DOO (`doo`):
   - File format for 1.32+ is now automatically detected.
   - Output format has changed.
+- Doodads DOO (`doo`):
+  - File format for 1.32+ is now automatically detected.
+  - Output format has changed.
 
 ## [0.10.1] - 2020-01-05
 ### Fixed

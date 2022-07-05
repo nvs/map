@@ -10,30 +10,34 @@ local Doodads_DOO = {}
 local unpack = string.unpack
 local pack = string.pack
 
+local is_format = {
+	[7] = true,
+	[8] = true
+}
+
+local is_subformat = {
+	[9] = true,
+	[11] = true
+}
+
 local flags = {
 	[0x01] = 'solid',
 	[0x02] = 'visible',
-	[0x04] = 'fixed_z'
+	[0x04] = 'fixed_z',
+	[0x08] = 'unknown_0x08',
+	[0x10] = 'unknown_0x10',
 }
 
-function Doodads_DOO.unpack (input, version)
-	assert (type (input) == 'string')
-	assert (type (version) == 'table')
+function Doodads_DOO.unpack (input, position)
+	local magic, count
+	local output = {}
 
-	local magic,
-		format,
-		subformat,
-		count,
-		position = unpack ('< c4 i4 i4 i4', input)
+	magic, output.format, output.subformat, count,
+	position = unpack ('< c4 i4 i4 i4', input, position)
 
 	assert (magic == 'W3do')
-	assert (format == 7 or format == 8)
-	assert (subformat == 9 or subformat == 11)
-
-	local output = {
-		format = format,
-		subformat = subformat
-	}
+	assert (is_format [output.format])
+	assert (is_subformat [output.subformat])
 
 	for doodad = 1, count do
 		output [doodad] = {
@@ -56,22 +60,27 @@ function Doodads_DOO.unpack (input, version)
 		-- Degrees are used in other files.  Match that behavior.
 		doodad.angle = math.deg (doodad.angle)
 
-		if version.minor >= 32 then
+		-- Following the behavior at https://github.com/Drake53/War3Net, we
+		-- check to see if the next character is printable.  If so, we make
+		-- the assumption that the newest format is used.  This imposes a
+		-- hard limit of 5-bits for flags.
+		local is_reforged = unpack ('< B', input) >= 0x20
+
+		if is_reforged then
 			doodad.skin,
-			position = unpack ('c4', input, position)
+			position = unpack ('< c4', input, position)
 		end
 
 		doodad.flags,
 		doodad.life,
-		position = unpack ('B B', input, position)
+		position = unpack ('< B B', input, position)
 
 		doodad.flags = Flags.unpack (flags, doodad.flags)
 
-		if format == 8 then
+		if output.format >= 8 then
 			doodad.item_table = {}
 
-			doodad.map_item_table,
-			count,
+			doodad.map_item_table, count,
 			position = unpack ('< i4 i4', input, position)
 
 			for set = 1, count do
@@ -85,22 +94,20 @@ function Doodads_DOO.unpack (input, version)
 					local item = {}
 					items [index] = item
 
-					item.id,
-					item.chance,
+					item.id, item.chance,
 					position = unpack ('< c4 i4', input, position)
 
 				end
 			end
 		end
 
-		doodad.id,
+		doodad.index,
 		position = unpack ('< i4', input, position)
 	end
 
 	output.special = {}
 
-	output.special.format,
-	count,
+	output.special.format, count,
 	position = unpack ('< i4 i4', input, position)
 
 	for index = 1, count do
@@ -116,25 +123,19 @@ function Doodads_DOO.unpack (input, version)
 		position = unpack ('< c4 i4 i4 i4', input, position)
 	end
 
-	assert (#input == position - 1)
-
-	return output
+	return output, position
 end
 
-function Doodads_DOO.pack (input, version)
-	assert (type (input) == 'table')
-	assert (type (version) == 'table')
+function Doodads_DOO.pack (input)
+	assert (is_format [input.format])
+	assert (is_subformat [input.subformat])
 
 	local output = {}
-	local format = input.format or 8
-	local subformat = input.subformat or 11
-	assert (format == 7 or format == 8)
-	assert (subformat == 9 or subformat == 11)
 
 	output [#output + 1] = pack (
 		'< c4 i4 i4 i4',
 		'W3do',
-		format,
+		input.format,
 		input.subformat,
 		#input)
 
@@ -151,12 +152,12 @@ function Doodads_DOO.pack (input, version)
 			doodad.scale.y,
 			doodad.scale.z)
 
-		if version.minor >= 32 then
+		if doodad.skin then
 			output [#output + 1] = pack ('c4', doodad.skin)
 		end
 
 		output [#output + 1] = pack (
-			'B B',
+			'< B B',
 			Flags.pack (flags, doodad.flags),
 			doodad.life)
 
@@ -178,7 +179,7 @@ function Doodads_DOO.pack (input, version)
 			end
 		end
 
-		output [#output + 1] = pack ('< i4', doodad.id)
+		output [#output + 1] = pack ('< i4', doodad.index)
 	end
 
 	output [#output + 1] = pack (
