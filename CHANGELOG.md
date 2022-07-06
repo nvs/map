@@ -30,6 +30,9 @@
 - Doodads DOO (`doo`):
   - File format for 1.32+ is now automatically detected.
   - Output format has changed.
+- W3S (`w3s`):
+  - Now supports format `3`.
+  - Output format has changed.
 
 ## [0.10.1] - 2020-01-05
 ### Fixed
