@@ -8,62 +8,102 @@ local W3C = {}
 local unpack = string.unpack
 local pack = string.pack
 
-function W3C.unpack (input, version)
-	assert (type (input) == 'string')
-	assert (type (version) == 'table')
+local is_format = {
+	[0] = true
+}
 
-	local format, count, position = unpack ('< i4 i4', input)
-	assert (format == 0)
+local unpackers = {
+	-- Format for patch `< 1.31`.
+	function (input, position)
+		local count
+		local output = {}
 
-	local output = {
-		format = format
-	}
+		output.format, count,
+		position = unpack ('< i4 i4', input, position)
 
-	for index = 1, count do
-		local camera = {
-			target = {}
-		}
+		assert (is_format [output.format])
 
-		camera.target.x,
-		camera.target.y,
-		camera.z_offset,
-		camera.rotation,
-		camera.angle_of_attack,
-		camera.distance,
-		camera.roll,
-		camera.field_of_view,
-		camera.far_z,
-		camera.near_z,
-		position = unpack (
-			'< f f f f f f f f f f', input, position)
+		for index = 1, count do
+			local camera = {
+				target = {}
+			}
 
-		if version.minor >= 31 then
+			camera.target.x,
+			camera.target.y,
+			camera.z_offset,
+			camera.rotation,
+			camera.angle_of_attack,
+			camera.distance,
+			camera.roll,
+			camera.field_of_view,
+			camera.far_z,
+			camera.near_z,
+			camera.name,
+			position = unpack (
+				'< f f f f f f f f f f z', input, position)
+
+			output [index] = camera
+		end
+
+		return output, position
+	end,
+
+	-- Format for patch '>= 1.31`.
+	function (input, position)
+		local count
+		local output = {}
+
+		output.format, count,
+		position = unpack ('< i4 i4', input, position)
+
+		assert (is_format [output.format])
+
+		for index = 1, count do
+			local camera = {
+				target = {}
+			}
+
+			camera.target.x,
+			camera.target.y,
+			camera.z_offset,
+			camera.rotation,
+			camera.angle_of_attack,
+			camera.distance,
+			camera.roll,
+			camera.field_of_view,
+			camera.far_z,
+			camera.near_z,
 			camera.local_pitch,
 			camera.local_yaw,
 			camera.local_roll,
-			position = unpack ('< f f f', input, position)
+			camera.name,
+			position = unpack (
+				'< f f f f f f f f f f f f f z', input, position)
+
+			output [index] = camera
 		end
 
-		camera.name,
-		position = unpack ('z', input, position)
-
-		output [index] = camera
+		return output, position
 	end
+}
 
-	assert (#input == position - 1)
+function W3C.unpack (input, position)
+	-- Attempt to use the older format first.  If the `input` is not fully
+	-- consumed, then we assume we need to use the latest format.
+	for _, unpacker in ipairs (unpackers) do
+		local output, _position = unpacker (input, position)
 
-	return output
+		if _position > #input then
+			return output, _position
+		end
+	end
 end
 
-function W3C.pack (input, version)
-	assert (type (input) == 'table')
-	assert (type (version) == 'table')
+function W3C.pack (input)
+	assert (is_format [input.format])
 
 	local output = {}
-	local format = input.format or 0
-	assert (format == 0)
-
-	output [#output + 1] = pack ('< i4 i4', format, #input)
+	output [#output + 1] = pack ('< i4 i4', input.format, #input)
 
 	for _, camera in ipairs (input) do
 		output [#output + 1] = pack (
@@ -79,7 +119,7 @@ function W3C.pack (input, version)
 			camera.far_z,
 			camera.near_z)
 
-		if version.minor >= 31 then
+		if camera.local_pitch then
 			output [#output + 1] = pack (
 				'< f f f',
 				camera.local_pitch,
@@ -87,7 +127,7 @@ function W3C.pack (input, version)
 				camera.local_roll)
 		end
 
-		output [#output + 1] = pack ('z', camera.name)
+		output [#output + 1] = pack ('< z', camera.name)
 	end
 
 	return table.concat (output)

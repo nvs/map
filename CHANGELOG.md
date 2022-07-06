@@ -35,6 +35,8 @@
 - W3S (`w3s`):
   - Now supports format `3`.
   - Output format has changed.
+- W3C (`w3c`):
+  - File format for 1.31 is now automatically detected.
 
 ## [0.10.1] - 2020-01-05
 ### Fixed
