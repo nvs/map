@@ -8,6 +8,13 @@ local Flags = require ('map.file.flags')
 
 local W3I = {}
 
+local is_format = {
+	[18] = 'RoC',
+	[25] = 'TFT',
+	[28] = 'Lua',
+	[31] = 'Reforged'
+}
+
 local map_flags = {
 	[0x00001] = 'hide_minimap_in_preview_screens',
 	[0x00002] = 'modify_ally_priorities',
@@ -38,26 +45,10 @@ local force_flags = {
 	[0x20] = 'share_advanced_control'
 }
 
-local formats = {
-	[18] = 'RoC',
-	[25] = 'TFT',
-	[28] = 'Lua',
-	[31] = 'Reforged'
-}
-
-function W3I.unpack (input)
-	assert (type (input) == 'string')
-
+function W3I.unpack (input, position)
 	local unpack = string.unpack
 	local count
-
-	local format,
-		position = unpack ('< i4', input)
-
-	assert (formats [format])
-
 	local output = {
-		format = format,
 		map = {},
 		camera = { {}, {}, {}, {} },
 		margins = {},
@@ -66,11 +57,13 @@ function W3I.unpack (input)
 		prologue = {}
 	}
 
-	output.saves,
-	output.editor,
+	output.format, position = unpack ('< i4', input, position)
+	assert (is_format [output.format])
+
+	output.saves, output.editor,
 	position = unpack ('< i4 i4', input, position)
 
-	if format >= 28 then
+	if output.format >= 28 then
 		output.version = {}
 
 		output.version.major,
@@ -106,7 +99,7 @@ function W3I.unpack (input)
 
 	output.map.flags = Flags.unpack (map_flags, output.map.flags)
 
-	if format == 18 then
+	if output.format == 18 then
 		output.campaign = {}
 
 		output.campaign.background,
@@ -157,21 +150,17 @@ function W3I.unpack (input)
 			input, position)
 	end
 
-	if format >= 28 then
-		output.script,
-		position = unpack ('< i4', input, position)
+	if output.format >= 28 then
+		output.script, position = unpack ('< i4', input, position)
 	end
 
-	if format >= 31 then
-		output.graphics,
-		output.game_data_version,
+	if output.format >= 31 then
+		output.graphics, output.game_data_version,
 		position = unpack ('< i4 i4', input, position)
 	end
 
 	output.players = {}
-
-	count,
-	position = unpack ('< i4', input, position)
+	count, position = unpack ('< i4', input, position)
 
 	for index = 1, count do
 		local player = {
@@ -194,7 +183,7 @@ function W3I.unpack (input)
 		player.ally.low = Bits.unpack ('I4', player.ally.low)
 		player.ally.high = Bits.unpack ('I4', player.ally.high)
 
-		if format >= 31 then
+		if output.format >= 31 then
 			player.enemy = {}
 
 			player.enemy.low,
@@ -207,17 +196,13 @@ function W3I.unpack (input)
 	end
 
 	output.forces = {}
-
-	count,
-	position = unpack ('< i4', input, position)
+	count, position = unpack ('< i4', input, position)
 
 	for index = 1, count do
 		local force = {}
 		output.forces [index] = force
 
-		force.flags,
-		force.players,
-		force.name,
+		force.flags, force.players, force.name,
 		position = unpack ('< I4 I4 z', input, position)
 
 		force.flags = Flags.unpack (force_flags, force.flags)
@@ -225,9 +210,7 @@ function W3I.unpack (input)
 	end
 
 	output.upgrades = {}
-
-	count,
-	position = unpack ('< i4', input, position)
+	count, position = unpack ('< i4', input, position)
 
 	for index = 1, count do
 		local upgrade = {}
@@ -243,9 +226,7 @@ function W3I.unpack (input)
 	end
 
 	output.tech = {}
-
-	count,
-	position = unpack ('< i4', input, position)
+	count, position = unpack ('< i4', input, position)
 
 	for index = 1, count do
 		local tech = {}
@@ -259,9 +240,7 @@ function W3I.unpack (input)
 	end
 
 	output.units = {}
-
-	count,
-	position = unpack ('< i4', input, position)
+	count, position = unpack ('< i4', input, position)
 
 	for index = 1, count do
 		local units = {
@@ -269,85 +248,70 @@ function W3I.unpack (input)
 		}
 		output.units [index] = units
 
-		units.index,
-		units.name,
-		units.columns,
+		units.index, units.name, units.columns,
 		position = unpack ('< i4 z i4', input, position)
 
 		local columns = units.columns
 		units.type = { unpack (('i4'):rep (columns), input, position) }
 		position = table.remove (units.type)
 
-		count,
-		position = unpack ('< i4', input, position)
+		count, position = unpack ('< i4', input, position)
 
 		for row = 1, count do
 			units.rows [row] = {}
 			row = units.rows [row]
 
-			row.chance,
-			position = unpack ('< i4', input, position)
-
+			row.chance, position = unpack ('< i4', input, position)
 			row.id = { unpack (('c4'):rep (columns), input, position) }
 			position = table.remove (row.id)
 		end
 	end
 
-	if format >= 25 then
+	if output.format >= 25 then
 		output.item_tables = {}
-
-		count,
-		position = unpack ('< i4', input, position)
+		count, position = unpack ('< i4', input, position)
 
 		for table = 1, count do
 			local item_table = {}
 			output.item_tables [table] = item_table
 
-			item_table.index,
-			item_table.name,
-			count,
+			item_table.index, item_table.name, count,
 			position = unpack ('< i4 z i4', input, position)
 
 			for set = 1, count do
 				local items = {}
 				item_table [set] = items
 
-				count,
-				position = unpack ('< i4', input, position)
+				count, position = unpack ('< i4', input, position)
 
 				for index = 1, count do
 					local item = {}
 					items [index] = item
 
-					item.chance,
-					item.id,
+					item.chance, item.id,
 					position = unpack ('< i4 c4', input, position)
 				end
 			end
 		end
 	end
 
-	assert (#input == position - 1)
-
+	assert (position > #input)
 	return output
 end
 
 function W3I.pack (input)
-	assert (type (input) == 'table')
+	assert (is_format [input.format])
 
 	local pack = string.pack
-
 	local output = {}
-	local format = input.format or 31
-	assert (formats [format])
 
 	output [#output + 1] = pack (
 		'< i4 i4 i4',
-		format,
+		input.format,
 		input.saves,
 		input.editor)
 
-	if format >= 28 then
+	if input.format >= 28 then
 		output [#output + 1] = pack (
 			'< i4 i4 i4 i4',
 			input.version.major,
@@ -379,7 +343,7 @@ function W3I.pack (input)
 		Flags.pack (map_flags, input.map.flags),
 		input.tileset)
 
-	if format == 18 then
+	if input.format == 18 then
 		output [#output + 1] = pack (
 		 '< i4 z z z i4 z z z',
 		input.campaign.background,
@@ -420,11 +384,11 @@ function W3I.pack (input)
 			input.environment.water.alpha)
 	end
 
-	if format >= 28 then
+	if input.format >= 28 then
 		output [#output + 1] = pack ('< i4', input.script)
 	end
 
-	if format >= 31 then
+	if input.format >= 31 then
 		output [#output + 1] = pack (
 			'< i4 i4',
 			input.graphics,
@@ -446,7 +410,7 @@ function W3I.pack (input)
 			Bits.pack (player.ally.low),
 			Bits.pack (player.ally.high))
 
-		if format == 31 then
+		if input.format == 31 then
 			output [#output + 1] = pack (
 				'< I4 I4',
 				Bits.pack (player.enemy.low),
@@ -503,7 +467,7 @@ function W3I.pack (input)
 		end
 	end
 
-	if format >= 25 then
+	if input.format >= 25 then
 		output [#output + 1] = pack ('< i4', #input.item_tables)
 
 		for _, item_table in ipairs (input.item_tables) do

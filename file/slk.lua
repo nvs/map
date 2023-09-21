@@ -1,96 +1,94 @@
+local LPeg = require ('lpeg')
+local Re = require ('re')
+
 local SLK = {}
 
--- Excel errors found in the Warcraft III SLK files.
+local grammar
+do
+	local P = LPeg.P
+	local row, column, output
+
+	local definitions = {
+		eol = P ('\r\n'),
+		to_number = tonumber,
+		to_boolean = {
+			FALSE = false,
+			TRUE = true,
+		},
+
+		init = function (columns, rows)
+			row = nil
+			column = nil
+			output = {
+				rows = tonumber (rows),
+				columns = tonumber (columns),
+			}
+		end,
+
+		output = function ()
+			return output
+		end,
+
+		row = function (value)
+			row = tonumber (value)
+			output [row] = output [row] or {}
+		end,
+
+		column = function (value)
+			column = tonumber (value)
+		end,
+
+		data = function (value)
+			output [row] [column] = value
+		end,
+
+		unsupported = function (value)
+			error ('unsupported value "' .. value .. '"')
+		end,
+	}
+
+	grammar = Re.compile ([[
+		SYLK <- ID B -> init C* E eof -> output {}
+
+		ID <- 'ID;PWXL;N;E' eol
+		B <- 'B;' X Y 'D0' eol
+		C <- 'C;' (X -> column)? (Y -> row)? K eol
+		E <- 'E' eol
+
+		X <- 'X' { [0-9]+ } ';'
+		Y <- 'Y' { [0-9]+ } ';'
+		K <- 'K' (string / number / boolean / error / unsupported) -> data
+
+		string <- '"' { (!'"' .)* } '"'
+		number <- ('-'? [0-9]+ ('.' [0-9]*)?) -> to_number
+		boolean <- ('TRUE' / 'FALSE') -> to_boolean
+		error <- '#VALUE!' / '#REF!'
+		unsupported <- (!eol .)* -> unsupported
+
+		eol <- %eol
+		eof <- !.
+	]], definitions)
+end
+
+function SLK.unpack (input, position)
+	return grammar:match (input, position)
+end
+
 local errors = {
 	['#VALUE!'] = true,
 	['#REF!'] = true
 }
 
-local is_boolean = {
-	FALSE = true,
-	TRUE = true
+local from_boolean = {
+	[true] = 'TRUE',
+	[false] = 'FALSE'
 }
-
-local to_boolean = {
-	FALSE = false,
-	TRUE = true
-}
-
-function SLK.unpack (input)
-	assert (type (input) == 'string')
-
-	local output = {}
-
-	assert (input:sub (1, 11) == 'ID;PWXL;N;E')
-
-	local row, column
-	local _, B = input:find ('[\r\n]+', 12)
-	B = B + 1
-
-	while true do
-		local record = input:sub (B, B)
-		B = B + 2
-
-		if record == 'C' then
-			while true do
-				local field, value
-				_, B, field, value = input:find (
-					'([XYK])([^;\r\n]+)[;\r\n]+', B)
-				B = B + 1
-
-				if field == 'X' then
-					column = tonumber (value)
-				elseif field == 'Y' then
-					value = tonumber (value)
-
-					row = output [value] or {}
-					output [value] = row
-				elseif field == 'K' then
-					if value:sub (1, 1) == '"' then
-						value = tostring (value:sub (2, -2))
-					elseif is_boolean [value] then
-						value = to_boolean [value]
-					elseif errors [value] then -- luacheck: ignore 542
-					else
-						value = tonumber (value)
-					end
-
-					row [column] = value
-					break
-				end
-			end
-		elseif record == 'B' then
-			while true do
-				local field, value
-				_, B, field, value = input:find (
-					'([XYD])([^;\r\n]+)[;\r\n]+', B)
-				B = B + 1
-
-				if field == 'X' then
-					output.columns = tonumber (value)
-				elseif field == 'Y' then
-					output.rows = tonumber (value)
-				elseif field == 'D' then
-					break
-				end
-			end
-		elseif record == 'E' then
-			break
-		end
-	end
-
-	return output
-end
 
 function SLK.pack (input)
-	assert (type (input) == 'table')
-
-	local output = {}
-	output [#output + 1] = 'ID;PWXL;N;E\r\n'
-	output [#output + 1] =
-		'B;X' .. input.columns .. ';Y' .. input.rows .. ';D0\r\n'
-
-	local previous_row
+	local output = {
+		'ID;PWXL;N;E',
+		'B;X' .. input.columns .. ';Y' .. input.rows .. ';D0'
+	}
 
 	for row = 1, input.rows do
 		local rows = input [row]
@@ -109,30 +107,26 @@ function SLK.pack (input)
 							value = '"' .. value .. '"'
 						end
 					elseif type == 'boolean' then
-						value = tostring (value):upper ()
+						value = from_boolean [value]
 					end
 
-					output [#output + 1] = 'C;X'
-					output [#output + 1] = column
+					local C
 
-					if row ~= previous_row then
-						previous_row = row
-
-						output [#output + 1] = ';Y'
-						output [#output + 1] = row
+					if row then
+						C = 'C;X' .. column .. ';Y' .. row .. ';K' .. value
+						row = nil
+					else
+						C = 'C;X' .. column .. ';K' .. value
 					end
 
-					output [#output + 1] = ';K'
-					output [#output + 1] = value
-					output [#output + 1] = '\r\n'
+					output [#output + 1] = C
 				end
 			end
 		end
 	end
 
 	output [#output + 1] = 'E\r\n'
-
-	return table.concat (output)
+	return table.concat (output, '\r\n')
 end
 
 return SLK

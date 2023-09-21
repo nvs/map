@@ -8,30 +8,30 @@ local W3R = {}
 local unpack = string.unpack
 local pack = string.pack
 
-function W3R.unpack (input)
-	assert (type (input) == 'string')
+local is_format = {
+	[5] = true
+}
 
-	local format,
-		count,
-		position = unpack ('< i4 i4', input)
+function W3R.unpack (input, position)
+	local count
+	local output = {}
 
-	assert (format == 5)
+	output.format, count,
+	position = unpack ('< i4 i4', input, position)
 
-	local output = {
-		format = format
-	}
+	assert (is_format [output.format])
 
 	for index = 1, count do
 		local region = {
-			minimum = {},
-			maximum = {},
+			x = {},
+			y = {},
 			color = {}
 		}
 
-		region.minimum.x,
-		region.minimum.y,
-		region.maximum.x,
-		region.maximum.y,
+		region.x.minimum,
+		region.y.minimum,
+		region.x.maximum,
+		region.y.maximum,
 		region.name,
 		region.id,
 		region.weather,
@@ -46,27 +46,22 @@ function W3R.unpack (input)
 		output [index] = region
 	end
 
-	assert (#input == position - 1)
-
-	return output
+	return output, position
 end
 
 function W3R.pack (input)
-	assert (type (input) == 'table')
+	assert (is_format [input.format])
 
 	local output = {}
-	local format = input.format or 5
-	assert (format == 5)
-
-	output [#output + 1] = pack ('i4 i4', format, #input)
+	output [#output + 1] = pack ('i4 i4', input.format, #input)
 
 	for _, region in ipairs (input) do
 		output [#output + 1] = pack (
 			'< f f f f z i4 c4 z B B B B',
-			region.minimum.x,
-			region.minimum.y,
-			region.maximum.x,
-			region.maximum.y,
+			region.x.minimum,
+			region.y.minimum,
+			region.x.maximum,
+			region.y.maximum,
 			region.name,
 			region.id,
 			region.weather,

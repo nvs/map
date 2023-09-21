@@ -7,36 +7,39 @@ local Flags = require ('map.file.flags')
 
 local W3S = {}
 
+local unpack = string.unpack
+local pack = string.pack
+
+local is_format = {
+	[1] = true,
+	[2] = true,
+	[3] = true
+}
+
 local flags = {
 	[0x01] = 'looping',
 	[0x02] = 'is_3d',
 	[0x04] = 'stop_when_out_of_range',
-	[0x08] = 'music'
+	[0x08] = 'music',
+	[0x10] = 'imported'
 }
 
-local unpack = string.unpack
-local pack = string.pack
+function W3S.unpack (input, position)
+	local count
+	local output = {}
 
-function W3S.unpack (input)
-	assert (type (input) == 'string')
+	output.format, count,
+	position = unpack ('< i4 i4', input, position)
 
-	local format,
-		count,
-		position = unpack ('< i4 i4', input)
-
-	assert (format == 1 or format == 2)
-
-	local output = {
-		format = format
-	}
+	assert (is_format [output.format])
 
 	for index = 1, count do
 		local sound = {
 			fade = {},
 			distance = {},
 			cone = {
-				angles = {},
-				volume = {},
+				inside = {},
+				outside = {},
 				orientation = {}
 			}
 		}
@@ -49,15 +52,15 @@ function W3S.unpack (input)
 		sound.fade.out_rate,
 		sound.volume,
 		sound.pitch,
-		sound.unknown_A,
-		sound.unknown_B,
+		sound.pitch_variance,
+		sound.priority,
 		sound.channel,
 		sound.distance.minimum,
 		sound.distance.maximum,
 		sound.distance.cutoff,
-		sound.cone.angles.inside,
-		sound.cone.angles.outside,
-		sound.cone.volume.outside,
+		sound.cone.inside.angle,
+		sound.cone.outside.angle,
+		sound.cone.outside.volume,
 		sound.cone.orientation.x,
 		sound.cone.orientation.y,
 		sound.cone.orientation.z,
@@ -67,32 +70,32 @@ function W3S.unpack (input)
 
 		sound.flags = Flags.unpack (flags, sound.flags)
 
-		if format == 2 then
-			sound.script = {}
+		if output.format >= 2 then
+			local name, path
 
-			sound.script.name,
-			sound.script.label,
-			sound.script.path,
-			sound.unknown_C,
-			position = unpack ('z z z c18', input, position)
+			name, sound.label, path, sound.unknown_A,
+			position = unpack (' < z z z c18', input, position)
+
+			assert (name == sound.name)
+			assert (path == sound.path)
+		end
+
+		if output.format >= 3 then
+			sound.unknown_B,
+			position = unpack ('< i4', input, position)
 		end
 
 		output [index] = sound
 	end
 
-	assert (#input == position - 1)
-
-	return output
+	return output, position
 end
 
 function W3S.pack (input)
-	assert (type (input) == 'table')
+	assert (is_format [input.format])
 
 	local output = {}
-	local format = input.format or 2
-	assert (format == 1 or format == 2)
-
-	output [#output + 1] = pack ('i4 i4', format, #input)
+	output [#output + 1] = pack ('i4 i4', input.format, #input)
 
 	for _, sound in ipairs (input) do
 		output [#output + 1] = pack (
@@ -105,26 +108,30 @@ function W3S.pack (input)
 			sound.fade.out_rate,
 			sound.volume,
 			sound.pitch,
-			sound.unknown_A,
-			sound.unknown_B,
+			sound.pitch_variance,
+			sound.priority,
 			sound.channel,
 			sound.distance.minimum,
 			sound.distance.maximum,
 			sound.distance.cutoff,
-			sound.cone.angles.inside,
-			sound.cone.angles.outside,
-			sound.cone.volume.outside,
+			sound.cone.inside.angle,
+			sound.cone.outside.angle,
+			sound.cone.outside.volume,
 			sound.cone.orientation.x,
 			sound.cone.orientation.y,
 			sound.cone.orientation.z)
 
-		if format == 2 then
+		if input.format >= 2 then
 			output [#output + 1] = pack (
 				'z z z c18',
-				sound.script.name,
-				sound.script.label,
-				sound.script.path,
-				sound.unknown_C)
+				sound.name,
+				sound.label,
+				sound.path,
+				sound.unknown_A)
+		end
+
+		if input.format >= 3 then
+			output [#output + 1] = pack ('< i4', sound.unknown_B)
 		end
 	end
 

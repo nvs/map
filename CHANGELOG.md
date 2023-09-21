@@ -1,7 +1,44 @@
 # Map Changelog
 
 ## [Unreleased]
-- N/A
+### Fixed
+- Trigger Strings (`wts`):
+  - Nested bracket support restored.
+- INI (`txt`):
+  - Properly handle quoted lists.
+
+### Added
+- Trigger Strings (`wts`):
+  - Comments are now supported.
+- Script (`war3map.lua`):
+  - Introduce support for packing the map script.
+
+### Changed
+- Modules:
+  - Output format has changed.
+- Trigger Strings (`wts`):
+  - Conversions on values are no longer performed.
+  - Unpacked format has changed.
+- Objects (`w3a`, `w3b`, `w3d`, `w3h`, `w3q`, `w3u`, `w3t`):
+  - Unpacked format has changed.
+- INI (`txt`):
+  - Quotes are no longer removed from values.
+  - Trailing comments are no longer removed from values.
+- Units DOO (`doo`):
+  - File format for 1.32+ is now automatically detected.
+  - Output format has changed.
+- Doodads DOO (`doo`):
+  - File format for 1.32+ is now automatically detected.
+  - Output format has changed.
+- W3R (`w3r`):
+  - Output format has changed.
+- W3S (`w3s`):
+  - Now supports format `3`.
+  - Output format has changed.
+- W3C (`w3c`):
+  - File format for 1.31 is now automatically detected.
+- IMP (`imp`):
+  - Output format has changed.
 
 ## [0.10.1] - 2020-01-05
 ### Fixed

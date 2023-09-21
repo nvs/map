@@ -5,25 +5,25 @@ end
 
 local WPM = {}
 
-function WPM.unpack (input)
-	assert (type (input) == 'string')
+local is_format = {
+	[0] = true
+}
 
-	local magic,
-		format,
-		columns,
-		rows,
-		position = string.unpack ('< c4 I4 I4 I4', input)
+function WPM.unpack (input, position)
+	local unpack = string.unpack
+	local byte = string.byte
+
+	local magic, columns, rows
+	local output = {}
+
+	magic, output.format, columns, rows,
+	position = unpack ('< c4 i4 i4 i4', input, position)
 
 	assert (magic == 'MP3W')
-	assert (format == 0)
-
-	local output = {
-		format = format,
-	}
+	assert (is_format [output.format])
 
 	local cells = {}
 	output.cells = cells
-	local byte = string.byte
 
 	for row = rows, 1, -1 do
 		local next = position + columns
@@ -47,29 +47,27 @@ function WPM.unpack (input)
 		cells [row] = line
 	end
 
-	return output
+	return output, position
 end
 
 function WPM.pack (input)
-	assert (type (input) == 'table')
+	assert (is_format [input.format])
+
+	local pack = string.pack
+	local char = string.char
+	local unpack = table.unpack
 
 	local output = {}
-	local format = input.format or 0
-	assert (format == 0)
-
 	local cells = input.cells
 	local rows = #cells
 	local columns = #cells [1]
 
-	output [#output + 1] = string.pack (
+	output [#output + 1] = pack (
 		'< c4 I4 I4 I4',
 		'MP3W',
-		format,
+		input.format,
 		columns,
 		rows)
-
-	local char = string.char
-	local unpack = table.unpack
 
 	for row = rows, 1, -1 do
 		row = cells [row]

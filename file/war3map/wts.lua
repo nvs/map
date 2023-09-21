@@ -1,23 +1,26 @@
 local WTS = {}
 
-function WTS.unpack (input)
-	assert (type (input) == 'string')
+local BOM = '\xEF\xBB\xBF'
 
-	local output = {}
-
-	for index, text in input:gmatch ('STRING (%d+).-(%b{})') do
-		text = text:gsub ('\r\n', '\n')
-		text = text:gsub ('^{[^\n]-\n', '')
-		text = text:gsub ('\n[^\n]-}$', '')
-		output [tonumber (index)] = text
+function WTS.unpack (input, position)
+	if position then
+		input = input:sub (position)
 	end
 
-	return output
+	local output = {}
+	local pattern = 'STRING (%d+)\r\n(.-){\r\n([^}]-)\r\n}'
+
+	for index, comment, value in input:gmatch (pattern) do
+		output [tonumber (index)] = {
+			comment = comment:match ('// (.*)\r\n'),
+			value = value
+		}
+	end
+
+	return output, #input + 1
 end
 
 function WTS.pack (input)
-	assert (type (input) == 'table')
-
 	local output = {}
 	local indices = {}
 
@@ -28,12 +31,17 @@ function WTS.pack (input)
 	table.sort (indices)
 
 	for _, index in ipairs (indices) do
-		output [#output + 1] = string.format (
-			'STRING %d\r\n{\r\n%s\r\n}\r\n\r\n',
-			index, input [index]:gsub ('([^\r])\n', '%1\r\n'))
+		local string = input [index]
+		output [#output + 1] = 'STRING ' .. index
+
+		if string.comment then
+			output [#output + 1] = '// ' .. string.comment
+		end
+
+		output [#output + 1] = '{\r\n' .. string.value .. '\r\n}\r\n'
 	end
 
-	return table.concat (output, '\r\n')
+	return BOM .. table.concat (output, '\r\n') .. '\r\n'
 end
 
 return WTS

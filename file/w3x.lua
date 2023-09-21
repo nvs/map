@@ -195,7 +195,7 @@ function W3X:close (compact)
 
 	if self._updated then
 		local imports = {
-			version = 1,
+			format = 1,
 			files = {}
 		}
 

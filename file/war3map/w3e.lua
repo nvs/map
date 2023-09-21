@@ -14,27 +14,24 @@ local pack = string.pack
 local floor = math.floor
 local band = bit32.band
 
-function W3E.unpack (input)
-	assert (type (input) == 'string')
+local is_format = {
+	[11] = true
+}
 
-	local magic,
-		format,
-		position = unpack ('< c4 I4', input)
-
-	assert (magic == 'W3E!')
-	assert (format == 11)
-
+function W3E.unpack (input, position)
+	local magic, count
 	local output = {
-		format = format,
 		textures = {},
 		offset = {}
 	}
 
-	local count
+	magic, output.format,
+	position = unpack ('< c4 i4', input, position)
 
-	output.tileset,
-	output.custom_tileset,
-	count,
+	assert (magic == 'W3E!')
+	assert (is_format [output.format])
+
+	output.tileset, output.custom_tileset, count,
 	position = unpack ('< c1 I4 I4', input, position)
 
 	output.textures.ground = {
@@ -42,24 +39,18 @@ function W3E.unpack (input)
 	}
 	position = table.remove (output.textures.ground)
 
-	count,
-	position = unpack ('< I4', input, position)
-
+	count, position = unpack ('< I4', input, position)
 	output.textures.cliff = { unpack (('c4'):rep (count), input, position) }
 	position = table.remove (output.textures.cliff)
 
 	local columns, rows
 
-	columns,
-	rows,
-	output.offset.x,
-	output.offset.y,
+	columns, rows, output.offset.x, output.offset.y,
 	position = unpack ('< I4 I4 f f', input, position)
 
 	local tiles = {}
 	output.tiles = tiles
-
-	format =  '<' .. ('I2 I2 I1 I1 I1'):rep (columns)
+	local format =  '<' .. ('I2 I2 I1 I1 I1'):rep (columns)
 
 	for row = rows, 1, -1 do
 		local line = {}
@@ -106,14 +97,11 @@ function W3E.unpack (input)
 		tiles [row] = line
 	end
 
-	assert (#input == position - 1)
-
-	return output
+	return output, position
 end
 
 function W3E.pack (input)
-	assert (type (input) == 'table')
-	assert (input.format == 11)
+	assert (is_format [input.format])
 
 	local output = {}
 
@@ -126,14 +114,12 @@ function W3E.pack (input)
 	local count = #input.textures.ground
 	output [#output + 1] = pack (
 		'< I4' .. ('c4'):rep (count),
-		count,
-		table.unpack (input.textures.ground))
+		count, table.unpack (input.textures.ground))
 
 	count = #input.textures.cliff
 	output [#output + 1] = pack (
 		'< I4' .. ('c4'):rep (count),
-		count,
-		table.unpack (input.textures.cliff))
+		count, table.unpack (input.textures.cliff))
 
 	local tiles = input.tiles
 	local rows = #tiles

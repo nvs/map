@@ -3,29 +3,42 @@ if _VERSION < 'Lua 5.3' then
 	require ('compat53')
 end
 
+local Flags = require ('map.file.flags')
+
 local Units_DOO = {}
 
 local unpack = string.unpack
 local pack = string.pack
 
-function Units_DOO.unpack (input, version)
-	assert (type (input) == 'string')
-	assert (type (version) == 'table')
+local is_format = {
+	[7] = true,
+	[8] = true
+}
 
-	local magic,
-		format,
-		subformat,
-		count,
-		position = unpack ('< c4 i4 i4 i4', input)
+local is_subformat = {
+	[9] = true,
+	[11] = true
+}
+
+-- Probably the same or similar to those in the Doodads DOO.
+local flags = {
+	[0x01] = 'unknown_0x01',
+	[0x02] = 'unknown_0x02',
+	[0x04] = 'unknown_0x04',
+	[0x08] = 'unknown_0x08',
+	[0x10] = 'unknown_0x10',
+}
+
+function Units_DOO.unpack (input, position)
+	local magic, count
+	local output = {}
+
+	magic, output.format, output.subformat, count,
+	position = unpack ('< c4 i4 i4 i4', input, position)
 
 	assert (magic == 'W3do')
-	assert (format == 7 or format == 8)
-	assert (subformat == 9 or subformat == 11)
-
-	local output = {
-		format = format,
-		subformat = subformat
-	}
+	assert (is_format [output.format])
+	assert (is_subformat [output.subformat])
 
 	for unit = 1, count do
 		output [unit] = {
@@ -48,13 +61,17 @@ function Units_DOO.unpack (input, version)
 		-- Degrees are used in other files.  Match that behavior.
 		unit.angle = math.deg (unit.angle)
 
-		if version.minor >= 32 then
+		-- Following the behavior at https://github.com/Drake53/War3Net, we
+		-- check to see if the next character is printable.  If so, we make
+		-- the assumption that the newest format is used.  This imposes a
+		-- hard limit of 5-bits for flags.
+		local is_reforged = unpack ('< B', input) >= 0x20
+
+		if is_reforged then
 			unit.skin,
-			position = unpack ('c4', input, position)
+			position = unpack ('< c4', input, position)
 		end
 
-		-- TODO: Determine flags.  They probably mirror those from the
-		-- doodads DOO file.
 		unit.flags,
 		unit.player,
 		unit.unknown_A,
@@ -63,7 +80,9 @@ function Units_DOO.unpack (input, version)
 		unit.mana,
 		position = unpack ('< B i4 B B i4 i4', input, position)
 
-		if subformat == 11 then
+		unit.flags = Flags.unpack (flags, unit.flags)
+
+		if output.subformat >= 11 then
 			unit.map_item_table,
 			position = unpack ('< i4', input, position)
 		end
@@ -95,10 +114,12 @@ function Units_DOO.unpack (input, version)
 		unit.level,
 		position = unpack ('< i4 f i4', input, position)
 
-		if subformat == 11 then
-			unit.strength,
-			unit.agility,
-			unit.intelligence,
+		if output.subformat >= 11 then
+			unit.attributes = {}
+
+			unit.attributes.strength,
+			unit.attributes.agility,
+			unit.attributes.intelligence,
 			position = unpack ('< i4 i4 i4', input, position)
 		end
 
@@ -161,29 +182,23 @@ function Units_DOO.unpack (input, version)
 
 		unit.color,
 		unit.waygate,
-		unit.id,
+		unit.index,
 		position = unpack ('< i4 i4 i4', input, position)
 	end
 
-	assert (#input == position - 1)
-
-	return output
+	return output, position
 end
 
-function Units_DOO.pack (input, version)
-	assert (type (input) == 'table')
-	assert (type (version) == 'table')
+function Units_DOO.pack (input)
+	assert (is_format [input.format])
+	assert (is_subformat [input.subformat])
 
 	local output = {}
-	local format = input.format or 8
-	local subformat = input.subformat or 11
-	assert (format == 7 or format == 8)
-	assert (subformat == 9 or subformat == 11)
 
 	output [#output + 1] = pack (
 		'< c4 i4 i4 i4',
 		'W3do',
-		format,
+		input.format,
 		input.subformat,
 		#input)
 
@@ -200,20 +215,20 @@ function Units_DOO.pack (input, version)
 			unit.scale.y,
 			unit.scale.z)
 
-		if version.minor >= 32 then
-			output [#output + 1] = pack ('c4', unit.skin)
+		if unit.skin then
+			output [#output + 1] = pack ('< c4', unit.skin)
 		end
 
 		output [#output + 1] = pack (
 			'< B i4 B B i4 i4',
-			unit.flags,
+			Flags.pack (flags, unit.flags),
 			unit.player,
 			unit.unknown_A,
 			unit.unknown_B,
 			unit.life,
 			unit.mana)
 
-		if subformat == 11 then
+		if input.subformat == 11 then
 			output [#output + 1] = pack ('< i4', unit.map_item_table)
 		end
 
@@ -236,12 +251,12 @@ function Units_DOO.pack (input, version)
 			unit.target_acquisition,
 			unit.level)
 
-		if subformat == 11 then
+		if input.subformat == 11 then
 			output [#output + 1] = pack (
 				'< i4 i4 i4',
-				unit.strength,
-				unit.agility,
-				unit.intelligence)
+				unit.attributes.strength,
+				unit.attributes.agility,
+				unit.attributes.intelligence)
 		end
 
 		output [#output + 1] = pack ('< i4', #unit.items)
@@ -287,7 +302,7 @@ function Units_DOO.pack (input, version)
 			'< i4 i4 i4',
 			unit.color,
 			unit.waygate,
-			unit.id)
+			unit.index)
 	end
 
 	return table.concat (output)
