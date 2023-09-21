@@ -4,7 +4,9 @@ local function teardown_objects (self)
 		local category = self [type]
 
 		if not category then
-			category = {}
+			category = {
+				format = 2
+			}
 			self [type] = category
 		end
 
